@@ -1,6 +1,7 @@
 import pygame as pg
 import sys
 from settings import *
+from level import Level
 
 
 class Game:
@@ -11,6 +12,7 @@ class Game:
 
         pg.display.set_caption("PyPacman")
         self.clock = pg.time.Clock()
+        self.level = Level(self)
 
     def run(self):
 
@@ -21,7 +23,10 @@ class Game:
                     pg.quit()
                     sys.exit()
 
+            self.screen.fill("black")
+            self.level.update()
             pg.display.update()
+
             self.clock.tick(FPS)
 
 
