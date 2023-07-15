@@ -23,8 +23,9 @@ class Level:
                 if column == "W":
                     Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
 
-            self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
+        self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
 
 
     def update(self):
         self.visibleSprites.draw(self.screen)
+        self.player.update()

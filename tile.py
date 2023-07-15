@@ -6,5 +6,6 @@ class Tile(pg.sprite.Sprite):
 
         self.image = pg.image.load(image)
         self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0,0)
 
 
