@@ -10,7 +10,7 @@ class Level:
         self.screen = pg.display.get_surface()
         self.visibleSprites = pg.sprite.Group()
         self.collisionSprites = pg.sprite.Group()
-
+        self.ground = pg.image.load("Map/level.png")
         self.createMap()
 
 
@@ -21,11 +21,14 @@ class Level:
                 y = rowIndex * tileSize
 
                 if column == "W":
-                    Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
+                    pass
+                    #Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
 
         self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
 
 
     def update(self):
+        
+        self.screen.blit(pg.transform.scale(self.ground,(1700,1700)),(0,0))
         self.visibleSprites.draw(self.screen)
         self.player.update()
