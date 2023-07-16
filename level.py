@@ -3,12 +3,28 @@ from settings import *
 from tile import *
 from player import Player
 
+class CameraGroup(pg.sprite.Group):
+    def __init__(self):
+        super().__init__()
+        self.display_canvas = pg.display.get_surface()
+        self.half_width = self.display_canvas.get_size()[0] // 2
+        self.half_height = self.display_canvas.get_size()[1] // 2
+        self.offset = pg.math.Vector2()
+
+    def custom_draw(self, player):
+        # getting the offset  for camera
+        self.offset.x = player.rect.centerx - self.half_width
+        self.offset.y = player.rect.centery - self.half_height
+
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+            offset_rect = sprite.rect.topleft - self.offset
+            self.display_canvas.blit(sprite.image, offset_rect)
 class Level:
     def __init__(self,main):
         self.main = main
 
         self.screen = pg.display.get_surface()
-        self.visibleSprites = pg.sprite.Group()
+        self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
         self.ground = pg.image.load("Map/level.png")
         self.createMap()
@@ -21,14 +37,13 @@ class Level:
                 y = rowIndex * tileSize
 
                 if column == "W":
-                    pass
-                    #Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
+                    Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
 
         self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
 
 
     def update(self):
         
-        self.screen.blit(pg.transform.scale(self.ground,(1700,1700)),(0,0))
-        self.visibleSprites.draw(self.screen)
+
+        self.visibleSprites.custom_draw(self.player)
         self.player.update()
