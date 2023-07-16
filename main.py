@@ -19,6 +19,13 @@ class Game:
         while True:
             for event in pg.event.get():
 
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_q:
+                        self.level.player.getEItemEquipped()
+                    if event.key == pg.K_SPACE:
+                        self.level.player.useItemEquipped()
+
+
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()

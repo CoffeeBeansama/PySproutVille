@@ -1,4 +1,3 @@
-import pygame as pg
 from settings import *
 from tile import *
 from player import Player
@@ -20,9 +19,8 @@ class CameraGroup(pg.sprite.Group):
             offset_rect = sprite.rect.topleft - self.offset
             self.display_canvas.blit(sprite.image, offset_rect)
 class Level:
-    def __init__(self,main):
+    def __init__(self ,main):
         self.main = main
-
         self.screen = pg.display.get_surface()
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
