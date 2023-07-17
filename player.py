@@ -26,7 +26,6 @@ class Player(Entity):
         self.state = "Down_idle"
         self.importSprites()
 
-        self.inventoryCapacity = 9
         self.itemIndex = 0
         self.equippedItem = equippableItems[self.itemIndex]
         self.usingItem = False

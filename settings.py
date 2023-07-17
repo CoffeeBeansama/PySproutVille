@@ -5,7 +5,7 @@ FPS = 60
 
 playerSpeed = 4
 
-tileSize = 64
+tileSize = 64   
 testSprites = {"Wall": "Sprites/test/wall.png","Player": "Sprites/test/player.png"}
 
 uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",

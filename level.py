@@ -1,6 +1,7 @@
 from settings import *
 from tile import *
 from player import Player
+from inventory import *
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -26,12 +27,10 @@ class Level:
         self.screen = pg.display.get_surface()
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
-        self.ground = pg.image.load("Map/level.png")
 
-        self.inventory = pg.image.load(uiSprites['InventoryHolder'])
+        self.inventory = Inventory()
         self.displayInventory = False
 
-        self.inventoryPos = (80,500)
         self.createMap()
 
     def renderInventory(self):
@@ -56,7 +55,7 @@ class Level:
         self.visibleSprites.custom_draw(self.player)
 
         if self.displayInventory:
-            self.screen.blit(self.inventory, self.inventoryPos)
+            self.inventory.display()
         else:
             self.player.update()
 
