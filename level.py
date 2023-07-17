@@ -19,14 +19,26 @@ class CameraGroup(pg.sprite.Group):
             offset_rect = sprite.rect.topleft - self.offset
             self.display_canvas.blit(sprite.image, offset_rect)
 class Level:
-    def __init__(self ,main):
+    def __init__(self,main):
+
         self.main = main
+        self.player = None
         self.screen = pg.display.get_surface()
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
         self.ground = pg.image.load("Map/level.png")
+
+        self.inventory = pg.image.load(uiSprites['InventoryHolder'])
+        self.displayInventory = False
+
+        self.inventoryPos = (80,500)
         self.createMap()
 
+    def renderInventory(self):
+        if self.displayInventory:
+            self.displayInventory = False
+        else:
+            self.displayInventory = True
 
     def createMap(self):
         for rowIndex,row in enumerate(map):
@@ -39,9 +51,12 @@ class Level:
 
         self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
 
-
     def update(self):
-        
 
         self.visibleSprites.custom_draw(self.player)
-        self.player.update()
+
+        if self.displayInventory:
+            self.screen.blit(self.inventory, self.inventoryPos)
+        else:
+            self.player.update()
+

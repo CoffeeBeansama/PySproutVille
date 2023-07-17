@@ -10,7 +10,8 @@ class Game:
 
         self.screen = pg.display.set_mode((WIDTH,HEIGHT))
 
-        pg.display.set_caption("PyPacman")
+        pg.display.set_caption("PyHarvestVille")
+
         self.clock = pg.time.Clock()
         self.level = Level(self)
 
@@ -24,7 +25,8 @@ class Game:
                         self.level.player.getEItemEquipped()
                     if event.key == pg.K_SPACE:
                         self.level.player.useItemEquipped()
-
+                    if event.key == pg.K_TAB:
+                        self.level.renderInventory()
 
                 if event.type == pg.QUIT:
                     pg.quit()

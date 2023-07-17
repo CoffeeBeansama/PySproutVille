@@ -26,9 +26,11 @@ class Player(Entity):
         self.state = "Down_idle"
         self.importSprites()
 
+        self.inventoryCapacity = 9
         self.itemIndex = 0
         self.equippedItem = equippableItems[self.itemIndex]
         self.usingItem = False
+
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -121,7 +123,6 @@ class Player(Entity):
 
     def getInputs(self):
         keys = pg.key.get_pressed()
-
 
         if keys[pg.K_w]:
             self.getState(self.verticalDirection, -1, "Up")
