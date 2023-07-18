@@ -2,6 +2,7 @@ from settings import *
 from tile import *
 from player import Player
 from inventory import *
+from debug import debug
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -53,7 +54,6 @@ class Level:
     def update(self):
 
         self.visibleSprites.custom_draw(self.player)
-
         if self.displayInventory:
             self.inventory.display()
         else:

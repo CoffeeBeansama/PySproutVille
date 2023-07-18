@@ -4,14 +4,16 @@ HEIGHT = 600
 FPS = 60
 
 playerSpeed = 4
+slotScale = (60, 60)
+items = {1: "Hoe", 2: "Axe", 3 : "WateringCan"}
 
 tileSize = 64   
 testSprites = {"Wall": "Sprites/test/wall.png","Player": "Sprites/test/player.png"}
 
 uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",
              "Slot": "Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png"}
-equippableItems = ["Hoe","Axe","WateringCan"]
 
+equippableItems = ["Hoe","Axe","WateringCan"]
 
 
 map = [
