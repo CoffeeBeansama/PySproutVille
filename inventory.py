@@ -8,9 +8,7 @@ class Slot:
         self.screen = pg.display.get_surface()
         self.pos = pos
 
-    def display(self,slotsImages,inventory):
-        for i in range(len(slotsImages)):
-            self.screen.blit(slotsImages[inventory[i]],self.pos)
+
 
 class Inventory:
     def __init__(self):
@@ -20,39 +18,42 @@ class Inventory:
         self.imagePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.currentItems = {0: "Hoe",1: "Axe", 2: "WateringCan",3: None, 4: None, 5: None, 6: None, 7: None, 8: None}
+        self.currentItems = ["Hoe","Axe","WateringCan"]
         self.inventoryCapacity = 9
         self.width = self.inventoryPos[0] // self.inventoryCapacity
 
         self.importSlotSprites()
         self.createSlots()
 
+
     def importSlotSprites(self):
-        self.slotSprites = []
+        self.slotSprites = {}
 
         for i in items.keys():
             images = pg.transform.scale(pg.image.load(f"{self.imagePath}{items[i]}.png"),slotScale)
-            self.slotSprites.append(images)
-        print(self.slotSprites)
+            self.slotSprites[f"{items[i]}"] = images
 
 
     def createSlots(self):
         self.slotList = []
 
-        for slots in range(self.inventoryCapacity):
+        for index,slots in enumerate(self.currentItems):
             inventoryWidth = 600  #less the borders
             increment = inventoryWidth // self.inventoryCapacity
 
-            left = (slots * increment) + (increment - self.width) + 37
+            left = (index * increment) + (increment - self.width) + 37
 
             slots = Slot((left,511))
             self.slotList.append(slots)
 
 
+
+
     def display(self):
         self.screen.blit(self.background,self.inventoryPos)
-        for slots in self.slotList:
-            slots.display(self.slotSprites,self.currentItems)
+        for index,slots in enumerate(self.slotList):
+            self.screen.blit(self.slotSprites[self.currentItems[index]],slots.pos)
+
 
 
 
