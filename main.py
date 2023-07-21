@@ -16,17 +16,24 @@ class Game:
         self.level = Level(self)
 
     def run(self):
+        player = self.level.player
 
         while True:
             for event in pg.event.get():
 
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_q:
-                        self.level.player.getEItemEquipped()
+                    if player.displayInventory:
+                        if event.key == pg.K_q:
+                            player.inventory.selectFromLeft()
+                        if event.key == pg.K_e:
+                            player.inventory.selectFromRight()
                     if event.key == pg.K_SPACE:
-                        self.level.player.useItemEquipped()
+                        if player.displayInventory:
+                            player.inventory.renderSelector()
+                        else:
+                            player.useItemEquipped()
                     if event.key == pg.K_TAB:
-                        self.level.renderInventory()
+                        player.renderInventory()
 
                 if event.type == pg.QUIT:
                     pg.quit()

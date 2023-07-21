@@ -20,6 +20,8 @@ class CameraGroup(pg.sprite.Group):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_rect = sprite.rect.topleft - self.offset
             self.display_canvas.blit(sprite.image, offset_rect)
+
+
 class Level:
     def __init__(self,main):
 
@@ -29,16 +31,7 @@ class Level:
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
 
-        self.inventory = Inventory()
-        self.displayInventory = False
-
         self.createMap()
-
-    def renderInventory(self):
-        if self.displayInventory:
-            self.displayInventory = False
-        else:
-            self.displayInventory = True
 
     def createMap(self):
         for rowIndex,row in enumerate(map):
@@ -54,8 +47,5 @@ class Level:
     def update(self):
 
         self.visibleSprites.custom_draw(self.player)
-        if self.displayInventory:
-            self.inventory.display()
-        else:
-            self.player.update()
+        self.player.update()
 

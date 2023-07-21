@@ -2,6 +2,7 @@ import pygame as pg
 from settings import *
 from entity import Entity
 from support import import_folder
+from inventory import Inventory
 
 
 class Player(Entity):
@@ -21,6 +22,9 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
         self.collisionSprites = collidable_sprites
+
+        self.inventory = Inventory()
+        self.displayInventory = False
 
         self.facingDirection = "Down"
         self.state = "Down_idle"
@@ -64,6 +68,12 @@ class Player(Entity):
     @staticmethod
     def getState(function, value, state):
         return function(value, state)
+
+    def renderInventory(self):
+        if self.displayInventory:
+            self.displayInventory = False
+        else:
+            self.displayInventory = True
 
     def horizontalDirection(self, value, state):
         self.direction.x = value
@@ -115,10 +125,10 @@ class Player(Entity):
     def useItemEquipped(self):
         notMoving = self.direction.x == 0 and self.direction.y == 0
         
-        if notMoving:
+        if notMoving and not self.inventory.selectingEmptySlot():
             self.frame_index = 0
             self.usingItem = True
-            self.state = f"{self.equippedItem}_{self.facingDirection}"
+            self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
 
     def getInputs(self):
         keys = pg.key.get_pressed()
@@ -136,6 +146,9 @@ class Player(Entity):
 
     def update(self):
 
-        self.getInputs()
-        self.movement(playerSpeed)
-        self.animate()
+        if self.displayInventory:
+            self.inventory.display()
+        else:
+            self.getInputs()
+            self.movement(playerSpeed)
+            self.animate()
