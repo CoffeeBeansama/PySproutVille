@@ -5,7 +5,7 @@ FPS = 60
 
 playerSpeed = 4
 slotScale = (60, 60)
-items = {1: "Hoe", 2: "Axe", 3 : "WateringCan"}
+slotSprites = {1: "Hoe", 2: "Axe", 3: "WateringCan", 4: "EmptySlot"}
 
 tileSize = 64   
 testSprites = {"Wall": "Sprites/test/wall.png","Player": "Sprites/test/player.png"}
