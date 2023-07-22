@@ -1,21 +1,33 @@
 import pygame as pg
 from settings import *
+from items import *
 
 class Slot:
-    def __init__(self,pos,sprite,selectedSprite,index):
+    def __init__(self,pos,item,index):
 
-        self.defaultSprite = pg.transform.scale(pg.image.load("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png"),slotScale)
         self.screen = pg.display.get_surface()
         self.pos = pos
-        self.sprite = sprite
         self.index = index
-        self.selectedSprite = selectedSprite
+        self.itemHolding = item
+        self.sprite = self.itemHolding.defaultSlotImage
+        self.selectedSprite = self.itemHolding.selectedUiSpriteSlotImage
+
+
+class EmptySlot:
+    def __init__(self, pos, item, index):
+        self.screen = pg.display.get_surface()
+        self.pos = pos
+        self.index = index
+        self.itemHolding = item
+        self.sprite = pg.transform.scale(pg.image.load("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlot.png"), slotScale)
+        self.selectedSprite = pg.transform.scale(pg.image.load("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlotSelected.png"), slotScale)
 
 
 class Inventory:
     def __init__(self):
 
         self.inventoryPos = (80, 500)
+        self.slotPosY = 514
         self.screen = pg.display.get_surface()
         self.imagePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
 
@@ -29,14 +41,14 @@ class Inventory:
 
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.defaultSlotItems = ["Hoe","Axe","WateringCan","EmptySlot","EmptySlot","EmptySlot","EmptySlot","EmptySlot","EmptySlot"]
-        self.currentItems = self.defaultSlotItems
+        self.defaultInventorySetup = [Hoe(), Axe(), WateringCan(),None,None,None,None,None,None]
+        self.currentItems = self.defaultInventorySetup
         self.itemIndex = 0
         self.itemSwapIndex = 0
         self.inventoryCapacity = 9
+
         self.width = self.inventoryPos[0] // self.inventoryCapacity
 
-        self.importSlotSprites()
         self.createSlots()
 
     def selectFromRight(self):
@@ -49,7 +61,6 @@ class Inventory:
             self.itemSwapIndex += 1
             if self.itemSwapIndex >= self.inventoryCapacity:
                 self.itemSwapIndex = 0
-
 
     def selectFromLeft(self):
         if not self.swappingItems:
@@ -80,33 +91,28 @@ class Inventory:
             self.swappingItems = True
 
     def selectingEmptySlot(self):
-        if self.currentItems[self.itemIndex] == "EmptySlot":
+        if self.currentItems[self.itemIndex] is None:
             return True
         else:
             return False
 
     def getCurrentSelectedItem(self):
-        item = self.currentItems[self.itemIndex]
+        item = self.currentItems[self.itemIndex].playerState()
         return item
-
-    def importSlotSprites(self):
-        self.slotSprites = {}
-
-        for i in slotSprites.keys():
-            images = pg.transform.scale(pg.image.load(f"{self.imagePath}{slotSprites[i]}.png"), slotScale)
-            self.slotSprites[f"{slotSprites[i]}"] = images
 
     def createSlots(self):
         self.slotList = []
 
-        for index,slots in enumerate(self.currentItems):
+        for index,item in enumerate(self.currentItems):
             inventoryWidth = 600  #less the borders
             increment = inventoryWidth // self.inventoryCapacity
 
             left = (index * increment) + (increment - self.width) + 37
 
-            slots = Slot((left,514),self.slotSprites[self.currentItems[index]],self.slotSprites[f"{self.currentItems[index]}Selected"],index)
-            self.slotList.append(slots)
+            newSlots = Slot((left,self.slotPosY),item,index) if self.currentItems[index] is not None else EmptySlot((left,self.slotPosY),item,index)
+
+            self.slotList.append(newSlots)
+
 
     def display(self):
         self.screen.blit(self.background,self.inventoryPos)
