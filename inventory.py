@@ -2,6 +2,7 @@ import pygame as pg
 from settings import *
 from items import *
 
+
 class Slot:
     def __init__(self,pos,item,index):
 
@@ -29,7 +30,6 @@ class Inventory:
         self.inventoryPos = (80, 500)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
-        self.imagePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
 
         self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
         self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
@@ -41,7 +41,7 @@ class Inventory:
 
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.defaultInventorySetup = [Hoe(), Axe(), WateringCan(),None,None,None,None,None,None]
+        self.defaultInventorySetup = [Hoe(slotSprites[1]), Axe(slotSprites[2]), WateringCan(slotSprites[3]),None,None,None,None,None,None]
         self.currentItems = self.defaultInventorySetup
         self.itemIndex = 0
         self.itemSwapIndex = 0
@@ -81,7 +81,6 @@ class Inventory:
 
         self.itemIndex = self.itemSwapIndex
 
-
     def renderSelector(self):
         if self.swappingItems:
             self.swapItems()
@@ -97,14 +96,14 @@ class Inventory:
             return False
 
     def getCurrentSelectedItem(self):
-        item = self.currentItems[self.itemIndex].playerState()
+        item = self.currentItems[self.itemIndex].playerState()  # if selecting Equipment
         return item
 
     def createSlots(self):
         self.slotList = []
 
         for index,item in enumerate(self.currentItems):
-            inventoryWidth = 600  #less the borders
+            inventoryWidth = 600  # less the borders
             increment = inventoryWidth // self.inventoryCapacity
 
             left = (index * increment) + (increment - self.width) + 37

@@ -3,6 +3,7 @@ from tile import *
 from player import Player
 from inventory import *
 from debug import debug
+from items import *
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
