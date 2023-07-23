@@ -16,7 +16,6 @@ class Item(ABC):
         self.defaultSlotImage = pg.transform.scale(pg.image.load(f"{self.uiPath}{self.defaultUiSprite}.png"), slotScale)
         self.selectedUiSpriteSlotImage = pg.transform.scale(pg.image.load(f"{self.uiPath}{self.selectedUiSprite}.png"),slotScale)
 
-
 class Equipment(Item):
     def __init__(self,uiSprite):
         super().__init__(uiSprite)

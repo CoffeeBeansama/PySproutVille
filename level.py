@@ -29,6 +29,7 @@ class Level:
         self.main = main
         self.player = None
         self.screen = pg.display.get_surface()
+
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
 
@@ -42,6 +43,10 @@ class Level:
 
                 if column == "W":
                     Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
+
+                if column == "A":
+                    Apple(testSprites["Apple"],(x,y),[self.visibleSprites,self.collisionSprites],slotSprites[5])
+
 
         self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
 
