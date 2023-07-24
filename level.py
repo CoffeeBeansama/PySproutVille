@@ -45,7 +45,7 @@ class Level:
                     Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
 
                 if column == "A":
-                    Apple(testSprites["Apple"],(x,y),[self.visibleSprites,self.collisionSprites],slotSprites[5])
+                    pass
 
 
         self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)

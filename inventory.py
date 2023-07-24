@@ -10,8 +10,8 @@ class Slot:
         self.pos = pos
         self.index = index
         self.itemHolding = item
-        self.sprite = self.itemHolding.defaultSlotImage
-        self.selectedSprite = self.itemHolding.selectedUiSpriteSlotImage
+        self.sprite = self.itemHolding["uiSprite"]
+        self.selectedSprite = self.itemHolding["uiSpriteSelected"]
 
 
 class EmptySlot:
@@ -41,8 +41,9 @@ class Inventory:
 
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.defaultInventorySetup = [Hoe(slotSprites[1]), Axe(slotSprites[2]), WateringCan(slotSprites[3]),None,None,None,None,None,None]
+        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
         self.currentItems = self.defaultInventorySetup
+        print(self.currentItems)
         self.itemIndex = 0
         self.itemSwapIndex = 0
         self.inventoryCapacity = 9
@@ -51,8 +52,15 @@ class Inventory:
 
         self.createSlots()
 
-    def selectFromRight(self):
+    def importSlotSprites(self):
+        self.slotSprites = {}
 
+        for i in slotSprites.keys():
+            images = pg.transform.scale(pg.image.load(f"{uiPath}{slotSprites[i]}.png"), slotScale)
+            self.slotSprites[f"{slotSprites[i]}"] = images
+
+
+    def selectFromRight(self):
         if not self.swappingItems:
             self.itemIndex += 1
             if self.itemIndex >= self.inventoryCapacity:
@@ -96,7 +104,7 @@ class Inventory:
             return False
 
     def getCurrentSelectedItem(self):
-        item = self.currentItems[self.itemIndex].playerState()  # if selecting Equipment
+        item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
         return item
 
     def createSlots(self):
@@ -116,7 +124,7 @@ class Inventory:
     def display(self):
         self.screen.blit(self.background,self.inventoryPos)
         for index,slots in enumerate(self.slotList):
-            self.screen.blit(slots.sprite if self.itemIndex != slots.index else slots.selectedSprite,slots.pos)
+            self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
         self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 
         if self.swappingItems:

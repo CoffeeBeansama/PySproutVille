@@ -4,21 +4,18 @@ from settings import *
 
 
 class Item(ABC):
-    def __init__(self,uiSprite):
+    def __init__(self,name):
 
         self.equipment = False
 
-        self.uiPath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
+        self.data = itemData[name]
+        self.defaultUiSprite = itemData[name]["uiSprite"]
+        self.selectedUiSprite = itemData[name]["uiSpriteSelected"]
 
-        self.defaultUiSprite = uiSprite
-        self.selectedUiSprite = f"{self.defaultUiSprite}Selected"
-
-        self.defaultSlotImage = pg.transform.scale(pg.image.load(f"{self.uiPath}{self.defaultUiSprite}.png"), slotScale)
-        self.selectedUiSpriteSlotImage = pg.transform.scale(pg.image.load(f"{self.uiPath}{self.selectedUiSprite}.png"),slotScale)
 
 class Equipment(Item):
-    def __init__(self,uiSprite):
-        super().__init__(uiSprite)
+    def __init__(self,name):
+        super().__init__(name)
         self.equipment = True
 
     @abstractmethod
@@ -27,16 +24,16 @@ class Equipment(Item):
 
 
 class Hoe(Equipment):
-    def __init__(self,uiSprite):
-        super().__init__(uiSprite)
+    def __init__(self,name):
+        super().__init__(name)
 
     def playerState(self):
         return "Hoe"
 
 
 class Axe(Equipment):
-    def __init__(self,uiSprite):
-        super().__init__(uiSprite)
+    def __init__(self,name):
+        super().__init__(name)
 
     def playerState(self):
         return "Axe"
