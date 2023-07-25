@@ -43,7 +43,7 @@ class Inventory:
 
         self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
         self.currentItems = self.defaultInventorySetup
-        print(self.currentItems)
+
         self.itemIndex = 0
         self.itemSwapIndex = 0
         self.inventoryCapacity = 9
@@ -51,14 +51,6 @@ class Inventory:
         self.width = self.inventoryPos[0] // self.inventoryCapacity
 
         self.createSlots()
-
-    def importSlotSprites(self):
-        self.slotSprites = {}
-
-        for i in slotSprites.keys():
-            images = pg.transform.scale(pg.image.load(f"{uiPath}{slotSprites[i]}.png"), slotScale)
-            self.slotSprites[f"{slotSprites[i]}"] = images
-
 
     def selectFromRight(self):
         if not self.swappingItems:
@@ -104,7 +96,7 @@ class Inventory:
             return False
 
     def getCurrentSelectedItem(self):
-        item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
+        item = self.currentItems[self.itemIndex]["name"] # if selecting Equipment
         return item
 
     def createSlots(self):
