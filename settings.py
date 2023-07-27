@@ -1,6 +1,6 @@
 import pygame as pg
 
-tileSize = 64
+tileSize = 32
 WIDTH = 800
 HEIGHT = 600
 FPS = 60
@@ -13,11 +13,9 @@ slotScale = (55, 55)
 itemScale = (24,24)
 
 
-
 def loadSprite(imagePath, scale):
     newImage = pg.transform.scale(pg.image.load(imagePath),scale)
     return newImage
-
 
 
 itemData = {
@@ -44,11 +42,6 @@ itemData = {
          }
 }
 
-slotSprites = {1: "Hoe", 2: "Axe", 3: "WateringCan", 4: "EmptySlot",5:"Apple",
-                6: "HoeSelected", 7: "AxeSelected", 8: "WateringCanSelected", 9: "EmptySlotSelected",10:"AppleSelected"
-               }
-
-
 testSprites = {"Wall": "Sprites/test/wall.png","Player": "Sprites/test/player.png",
                "Apple": "Sprites/Sprout Lands - Sprites - Basic pack/Objects/AppleFruit Final.png"
                }
@@ -56,7 +49,7 @@ testSprites = {"Wall": "Sprites/test/wall.png","Player": "Sprites/test/player.pn
 uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",
              "Slot": "Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png"}
 
-equippableItems = ["Hoe","Axe","WateringCan"]
+equipmentItems = ["Hoe", "Axe", "WateringCan"]
 
 
 map = [
@@ -64,7 +57,7 @@ map = [
     ["W"," "," "," "," "," "," "," "," "," ","W"],
     ["W"," "," "," "," "," "," "," "," "," ","W"],
     ["W"," "," ","P"," "," "," ","A"," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," ","W"],
+    ["W"," ","A"," "," "," "," "," "," "," ","W"],
     ["W"," "," "," "," "," "," "," "," "," ","W"],
     ["W"," "," "," "," "," "," "," "," "," ","W"],
     ["W","W","W","W","W","W","W","W","W","W","W"],

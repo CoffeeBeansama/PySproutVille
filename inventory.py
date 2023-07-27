@@ -89,14 +89,15 @@ class Inventory:
             self.itemSwapIndex = self.itemIndex
             self.swappingItems = True
 
-    def selectingEmptySlot(self):
-        if self.currentItems[self.itemIndex] is None:
-            return True
-        else:
-            return False
+    def selectingEquipmentSlot(self):
+        if self.currentItems[self.itemIndex] is not None:
+            if self.currentItems[self.itemIndex]["name"] in equipmentItems:
+                return True
+            else:
+                return False
 
     def getCurrentSelectedItem(self):
-        item = self.currentItems[self.itemIndex]["name"] # if selecting Equipment
+        item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
         return item
 
     def createSlots(self):
@@ -112,10 +113,21 @@ class Inventory:
 
             self.slotList.append(newSlots)
 
+    def update(self,item):
+        for itemIndex,items in enumerate(self.currentItems):
+            if items is None:
+                self.currentItems[itemIndex] = item
+                self.slotList[itemIndex].sprite = item["uiSprite"]
+                self.slotList[itemIndex].selectedSprite = item["uiSpriteSelected"]
+                return
+            else:
+                pass
 
     def display(self):
         self.screen.blit(self.background,self.inventoryPos)
+
         for index,slots in enumerate(self.slotList):
+
             self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
         self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 

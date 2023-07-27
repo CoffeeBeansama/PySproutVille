@@ -5,6 +5,7 @@ from inventory import *
 from debug import debug
 from items import *
 
+
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
         super().__init__()
@@ -32,6 +33,8 @@ class Level:
 
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
+        self.pickAbleItems = pg.sprite.Group()
+        self.playerSprite = pg.sprite.Group()
 
         self.createMap()
 
@@ -45,13 +48,22 @@ class Level:
                     Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
 
                 if column == "A":
-                    Apple("Apple",(x,y),self.visibleSprites)
+                    Apple("Apple",(x,y),[self.visibleSprites,self.pickAbleItems])
 
+        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self)
 
-        self.player = Player(testSprites["Player"],[self.visibleSprites],self.collisionSprites,self)
+    def playerCollision(self):
+        for sprites in self.playerSprite:
+            itemCollided = pg.sprite.spritecollide(sprites,self.pickAbleItems,False)
+
+            if itemCollided:
+                for items in itemCollided:
+                    self.player.updateInventory(items.data)
+                    items.kill()
+
 
     def update(self):
-
         self.visibleSprites.custom_draw(self.player)
+        self.playerCollision()
         self.player.update()
 

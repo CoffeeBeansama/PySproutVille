@@ -6,7 +6,7 @@ from inventory import Inventory
 
 
 class Player(Entity):
-    def __init__(self, image, group, collidable_sprites, level):
+    def __init__(self, image, group,collidable_sprites, level):
         super().__init__(group)
 
         self.animations_States = None
@@ -31,7 +31,7 @@ class Player(Entity):
         self.importSprites()
 
         self.itemIndex = 0
-        self.equippedItem = equippableItems[self.itemIndex]
+        self.equippedItem = equipmentItems[self.itemIndex]
         self.usingItem = False
 
 
@@ -68,6 +68,9 @@ class Player(Entity):
     @staticmethod
     def getState(function, value, state):
         return function(value, state)
+
+    def updateInventory(self,item):
+        self.inventory.update(item)
 
     def renderInventory(self):
         if self.displayInventory:
@@ -118,14 +121,14 @@ class Player(Entity):
 
     def getEItemEquipped(self):
         self.itemIndex += 1
-        if self.itemIndex >= len(equippableItems):
+        if self.itemIndex >= len(equipmentItems):
             self.itemIndex = 0
-        self.equippedItem = equippableItems[self.itemIndex]
+        self.equippedItem = equipmentItems[self.itemIndex]
 
     def useItemEquipped(self):
         notMoving = self.direction.x == 0 and self.direction.y == 0
         
-        if notMoving and not self.inventory.selectingEmptySlot():
+        if notMoving and self.inventory.selectingEquipmentSlot():
             self.frame_index = 0
             self.usingItem = True
             self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"

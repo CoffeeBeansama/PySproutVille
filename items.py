@@ -9,6 +9,7 @@ class Item(ABC,pg.sprite.Sprite):
 
         self.equipment = False
 
+
         self.data = itemData[name]
 
         self.image = itemData[name]["sprite"]
@@ -28,9 +29,12 @@ class Equipment(Item):
     def playerState(self):
         pass
 
+
 class Apple(Item):
     def __init__(self,name,pos,group):
         super().__init__(name,pos,group)
+        self.pickAble = True
+
 
 
 class Hoe(Equipment):
