@@ -6,3 +6,6 @@ class Entity(pg.sprite.Sprite):
         super().__init__(groups)
 
         self.direction = pg.math.Vector2()
+
+
+

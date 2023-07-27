@@ -124,6 +124,7 @@ class Inventory:
                 pass
 
     def display(self):
+
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):

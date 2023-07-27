@@ -45,10 +45,14 @@ class Level:
                 y = rowIndex * tileSize
 
                 if column == "W":
+
                     Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
 
                 if column == "A":
                     Apple("Apple",(x,y),[self.visibleSprites,self.pickAbleItems])
+
+                if column == "C":
+                    Chest(testSprites["Chest"],(x,y),[self.visibleSprites])
 
         self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self)
 

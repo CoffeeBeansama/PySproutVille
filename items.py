@@ -9,7 +9,6 @@ class Item(ABC,pg.sprite.Sprite):
 
         self.equipment = False
 
-
         self.data = itemData[name]
 
         self.image = itemData[name]["sprite"]
@@ -28,7 +27,6 @@ class Equipment(Item):
     @abstractmethod
     def playerState(self):
         pass
-
 
 class Apple(Item):
     def __init__(self,name,pos,group):
