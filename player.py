@@ -11,13 +11,13 @@ class Player(Entity):
 
         self.animations_States = None
         self.level = level
-        self.startingPos = (100, 100)
+        self.startingPos = (948, 866)
 
         self.frame_index = 0
         self.walkingAnimationTime = 1 / 8
         self.eqpActionAnimationTime = 1 / 20
 
-        self.image = pg.image.load(image).convert_alpha()
+        self.image = testSprites["Player"]
 
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -62,7 +62,7 @@ class Player(Entity):
             self.usingItem = False
 
         self.image = animation[int(self.frame_index)]
-        self.image = pg.transform.scale(self.image, (84, 84))
+
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
     @staticmethod
@@ -104,14 +104,14 @@ class Player(Entity):
             if sprite.hitbox.colliderect(self.hitbox):
                 if direction == "Horizontal":
                     if self.direction.x < 0:
-                        self.hitbox.left = sprite.hitbox.right
+                        self.hitbox.left = (sprite.hitbox.right + 3)
                     else:
-                        self.hitbox.right = sprite.hitbox.left
+                        self.hitbox.right = (sprite.hitbox.left - 3)
                 elif direction == "Vertical":
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
                     else:
-                        self.hitbox.bottom = sprite.hitbox.top
+                        self.hitbox.bottom = (sprite.hitbox.top - 3)
 
     def idleState(self):
         self.direction.x = 0
@@ -148,7 +148,6 @@ class Player(Entity):
             self.idleState()
 
     def update(self):
-
         if self.displayInventory:
             self.inventory.display()
         else:

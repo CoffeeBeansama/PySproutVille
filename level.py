@@ -4,6 +4,7 @@ from player import Player
 from inventory import *
 from debug import debug
 from items import *
+from support import import_csv_layout
 
 
 class CameraGroup(pg.sprite.Group):
@@ -12,6 +13,20 @@ class CameraGroup(pg.sprite.Group):
         self.display_canvas = pg.display.get_surface()
         self.half_width = self.display_canvas.get_size()[0] // 2
         self.half_height = self.display_canvas.get_size()[1] // 2
+
+        self.groundSprite = pg.image.load("Sprites/map.png").convert()
+        self.groundRect = self.groundSprite.get_rect(topleft=(0,0))
+
+        self.internalSurfaceSize = (500,500)
+        self.internalSurface = pg.Surface(self.internalSurfaceSize,pg.SRCALPHA)
+        self.internalRect = self.internalSurface.get_rect(center=(self.half_width,self.half_height))
+
+        self.zoomSize = (1100, 1100)
+
+        self.internalOffset = pg.math.Vector2()
+        self.internalOffset.x = self.internalSurfaceSize[0] // 2 - self.half_width
+        self.internalOffset.y = self.internalSurfaceSize[1] // 2 - self.half_height
+
         self.offset = pg.math.Vector2()
 
     def custom_draw(self, player):
@@ -19,9 +34,18 @@ class CameraGroup(pg.sprite.Group):
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
 
+        self.internalSurface.fill("black")
+
+        floor_offset_pos = self.groundRect.topleft - self.offset + self.internalOffset
+        self.internalSurface.blit(self.groundSprite, floor_offset_pos)
+
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
-            offset_rect = sprite.rect.topleft - self.offset
-            self.display_canvas.blit(sprite.image, offset_rect)
+            offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
+            self.internalSurface.blit(sprite.image, offset_rect)
+
+        scaledSurface = pg.transform.scale(self.internalSurface, self.zoomSize)
+        scaledRect = scaledSurface.get_rect(center=(self.half_width,self.half_height))
+        self.display_canvas.blit(scaledSurface,scaledRect)
 
 
 class Level:
@@ -39,20 +63,21 @@ class Level:
         self.createMap()
 
     def createMap(self):
-        for rowIndex,row in enumerate(map):
-            for columnIndex,column in enumerate(row):
-                x = columnIndex * tileSize
-                y = rowIndex * tileSize
 
-                if column == "W":
+        mapLayouts = {
+            "boundary": import_csv_layout("Map/wall.csv")
 
-                    Tile(testSprites["Wall"],(x,y),[self.visibleSprites,self.collisionSprites])
+        }
+        for style, layout in mapLayouts.items():
+            for rowIndex,row in enumerate(layout):
+                for columnIndex,column in enumerate(row):
 
-                if column == "A":
-                    Apple("Apple",(x,y),[self.visibleSprites,self.pickAbleItems])
+                    if column != "-1":
+                        x = columnIndex * tileSize
+                        y = rowIndex * tileSize
 
-                if column == "C":
-                    Chest(testSprites["Chest"],(x,y),[self.visibleSprites])
+                        if style == "boundary":
+                            Tile(testSprites["Player"],(x,y),[self.collisionSprites])
 
         self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self)
 
