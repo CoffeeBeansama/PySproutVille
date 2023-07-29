@@ -21,7 +21,7 @@ class CameraGroup(pg.sprite.Group):
         self.internalSurface = pg.Surface(self.internalSurfaceSize,pg.SRCALPHA)
         self.internalRect = self.internalSurface.get_rect(center=(self.half_width,self.half_height))
 
-        self.zoomSize = (1100, 1100)
+        self.zoomInSize = (1100, 1100)
 
         self.internalOffset = pg.math.Vector2()
         self.internalOffset.x = self.internalSurfaceSize[0] // 2 - self.half_width
@@ -39,11 +39,11 @@ class CameraGroup(pg.sprite.Group):
         floor_offset_pos = self.groundRect.topleft - self.offset + self.internalOffset
         self.internalSurface.blit(self.groundSprite, floor_offset_pos)
 
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type == "object" else sprite.rect.centery):
             offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
             self.internalSurface.blit(sprite.image, offset_rect)
 
-        scaledSurface = pg.transform.scale(self.internalSurface, self.zoomSize)
+        scaledSurface = pg.transform.scale(self.internalSurface, self.zoomInSize)
         scaledRect = scaledSurface.get_rect(center=(self.half_width,self.half_height))
         self.display_canvas.blit(scaledSurface,scaledRect)
 
@@ -65,7 +65,8 @@ class Level:
     def createMap(self):
 
         mapLayouts = {
-            "boundary": import_csv_layout("Map/wall.csv")
+            "boundary": import_csv_layout("Map/wall.csv"),
+            "plantTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv")
 
         }
         for style, layout in mapLayouts.items():
@@ -79,7 +80,11 @@ class Level:
                         if style == "boundary":
                             Tile(testSprites["Player"],(x,y),[self.collisionSprites])
 
+                        if style == "plantTile":
+                            PlantTile((x,y),[self.visibleSprites])
+
         self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self)
+
 
     def playerCollision(self):
         for sprites in self.playerSprite:

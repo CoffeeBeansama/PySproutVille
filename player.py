@@ -9,6 +9,7 @@ class Player(Entity):
     def __init__(self, image, group,collidable_sprites, level):
         super().__init__(group)
 
+        self.type = "player"
         self.animations_States = None
         self.level = level
         self.startingPos = (948, 866)
@@ -62,7 +63,6 @@ class Player(Entity):
             self.usingItem = False
 
         self.image = animation[int(self.frame_index)]
-
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
     @staticmethod
@@ -148,6 +148,7 @@ class Player(Entity):
             self.idleState()
 
     def update(self):
+
         if self.displayInventory:
             self.inventory.display()
         else:

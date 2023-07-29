@@ -41,6 +41,16 @@ itemData = {
          }
 }
 
+plantTileSprites = {
+    "Soil":{
+        "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)),
+        "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)),
+    }
+
+}
+
+
+
 testSprites = {"Wall": loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize)),
                "Player": loadSprite(f"{testSpritePath}player.png",(tileSize,tileSize)),
                "Apple": "Sprites/Sprout Lands - Sprites - Basic pack/Objects/AppleFruit Final.png",
