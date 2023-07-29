@@ -6,7 +6,7 @@ from inventory import Inventory
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites, level):
+    def __init__(self, image, group,collidable_sprites, level,useEquipmentTile):
         super().__init__(group)
 
         self.type = "player"
@@ -27,12 +27,14 @@ class Player(Entity):
         self.inventory = Inventory()
         self.displayInventory = False
 
+
         self.facingDirection = "Down"
         self.state = "Down_idle"
         self.importSprites()
 
         self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
+        self.createEquipmentTile = useEquipmentTile
         self.usingItem = False
 
 
@@ -104,14 +106,14 @@ class Player(Entity):
             if sprite.hitbox.colliderect(self.hitbox):
                 if direction == "Horizontal":
                     if self.direction.x < 0:
-                        self.hitbox.left = (sprite.hitbox.right + 3)
+                        self.hitbox.left = sprite.hitbox.right
                     else:
-                        self.hitbox.right = (sprite.hitbox.left - 3)
+                        self.hitbox.right = sprite.hitbox.left
                 elif direction == "Vertical":
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
                     else:
-                        self.hitbox.bottom = (sprite.hitbox.top - 3)
+                        self.hitbox.bottom = sprite.hitbox.top
 
     def idleState(self):
         self.direction.x = 0
@@ -130,6 +132,7 @@ class Player(Entity):
         
         if notMoving and self.inventory.selectingEquipmentSlot():
             self.frame_index = 0
+            self.createEquipmentTile()
             self.usingItem = True
             self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
 

@@ -83,9 +83,13 @@ class Level:
                         if style == "plantTile":
                             PlantTile((x,y),[self.visibleSprites])
 
-        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self)
-
-
+        self.player = Player(
+            testSprites["Player"],
+            [self.visibleSprites,self.playerSprite],
+            self.collisionSprites,self,
+            self.createEquipmentTile)
+    def createEquipmentTile(self):
+        print("Equipment tile created")
     def playerCollision(self):
         for sprites in self.playerSprite:
             itemCollided = pg.sprite.spritecollide(sprites,self.pickAbleItems,False)
