@@ -60,9 +60,19 @@ class Player(Entity):
         animation = self.animations_States[self.state]
         self.frame_index += self.eqpActionAnimationTime if self.usingItem else self.walkingAnimationTime
 
+        notMoving = self.direction.x == 0 and self.direction.y == 0
+
         if self.frame_index >= len(animation):
             self.frame_index = 0 if not self.usingItem else len(animation) - 1
-            self.usingItem = False
+
+            usingEquipment = not "idle" in self.state and notMoving
+            if usingEquipment:
+                self.createEquipmentTile()
+                self.usingItem = False
+
+
+
+
 
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center=self.hitbox.center)
@@ -132,7 +142,7 @@ class Player(Entity):
         
         if notMoving and self.inventory.selectingEquipmentSlot():
             self.frame_index = 0
-            self.createEquipmentTile()
+
             self.usingItem = True
             self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
 

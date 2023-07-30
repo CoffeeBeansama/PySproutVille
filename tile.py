@@ -11,7 +11,6 @@ class Tile(pg.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0,0)
 
-
 class InteractableObjects(Tile):
     def __init__(self,image,pos,group):
         super().__init__(image,pos,group)
@@ -22,11 +21,13 @@ class Chest(InteractableObjects):
 
 
 class PlantTile(pg.sprite.Sprite):
-    def __init__(self,pos,group,untiledSprite=plantTileSprites["Soil"]["untiledSprite"],tiledSprite=plantTileSprites["Soil"]["tiledSprite"]):
+    def __init__(self,pos,group):
         super().__init__(group)
 
         self.type = "object"
-        self.image = untiledSprite.convert()
+        self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert()
+        self.tiledSprite = plantTileSprites["Soil"]["tiledSprite"].convert()
+        self.image = self.untiledSprite
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0,0)
 

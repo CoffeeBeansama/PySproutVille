@@ -41,6 +41,7 @@ class CameraGroup(pg.sprite.Group):
 
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type == "object" else sprite.rect.centery):
             offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
+
             self.internalSurface.blit(sprite.image, offset_rect)
 
         scaledSurface = pg.transform.scale(self.internalSurface, self.zoomInSize)
@@ -57,6 +58,8 @@ class Level:
 
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
+        self.equipmentSprites = pg.sprite.Group()
+        self.plantSprites = pg.sprite.Group()
         self.pickAbleItems = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
 
@@ -81,7 +84,7 @@ class Level:
                             Tile(testSprites["Player"],(x,y),[self.collisionSprites])
 
                         if style == "plantTile":
-                            PlantTile((x,y),[self.visibleSprites])
+                            PlantTile((x,y),[self.visibleSprites,self.plantSprites])
 
         self.player = Player(
             testSprites["Player"],
@@ -89,7 +92,16 @@ class Level:
             self.collisionSprites,self,
             self.createEquipmentTile)
     def createEquipmentTile(self):
-        print("Equipment tile created")
+        self.currentEquipment = Equipment([self.equipmentSprites],self.player)
+
+    def equipmentTileCollisionLogic(self):
+        for sprites in self.equipmentSprites:
+            plantTileCollided = pg.sprite.spritecollide(sprites,self.plantSprites,False)
+            if plantTileCollided:
+                sprites.kill()
+                for plantIndex,plantTile in enumerate(plantTileCollided):
+                    plantTileCollided[0].image = plantTile.tiledSprite
+
     def playerCollision(self):
         for sprites in self.playerSprite:
             itemCollided = pg.sprite.spritecollide(sprites,self.pickAbleItems,False)
@@ -102,6 +114,7 @@ class Level:
 
     def update(self):
         self.visibleSprites.custom_draw(self.player)
+        self.equipmentTileCollisionLogic()
         self.playerCollision()
         self.player.update()
 

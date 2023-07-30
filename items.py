@@ -19,43 +19,33 @@ class Item(ABC,pg.sprite.Sprite):
         self.selectedUiSprite = itemData[name]["uiSpriteSelected"]
 
 
-class Equipment(Item):
-    def __init__(self,name,pos,group):
-        super().__init__(name,pos,group)
+class Equipment(pg.sprite.Sprite):
+    def __init__(self,group,player):
+        super().__init__(group)
+
+        self.type = "Equipment"
+
         self.equipment = True
 
-    @abstractmethod
-    def playerState(self):
-        pass
+        playerDirection = player.facingDirection
+        self.image = pg.Surface((12,12))
+
+        if playerDirection == "Up":
+            self.rect = self.image.get_rect(midbottom=player.rect.midtop + pg.math.Vector2(0, tileSize))
+        elif playerDirection == "Down":
+            self.rect = self.image.get_rect(midtop=player.rect.midbottom - pg.math.Vector2(0, tileSize))
+        elif playerDirection == "Left":
+            self.rect = self.image.get_rect(midright=player.rect.midleft + pg.math.Vector2(tileSize, 0))
+        elif playerDirection == "Right":
+            self.rect = self.image.get_rect(midleft=player.rect.midright - pg.math.Vector2(tileSize, 0))
+
+
+
 
 class Apple(Item):
     def __init__(self,name,pos,group):
         super().__init__(name,pos,group)
         self.pickAble = True
 
-
-
-class Hoe(Equipment):
-    def __init__(self,name,pos,group):
-        super().__init__(name,pos,group)
-
-    def playerState(self):
-        return "Hoe"
-
-
-class Axe(Equipment):
-    def __init__(self,name,pos,group):
-        super().__init__(name,pos,group)
-
-    def playerState(self):
-        return "Axe"
-
-
-class WateringCan(Equipment):
-    def __init__(self,name,pos,group):
-        super().__init__(name,pos,group)
-
-    def playerState(self):
-        return "WateringCan"
 
 
