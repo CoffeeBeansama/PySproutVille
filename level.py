@@ -4,6 +4,7 @@ from player import Player
 from inventory import *
 from debug import debug
 from items import *
+from plants import *
 from support import import_csv_layout
 
 
