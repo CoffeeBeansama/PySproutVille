@@ -19,7 +19,7 @@ class Player(Entity):
         self.eqpActionAnimationTime = 1 / 20
 
         self.image = testSprites["Player"]
-
+        self.screen = pg.display.get_surface()
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
         self.collisionSprites = collidable_sprites
@@ -70,7 +70,10 @@ class Player(Entity):
                 self.usingItem = False
 
         self.image = self.animation[int(self.frame_index)]
+
         self.rect = self.image.get_rect(center=self.hitbox.center)
+
+
 
     @staticmethod
     def getState(function, value, state):
@@ -165,9 +168,12 @@ class Player(Entity):
                 self.idleState()
 
     def update(self):
+
         if self.displayInventory:
             self.inventory.display()
+
         else:
             self.getInputs()
             self.movement(playerSpeed)
             self.animate()
+

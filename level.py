@@ -22,7 +22,7 @@ class CameraGroup(pg.sprite.Group):
         self.internalSurfaceSize = (500, 500)
         self.internalSurface = pg.Surface(self.internalSurfaceSize, pg.SRCALPHA)
         self.internalRect = self.internalSurface.get_rect(center=(self.half_width, self.half_height))
-
+        self.offset_rect = None
         self.zoomInSize = (1100, 1100)
 
         self.internalOffset = pg.math.Vector2()
@@ -41,11 +41,10 @@ class CameraGroup(pg.sprite.Group):
         floor_offset_pos = self.groundRect.topleft - self.offset + self.internalOffset
         self.internalSurface.blit(self.groundSprite, floor_offset_pos)
 
-        for sprite in sorted(self.sprites(), key=lambda
-                sprite: sprite.rect.centery - 15 if sprite.type == "object" else sprite.rect.centery):
-            offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type == "object" else sprite.rect.centery):
+            self.offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
 
-            self.internalSurface.blit(sprite.image, offset_rect)
+            self.internalSurface.blit(sprite.image, self.offset_rect)
 
         scaledSurface = pg.transform.scale(self.internalSurface, self.zoomInSize)
         scaledRect = scaledSurface.get_rect(center=(self.half_width, self.half_height))
@@ -139,9 +138,10 @@ class Level:
                     items.kill()
 
     def update(self):
-        self.visibleSprites.custom_draw(self.player)
+
         for plants in self.plantTilesList:
             plants.update()
+        self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
         self.playerCollision()
         self.player.update()

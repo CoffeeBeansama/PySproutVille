@@ -71,7 +71,8 @@ class PlantTilePhaseOne(BaseState):
 
     def UpdateState(self):
         if self.main.currentPlant is not None:
-            print(self.main.image.blit(self.main.currentPlant[f"{self.main.currentPhase}Sprite"],self.main.rect.center))
+            self.main.image = self.main.currentPlant[f"{self.main.currentPhase}Sprite"]
+
 
     def CheckSwitchState(self):
         pass
