@@ -41,7 +41,7 @@ class Inventory:
 
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
+        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
         self.currentItems = self.defaultInventorySetup
 
         self.itemIndex = 0
@@ -92,6 +92,8 @@ class Inventory:
     def selectingEquipmentSlot(self):
         if self.currentItems[self.itemIndex] is not None:
             if self.currentItems[self.itemIndex]["name"] in equipmentItems:
+                return True
+            elif self.currentItems[self.itemIndex]["name"] in seedItems:
                 return True
             else:
                 return False

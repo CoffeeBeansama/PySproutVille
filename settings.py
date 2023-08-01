@@ -14,9 +14,6 @@ playerSpeed = 3
 slotScale = (55, 55)
 itemScale = (24,24)
 
-
-
-
 itemData = {
     "Hoe":{
         "name": "Hoe",
@@ -38,18 +35,34 @@ itemData = {
         "sprite":  loadSprite(f"{spritePath}Apple.png",itemScale),
         "uiSprite": loadSprite(f"{uiPath}Apple.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}AppleSelected.png", slotScale)
-         }
+         },
+    "Wheat":{
+        "name": "Wheat",
+        "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
+        "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
+        "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Wheat/1.png",(tileSize,tileSize)),
+        "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Wheat/2.png",(tileSize,tileSize)),
+        "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Wheat/3.png",(tileSize,tileSize)),
+        "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Wheat/4.png",(tileSize,tileSize)),
+        },
+    "Tomato":{
+        "name": "Tomato",
+        "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
+        "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
+        "PhaseOneSprite": loadSprite(f"{spritePath}Plants/Tomato/1.png",(tileSize,tileSize)),
+        "PhaseTwoSprite": loadSprite(f"{spritePath}Plants/Tomato/2.png",(tileSize,tileSize)),
+        "PhaseThreeSprite": loadSprite(f"{spritePath}Plants/Tomato/3.png",(tileSize,tileSize)),
+        "PhaseFourSprite": loadSprite(f"{spritePath}Plants/Tomato/4.png",(tileSize,tileSize)),
+    }
+
 }
 
 plantTileSprites = {
     "Soil":{
         "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)),
         "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)),
-    }
-
+    },
 }
-
-
 
 testSprites = {"Wall": loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize)),
                "Player": loadSprite(f"{testSpritePath}player.png",(tileSize,tileSize)),
@@ -62,6 +75,7 @@ uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/I
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 
+seedItems = ["Wheat","Tomato"]
 
 map = [
     ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],

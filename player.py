@@ -27,7 +27,6 @@ class Player(Entity):
         self.inventory = Inventory()
         self.displayInventory = False
 
-
         self.facingDirection = "Down"
         self.state = "Down_idle"
         self.importSprites()
@@ -57,24 +56,20 @@ class Player(Entity):
         # increments the frame index when receiving input
         # when frame index reaches to maximum it loops over again to repeat the animation cycle
 
-        animation = self.animations_States[self.state]
+        self.animation = self.animations_States[self.state]
         self.frame_index += self.eqpActionAnimationTime if self.usingItem else self.walkingAnimationTime
 
         notMoving = self.direction.x == 0 and self.direction.y == 0
 
-        if self.frame_index >= len(animation):
-            self.frame_index = 0 if not self.usingItem else len(animation) - 1
+        if self.frame_index >= len(self.animation):
+            self.frame_index = 0 if not self.usingItem else len(self.animation ) - 1
 
             usingEquipment = not "idle" in self.state and notMoving
             if usingEquipment:
                 self.createEquipmentTile()
                 self.usingItem = False
 
-
-
-
-
-        self.image = animation[int(self.frame_index)]
+        self.image = self.animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
     @staticmethod
@@ -138,30 +133,38 @@ class Player(Entity):
         self.equippedItem = equipmentItems[self.itemIndex]
 
     def useItemEquipped(self):
+        inventory = self.inventory
         notMoving = self.direction.x == 0 and self.direction.y == 0
-        
+
         if notMoving and self.inventory.selectingEquipmentSlot():
             self.frame_index = 0
 
             self.usingItem = True
-            self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
+            if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
+                self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
+            elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
+                self.state = f"{self.facingDirection}_idle"
+                self.createEquipmentTile()
+                self.usingItem = False
+
+
 
     def getInputs(self):
         keys = pg.key.get_pressed()
 
-        if keys[pg.K_w]:
-            self.getState(self.verticalDirection, -1, "Up")
-        elif keys[pg.K_s]:
-            self.getState(self.verticalDirection, 1, "Down")
-        elif keys[pg.K_a]:
-            self.getState(self.horizontalDirection, -1, "Left")
-        elif keys[pg.K_d]:
-            self.getState(self.horizontalDirection, 1, "Right")
-        else:
-            self.idleState()
+        if not self.usingItem:
+            if keys[pg.K_w]:
+                self.getState(self.verticalDirection, -1, "Up")
+            elif keys[pg.K_s]:
+                self.getState(self.verticalDirection, 1, "Down")
+            elif keys[pg.K_a]:
+                self.getState(self.horizontalDirection, -1, "Left")
+            elif keys[pg.K_d]:
+                self.getState(self.horizontalDirection, 1, "Right")
+            else:
+                self.idleState()
 
     def update(self):
-
         if self.displayInventory:
             self.inventory.display()
         else:

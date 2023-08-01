@@ -1,23 +1,23 @@
 import pygame as pg
 from settings import *
 from enum import Enum
-from abc import ABC,abstractmethod
+from abc import ABC, abstractmethod
 
 
 class PlantTileState(Enum):
-    PhaseOne: 0
-    PhaseTwo: 1
-    PhaseThree: 3
-    PhaseFour: 4
+    PhaseOne = 1
+    PhaseTwo = 2
+    PhaseThree = 3
+    PhaseFour = 4
 
 
 class StateCache:
-    def __init__(self,main):
+    def __init__(self, main):
         self.main = main
         self.plantStates = PlantTileState
 
         self.states = {
-            self.plantStates.PhaseOne: PlantTilePhaseOne(self,self.main),
+            self.plantStates.PhaseOne: PlantTilePhaseOne(self, self.main),
             self.plantStates.PhaseTwo: PlantTilePhaseTwo(self, self.main),
             self.plantStates.PhaseThree: PlantTilePhaseThree(self, self.main),
             self.plantStates.PhaseFour: PlantTilePhaseFour(self, self.main)
@@ -49,7 +49,7 @@ class BaseState(ABC):
     @abstractmethod
     def CheckSwitchState(self):
         pass
-    
+
     @abstractmethod
     def ExitState(self):
         pass
@@ -67,10 +67,11 @@ class BaseState(ABC):
 class PlantTilePhaseOne(BaseState):
 
     def EnterState(self):
-        pass
+        self.main.currentPhase = "PhaseOne"
 
     def UpdateState(self):
-        pass
+        if self.main.currentPlant is not None:
+            print(self.main.image.blit(self.main.currentPlant[f"{self.main.currentPhase}Sprite"],self.main.rect.center))
 
     def CheckSwitchState(self):
         pass
@@ -125,18 +126,26 @@ class PlantTilePhaseFour(BaseState):
 
 
 class PlantTile(pg.sprite.Sprite):
-    def __init__(self,pos,group):
+    def __init__(self, pos, group):
         super().__init__(group)
 
+        self.screen = pg.display.get_surface()
         self.type = "object"
         self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert()
         self.tiledSprite = plantTileSprites["Soil"]["tiledSprite"].convert()
         self.image = self.untiledSprite
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0,0)
+        self.hitbox = self.rect.inflate(0, 0)
 
         self.currentPlant = None
+        self.currentPhase = None
+        self.tilted = False
 
         self.stateCache = StateCache(self)
         self.currentState = self.stateCache.PhaseOne()
         self.currentState.EnterState()
+
+    def update(self):
+
+        self.currentState.UpdateState()
+
