@@ -128,6 +128,7 @@ class Inventory:
     def display(self):
 
         self.screen.blit(self.background,self.inventoryPos)
+
         for index,slots in enumerate(self.slotList):
 
             self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)

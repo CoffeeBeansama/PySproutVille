@@ -126,12 +126,11 @@ class PlantTilePhaseFour(BaseState):
         pass
 
 
-class PlantTile(pg.sprite.Sprite):
+class SoilTile(pg.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
 
-        self.screen = pg.display.get_surface()
-        self.type = "object"
+        self.type = "Soil"
         self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert()
         self.tiledSprite = plantTileSprites["Soil"]["tiledSprite"].convert()
         self.image = self.untiledSprite
@@ -141,12 +140,25 @@ class PlantTile(pg.sprite.Sprite):
         self.currentPlant = None
         self.currentPhase = None
         self.tilted = False
+        self.watered = False
 
-        self.stateCache = StateCache(self)
-        self.currentState = self.stateCache.PhaseOne()
-        self.currentState.EnterState()
+        #self.stateCache = StateCache(self)
+        #self.currentState = self.stateCache.PhaseOne()
+        #self.currentState.EnterState()
 
     def update(self):
-
         self.currentState.UpdateState()
+
+class PlantTile(pg.sprite.Sprite):
+    def __init__(self, pos, group,defaultSprite):
+        super().__init__(group)
+
+        self.type = "Plants"
+        self.image = defaultSprite
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0, 0)
+
+
+
+
 

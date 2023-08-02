@@ -74,8 +74,8 @@ uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/I
              "Slot": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png",slotScale)}
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
-
 seedItems = ["Wheat","Tomato"]
+groundTiles = ["Soil","Plants"]
 
 map = [
     ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],

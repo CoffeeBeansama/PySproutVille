@@ -41,7 +41,7 @@ class CameraGroup(pg.sprite.Group):
         floor_offset_pos = self.groundRect.topleft - self.offset + self.internalOffset
         self.internalSurface.blit(self.groundSprite, floor_offset_pos)
 
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type == "object" else sprite.rect.centery):
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type in groundTiles else sprite.rect.centery):
             self.offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
 
             self.internalSurface.blit(sprite.image, self.offset_rect)
@@ -63,12 +63,15 @@ class Level:
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
         self.equipmentSprites = pg.sprite.Group()
-        self.plantSprites = pg.sprite.Group()
+        self.soilTileSprites = pg.sprite.Group()
         self.pickAbleItems = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
 
+        self.soilTile = None
+        self.soilTileList = []
+
         self.plantTile = None
-        self.plantTilesList = []
+        self.plantTileList = []
 
         self.createMap()
 
@@ -77,7 +80,7 @@ class Level:
 
         mapLayouts = {
             "boundary": import_csv_layout("Map/wall.csv"),
-            "plantTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv")
+            "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv")
 
         }
         for style, layout in mapLayouts.items():
@@ -91,9 +94,9 @@ class Level:
                         if style == "boundary":
                             Tile(testSprites["Player"], (x, y), [self.collisionSprites])
 
-                        if style == "plantTile":
-                            self.plantTile = PlantTile((x, y), [self.visibleSprites, self.plantSprites])
-                            self.plantTilesList.extend([self.plantTile])
+                        if style == "soilTile":
+                            self.soilTile = SoilTile((x, y), [self.visibleSprites, self.soilTileSprites])
+                            self.soilTileList.extend([self.soilTile])
 
         self.player = Player(
             testSprites["Player"],
@@ -107,26 +110,31 @@ class Level:
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
         for sprites in self.equipmentSprites:
-            plantTileCollided = pg.sprite.spritecollide(sprites, self.plantSprites, False)
-            if plantTileCollided:
-                for plantIndex, plantTile in enumerate(plantTileCollided):
+            soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
+            if soilTileCollided:
+                for plantIndex, plantTile in enumerate(soilTileCollided):
                     if inventory.currentItems[inventory.itemIndex]["name"] == "Hoe":
-                        if plantTileCollided[0].tilted is False:
-                            plantTileCollided[0].image = plantTile.tiledSprite
-                            plantTileCollided[0].tilted = True
+                        if soilTileCollided[0].tilted is False:
+                            soilTileCollided[0].image = plantTile.tiledSprite
+                            soilTileCollided[0].tilted = True
                     elif inventory.currentItems[inventory.itemIndex]["name"] == "Wheat":
-                        self.seedPlantTile(plantTileCollided[0])
+                        self.seedPlantTile(soilTileCollided[0])
                     elif inventory.currentItems[inventory.itemIndex]["name"] == "Tomato":
-                        self.seedPlantTile(plantTileCollided[0])
+                        self.seedPlantTile(soilTileCollided[0])
 
         if self.currentEquipment is not None:
             pass
             self.currentEquipment.kill()
 
-    def seedPlantTile(self, plantTile):
+    def seedPlantTile(self, soilTile):
         inventory = self.player.inventory
-        if plantTile.currentPlant is None and plantTile.tilted:
-            plantTile.currentPlant = inventory.currentItems[inventory.itemIndex]
+        if soilTile.currentPlant is None and soilTile.tilted:
+
+            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],inventory.currentItems[inventory.itemIndex]["PhaseOneSprite"])
+            soilTile.currentPlant = plantTile
+
+
+
 
     def playerCollision(self):
         for sprites in self.playerSprite:
@@ -139,8 +147,6 @@ class Level:
 
     def update(self):
 
-        for plants in self.plantTilesList:
-            plants.update()
         self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
         self.playerCollision()
