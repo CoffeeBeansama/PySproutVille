@@ -73,7 +73,6 @@ class PlantTilePhaseOne(BaseState):
         if self.main.currentPlant is not None:
             self.main.image = self.main.currentPlant[f"{self.main.currentPhase}Sprite"]
 
-
     def CheckSwitchState(self):
         pass
 
@@ -133,6 +132,7 @@ class SoilTile(pg.sprite.Sprite):
         self.type = "Soil"
         self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert()
         self.tiledSprite = plantTileSprites["Soil"]["tiledSprite"].convert()
+        self.wateredSprite = plantTileSprites["Soil"]["WateredSprite"].convert_alpha()
         self.image = self.untiledSprite
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -142,23 +142,55 @@ class SoilTile(pg.sprite.Sprite):
         self.tilted = False
         self.watered = False
 
-        #self.stateCache = StateCache(self)
-        #self.currentState = self.stateCache.PhaseOne()
-        #self.currentState.EnterState()
-
     def update(self):
-        self.currentState.UpdateState()
+        self.currentPlant.NextPhase()
+        self.watered = False
+        self.image = self.tiledSprite
+
 
 class PlantTile(pg.sprite.Sprite):
-    def __init__(self, pos, group,defaultSprite):
+    def __init__(self, pos, group, data,soil):
         super().__init__(group)
 
         self.type = "Plants"
-        self.image = defaultSprite
+        self.data = data
+        self.image = self.data["PhaseOneSprite"]
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
+        self.soil = soil
 
+        self.currentPhase = 1
 
+        self.phases = {
+            1: self.PhaseOne,
+            2: self.PhaseTwo,
+            3: self.PhaseThree,
+            4: self.PhaseFour
+        }
+
+    def NextPhase(self):
+        self.currentPhase += 1
+        if self.currentPhase <= len(self.phases):
+            getCurrentPhase = self.phases.get(self.currentPhase)
+            getCurrentPhase()
+        else:
+            self.ProduceCrop()
+
+    def PhaseOne(self):
+        self.image = self.data["PhaseOneSprite"]
+
+    def PhaseTwo(self):
+        self.image = self.data["PhaseTwoSprite"]
+
+    def PhaseThree(self):
+        self.image = self.data["PhaseThreeSprite"]
+
+    def PhaseFour(self):
+        self.image = self.data["PhaseFourSprite"]
+
+    def ProduceCrop(self):
+        self.soil.currentPlant = None
+        self.kill()
 
 

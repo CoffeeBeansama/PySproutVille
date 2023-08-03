@@ -16,7 +16,7 @@ class CameraGroup(pg.sprite.Group):
         self.half_width = self.display_canvas.get_size()[0] // 2
         self.half_height = self.display_canvas.get_size()[1] // 2
 
-        self.groundSprite = pg.image.load("Sprites/map.png").convert()
+        self.groundSprite = pg.image.load("Sprites/level.png").convert()
         self.groundRect = self.groundSprite.get_rect(topleft=(0, 0))
 
         self.internalSurfaceSize = (500, 500)
@@ -67,14 +67,12 @@ class Level:
         self.pickAbleItems = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
 
-        self.soilTile = None
-        self.soilTileList = []
+        self.PlantedSoilTileList = []
 
         self.plantTile = None
         self.plantTileList = []
 
         self.createMap()
-
 
     def createMap(self):
 
@@ -95,14 +93,18 @@ class Level:
                             Tile(testSprites["Player"], (x, y), [self.collisionSprites])
 
                         if style == "soilTile":
-                            self.soilTile = SoilTile((x, y), [self.visibleSprites, self.soilTileSprites])
-                            self.soilTileList.extend([self.soilTile])
+                            SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
 
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites, self.playerSprite],
             self.collisionSprites, self,
             self.createEquipmentTile)
+
+    def plantGrowth(self):
+        for soil in self.PlantedSoilTileList:
+            if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
+                soil.update()
 
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
@@ -112,29 +114,41 @@ class Level:
         for sprites in self.equipmentSprites:
             soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
             if soilTileCollided:
-                for plantIndex, plantTile in enumerate(soilTileCollided):
-                    if inventory.currentItems[inventory.itemIndex]["name"] == "Hoe":
-                        if soilTileCollided[0].tilted is False:
-                            soilTileCollided[0].image = plantTile.tiledSprite
-                            soilTileCollided[0].tilted = True
-                    elif inventory.currentItems[inventory.itemIndex]["name"] == "Wheat":
-                        self.seedPlantTile(soilTileCollided[0])
-                    elif inventory.currentItems[inventory.itemIndex]["name"] == "Tomato":
-                        self.seedPlantTile(soilTileCollided[0])
+
+                itemName = inventory.currentItems[inventory.itemIndex]["name"]
+
+                if itemName == "Hoe":
+                    self.tiltSoilTile(soilTileCollided[0])
+                elif itemName == "WateringCan":
+                    self.waterSoilTile(soilTileCollided[0])
+                elif itemName == "Wheat":
+                    self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+                elif itemName == "Tomato":
+                    self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
 
         if self.currentEquipment is not None:
             pass
             self.currentEquipment.kill()
 
-    def seedPlantTile(self, soilTile):
-        inventory = self.player.inventory
+    def waterSoilTile(self,soilTile):
+        if soilTile.tilted is True and soilTile.watered is False:
+            soilTile.image = soilTile.wateredSprite
+            soilTile.watered = True
+        return
+
+    def tiltSoilTile(self,soilTile):
+        if soilTile.tilted is False:
+            soilTile.image = soilTile.tiledSprite
+            soilTile.tilted = True
+        return
+
+    def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
 
-            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],inventory.currentItems[inventory.itemIndex]["PhaseOneSprite"])
+            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile)
             soilTile.currentPlant = plantTile
-
-
-
+            self.plantTileList.append(plantTile)
+            self.PlantedSoilTileList.append(soilTile)
 
     def playerCollision(self):
         for sprites in self.playerSprite:

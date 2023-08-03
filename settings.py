@@ -61,6 +61,7 @@ plantTileSprites = {
     "Soil":{
         "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)),
         "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)),
+        "WateredSprite": loadSprite(f"{spritePath}WateredTiledDirt.png",(tileSize,tileSize)),
     },
 }
 
