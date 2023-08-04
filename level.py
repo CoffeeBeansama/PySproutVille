@@ -7,7 +7,7 @@ from items import *
 from plants import *
 from support import import_csv_layout
 from equipment import Equipment
-
+from timeManager import TimeManager
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -67,6 +67,7 @@ class Level:
         self.pickAbleItems = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
 
+        self.timeManager = TimeManager()
         self.PlantedSoilTileList = []
 
         self.plantTile = None
@@ -147,7 +148,7 @@ class Level:
 
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile)
             soilTile.currentPlant = plantTile
-            self.plantTileList.append(plantTile)
+            self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
 
     def playerCollision(self):
@@ -165,3 +166,4 @@ class Level:
         self.equipmentTileCollisionLogic()
         self.playerCollision()
         self.player.update()
+        self.timeManager.dayNightCycle()
