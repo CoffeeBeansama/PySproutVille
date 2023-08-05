@@ -17,7 +17,9 @@ class CameraGroup(pg.sprite.Group):
         self.half_height = self.display_canvas.get_size()[1] // 2
 
         self.groundSprite = pg.image.load("Sprites/level.png").convert()
+
         self.groundRect = self.groundSprite.get_rect(topleft=(0, 0))
+
 
         self.internalSurfaceSize = (500, 500)
         self.internalSurface = pg.Surface(self.internalSurfaceSize, pg.SRCALPHA)
@@ -41,14 +43,17 @@ class CameraGroup(pg.sprite.Group):
         floor_offset_pos = self.groundRect.topleft - self.offset + self.internalOffset
         self.internalSurface.blit(self.groundSprite, floor_offset_pos)
 
+
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type in groundTiles else sprite.rect.centery):
             self.offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
 
             self.internalSurface.blit(sprite.image, self.offset_rect)
 
+
         scaledSurface = pg.transform.scale(self.internalSurface, self.zoomInSize)
         scaledRect = scaledSurface.get_rect(center=(self.half_width, self.half_height))
         self.display_canvas.blit(scaledSurface, scaledRect)
+
 
 
 class Level:
