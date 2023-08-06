@@ -20,6 +20,7 @@ class TimeManager:
         #60000 per minute
         #25000 in game one hour
 
+        self.firstDay = True
         self.dayTime = True
         self.nightTime = False
 
@@ -32,6 +33,8 @@ class TimeManager:
         if self.darknessOpacity <= 255:
             self.darknessOpacity += 0.0006
             self.nightDarknessSprite.set_alpha(self.darknessOpacity)
+        else:
+            print("it is 9pm")
 
 
     def dayNightCycle(self):
