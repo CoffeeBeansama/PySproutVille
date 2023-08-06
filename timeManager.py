@@ -11,39 +11,42 @@ class TimeManager:
         self.nightDarknessSprite = pg.transform.scale(pg.image.load("Sprites/NightMask.png"),(WIDTH, HEIGHT)).convert_alpha()
         self.nightDarknessSprite.set_alpha(0)
 
-        self.DayTime()
         self.cycleTime = 600000
         self.fullDayDuration = 600000  # 10 minutes
+        self.sunriseTime = 125000
+        self.sunsetTime = 425000
+
+        #1000 per second
+        #60000 per minute
+        #25000 in game one hour
+
         self.dayTime = True
         self.nightTime = False
 
-    def DayTime(self):
-        self.dayTime = True
         self.startTickTime = pg.time.get_ticks()
 
-
-
-    def NightTime(self):
-        self.nightTime = True
+    def newDay(self):
         self.startTickTime = pg.time.get_ticks()
-        print("night time")
+
+    def sunset(self):
+        if self.darknessOpacity <= 255:
+            self.darknessOpacity += 0.0006
+            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
+
 
     def dayNightCycle(self):
         self.currentTime = pg.time.get_ticks()
         self.screen.blit(self.nightDarknessSprite,(0,0))
         
-        if self.dayTime:
 
-            self.darknessOpacity += 1
-            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
+        if self.currentTime - self.startTickTime > self.sunsetTime:
+            self.sunset()
 
-            if self.currentTime - self.startTickTime > self.cycleTime:
-                self.NightTime()
-                self.dayTime = False
-        elif self.nightTime:
-            if self.currentTime - self.startTickTime > self.cycleTime:
-                self.DayTime()
-                self.nightTime = False
+
+        if self.currentTime - self.startTickTime > self.fullDayDuration:
+            self.newDay()
+
+
 
 
 
