@@ -104,6 +104,7 @@ class Level:
                             SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
 
         self.bed = Bed([self.visibleSprites,self.interactableSprites],self)
+
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites, self.playerSprite],
@@ -159,7 +160,6 @@ class Level:
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile)
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
-            print(self.timeManager.plantList)
             self.PlantedSoilTileList.append(soilTile)
 
     def playerCollision(self):

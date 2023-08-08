@@ -6,7 +6,7 @@ from inventory import Inventory
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites, level,useEquipmentTile,interactableObjects):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,level):
         super().__init__(group)
 
         self.type = "player"
