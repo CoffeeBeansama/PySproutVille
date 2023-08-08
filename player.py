@@ -11,7 +11,6 @@ class Player(Entity):
 
         self.type = "player"
         self.animations_States = None
-        self.level = level
         self.startingPos = (948, 866)
 
         self.frame_index = 0
@@ -34,6 +33,8 @@ class Player(Entity):
         self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
         self.createEquipmentTile = useEquipmentTile
+        self.level = level
+
         self.usingItem = False
 
         self.interactableObjects = interactableObjects

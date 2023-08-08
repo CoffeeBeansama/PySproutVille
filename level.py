@@ -108,9 +108,10 @@ class Level:
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites, self.playerSprite],
-            self.collisionSprites, self,
+            self.collisionSprites,
             self.createEquipmentTile,
-            self.interactableSprites
+            self.interactableSprites,
+            self
             )
 
     def plantGrowth(self):
