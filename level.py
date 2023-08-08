@@ -134,10 +134,10 @@ class Level:
                     self.tiltSoilTile(soilTileCollided[0])
                 elif itemName == "WateringCan":
                     self.waterSoilTile(soilTileCollided[0])
-                elif itemName == "Wheat":
+                    
+                elif itemName in seedItems:
                     self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
-                elif itemName == "Tomato":
-                    self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+
 
         if self.currentEquipment is not None:
             pass
