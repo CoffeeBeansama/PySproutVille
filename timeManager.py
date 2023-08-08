@@ -1,6 +1,9 @@
 import pygame as pg
 from settings import *
+
+
 class TimeManager:
+
     def __init__(self):
         self.plantList = []
         self.currentTime = 0
@@ -11,43 +14,63 @@ class TimeManager:
         self.nightDarknessSprite = pg.transform.scale(pg.image.load("Sprites/NightMask.png"),(WIDTH, HEIGHT)).convert_alpha()
         self.nightDarknessSprite.set_alpha(0)
 
-        self.cycleTime = 600000
-        self.fullDayDuration = 600000  # 10 minutes
-        self.sunriseTime = 125000
-        self.sunsetTime = 425000
+        self.day = 1
+        self.dayNightCyclePeriod = 300000
+        self.fullDayDuration = 36000  # 10 minutes
 
-        #1000 per second
-        #60000 per minute
-        #25000 in game one hour
+        # sunrise at 5am
+        # sunset 6pm-9pm
+        # 7.08 minutes sunset starts
+        # 8.33 minutes at full darkness
+        # 1000 per second
+        # 60000 per minute
+        # 25000 in game one hour
 
-        self.firstDay = True
         self.dayTime = True
         self.nightTime = False
 
         self.startTickTime = pg.time.get_ticks()
 
     def newDay(self):
-        self.startTickTime = pg.time.get_ticks()
+        self.day += 1
+
+        if self.day > 1 and len(self.plantList) > 0:
+            for plants in self.plantList:
+                plants.NextPhase()
 
     def sunset(self):
+
         if self.darknessOpacity <= 255:
-            self.darknessOpacity += 0.0006
+            self.darknessOpacity += 0.07
             self.nightDarknessSprite.set_alpha(self.darknessOpacity)
         else:
-            print("it is 9pm")
+            self.nightTime = True
+            self.dayTime = False
+            self.startTickTime = pg.time.get_ticks()
 
+    def sunrise(self):
+
+        if self.darknessOpacity >= 0:
+            self.darknessOpacity -= 0.07
+            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
+        else:
+            self.dayTime = True
+            self.nightTime = False
+            self.newDay()
+            self.startTickTime = pg.time.get_ticks()
 
     def dayNightCycle(self):
         self.currentTime = pg.time.get_ticks()
         self.screen.blit(self.nightDarknessSprite,(0,0))
-        
 
-        if self.currentTime - self.startTickTime > self.sunsetTime:
-            self.sunset()
+        if self.dayTime:
+            if self.currentTime - self.startTickTime > self.dayNightCyclePeriod:
+                self.sunset()
 
+        if self.nightTime:
+            if self.currentTime - self.startTickTime > self.dayNightCyclePeriod:
+                self.sunrise()
 
-        if self.currentTime - self.startTickTime > self.fullDayDuration:
-            self.newDay()
 
 
 
