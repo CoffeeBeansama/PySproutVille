@@ -53,12 +53,15 @@ class PlantTile(pg.sprite.Sprite):
         soil = self.soil
         if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
             soil.update()
+
             self.currentPhase += 1
             if self.currentPhase <= len(self.phases):
                 getCurrentPhase = self.phases.get(self.currentPhase)
                 getCurrentPhase()
             else:
                 self.ProduceCrop()
+
+
 
     def PhaseOne(self):
         self.image = self.data["PhaseOneSprite"]

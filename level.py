@@ -8,6 +8,7 @@ from plants import *
 from support import import_csv_layout
 from equipment import Equipment
 from timeManager import TimeManager
+from objects import *
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -71,6 +72,7 @@ class Level:
         self.soilTileSprites = pg.sprite.Group()
         self.pickAbleItems = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
+        self.interactableSprites = pg.sprite.Group()
 
         self.timeManager = TimeManager()
         self.PlantedSoilTileList = []
@@ -101,11 +103,14 @@ class Level:
                         if style == "soilTile":
                             SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
 
+        self.bed = Bed([self.visibleSprites,self.interactableSprites],self)
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites, self.playerSprite],
             self.collisionSprites, self,
-            self.createEquipmentTile)
+            self.createEquipmentTile,
+            self.interactableSprites
+            )
 
     def plantGrowth(self):
         for soil in self.PlantedSoilTileList:
@@ -154,6 +159,7 @@ class Level:
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile)
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
+            print(self.timeManager.plantList)
             self.PlantedSoilTileList.append(soilTile)
 
     def playerCollision(self):

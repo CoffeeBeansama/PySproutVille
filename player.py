@@ -6,7 +6,7 @@ from inventory import Inventory
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites, level,useEquipmentTile):
+    def __init__(self, image, group,collidable_sprites, level,useEquipmentTile,interactableObjects):
         super().__init__(group)
 
         self.type = "player"
@@ -36,6 +36,7 @@ class Player(Entity):
         self.createEquipmentTile = useEquipmentTile
         self.usingItem = False
 
+        self.interactableObjects = interactableObjects
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -88,6 +89,7 @@ class Player(Entity):
         else:
             self.displayInventory = True
 
+
     def horizontalDirection(self, value, state):
         self.direction.x = value
         self.direction.y = 0
@@ -108,8 +110,16 @@ class Player(Entity):
         self.checkCollision("Vertical")
         self.rect.center = self.hitbox.center
 
-    def checkCollision(self, direction):
 
+
+    def interact(self):
+        for sprite in self.interactableObjects:
+            if sprite.hitbox.colliderect(self.hitbox):
+                sprite.interact()
+            else:
+                return
+
+    def checkCollision(self, direction):
         for sprite in self.collisionSprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 if direction == "Horizontal":
@@ -168,7 +178,6 @@ class Player(Entity):
                 self.idleState()
 
     def update(self):
-
         if self.displayInventory:
             self.inventory.display()
 
@@ -176,4 +185,6 @@ class Player(Entity):
             self.getInputs()
             self.movement(playerSpeed)
             self.animate()
+
+
 
