@@ -36,8 +36,9 @@ class TimeManager:
         self.nightTime = False
 
         self.day += 1
-        for plants in self.plantList:
-            plants.NextPhase()
+        if len(self.plantList) > 0:
+            for plants in self.plantList:
+                plants.NextPhase()
 
         self.nightDarknessSprite.set_alpha(0)
         self.startTickTime = pg.time.get_ticks()
@@ -48,7 +49,6 @@ class TimeManager:
         self.startTickTime = pg.time.get_ticks()
 
     def sunset(self):
-
         if self.darknessOpacity <= 255:
             self.darknessOpacity += 0.07
             self.nightDarknessSprite.set_alpha(self.darknessOpacity)
@@ -56,7 +56,6 @@ class TimeManager:
             self.evening()
 
     def sunrise(self):
-
         if self.darknessOpacity >= 0:
             self.darknessOpacity -= 0.07
             self.nightDarknessSprite.set_alpha(self.darknessOpacity)
