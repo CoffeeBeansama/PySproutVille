@@ -36,8 +36,8 @@ itemData = {
         "uiSprite": loadSprite(f"{uiPath}Apple.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}AppleSelected.png", slotScale)
          },
-    "Wheat":{
-        "name": "Wheat",
+    "WheatSeed":{
+        "name": "WheatSeed",
         "cost": 10,
         "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
@@ -47,11 +47,11 @@ itemData = {
         "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Wheat/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Wheat/3.png",(tileSize,tileSize)),
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Wheat/4.png",(tileSize,tileSize)),
-        "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
+
 
         },
-    "Tomato":{
-        "name": "Tomato",
+    "TomatoSeed":{
+        "name": "TomatoSeed",
         "cost": 12,
         "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
@@ -60,7 +60,22 @@ itemData = {
         "PhaseOneSprite": loadSprite(f"{spritePath}Plants/Tomato/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}Plants/Tomato/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}Plants/Tomato/3.png",(tileSize,tileSize)),
+        "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Tomato/4.png",(tileSize,tileSize)),
+
+    },
+    "WheatCrop": {
+        "name": "WheatCrop",
+        "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
+        "uiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
+        "uiSpriteSelected": loadSprite(f"{uiPath}WheatCropSelected.png", slotScale),
+
+    },
+    "TomatoCrop": {
+        "name": "TomatoCrop",
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
+        "uiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
+        "uiSpriteSelected": loadSprite(f"{uiPath}TomatoCropSelected.png", slotScale),
+
     }
 
 }
@@ -92,7 +107,7 @@ uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/I
              "Slot": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png",slotScale)}
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
-seedItems = ["Wheat","Tomato"]
+seedItems = ["WheatSeed","TomatoSeed"]
 sellableItems = ["Wheat","Tomato","Apple"]
 groundTiles = ["Soil","Plants"]
 

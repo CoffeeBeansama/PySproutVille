@@ -41,7 +41,7 @@ class Inventory:
 
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
+        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["WheatSeed"],itemData["TomatoSeed"],None,None,None,None]
         self.currentItems = self.defaultInventorySetup
 
         self.itemIndex = 0
@@ -102,9 +102,10 @@ class Inventory:
     def AddItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):
             if itemSlots.itemHolding is None:
+
                 itemSlots.itemHolding = item.data
-                itemSlots.sprite = item.data["uiSprite"] if item.type != "Plants" else item.data["cropUiSprite"]
-                itemSlots.selectedSprite = item.data["uiSpriteSelected"] if item.type != "Plants" else item.data["cropUiSpriteSelected"]
+                itemSlots.sprite = item.data["uiSprite"]
+                itemSlots.selectedSprite = item.data["uiSpriteSelected"]
                 self.sellableItems.append(item)
                 return
 
