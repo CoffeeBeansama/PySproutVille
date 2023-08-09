@@ -51,8 +51,6 @@ class PlantTile(pg.sprite.Sprite):
             5: self.ProduceCrop
         }
 
-        self.cropProduced = False
-
     def NextPhase(self):
         soil = self.soil
         if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
@@ -79,8 +77,8 @@ class PlantTile(pg.sprite.Sprite):
 
     def ProduceCrop(self):
         self.image = self.data["CropSprite"]
-        self.cropProduced = True
-        # self.soil.currentPlant = None
-        # self.kill()
+        self.add(self.level.pickAbleItemSprites)
+        self.soil.currentPlant = None
+
 
 

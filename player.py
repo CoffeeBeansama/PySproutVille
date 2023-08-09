@@ -67,7 +67,7 @@ class Player(Entity):
         notMoving = self.direction.x == 0 and self.direction.y == 0
 
         if self.frame_index >= len(self.animation):
-            self.frame_index = 0 if not self.usingItem else len(self.animation ) - 1
+            self.frame_index = 0 if not self.usingItem else len(self.animation) - 1
 
             usingEquipment = not "idle" in self.state and notMoving
             if usingEquipment:
@@ -108,26 +108,30 @@ class Player(Entity):
     def movement(self, speed):
         self.rect.center += self.direction * speed
         self.hitbox.x += self.direction.x * speed
-        self.checkCollision("Horizontal")
+        self.checkWallCollision("Horizontal")
         self.hitbox.y += self.direction.y * speed
-        self.checkCollision("Vertical")
+        self.checkWallCollision("Vertical")
         self.rect.center = self.hitbox.center
 
     def pickUpItems(self):
-        for items in self.pickAbleItems:
+        for itemIndex,items in enumerate(self.pickAbleItems):
             if items.hitbox.colliderect(self.hitbox):
-                print("this")
-                self.inventory.AddItem(items)
 
+                if items.type == "Plants":
+                    self.level.timeManager.plantList.remove(items)
+
+                self.inventory.AddItem(items)
+                items.kill()
 
     def interact(self):
-        for object in self.interactableObjects:
+        for objectIndex,object in enumerate(self.interactableObjects):
             if object.hitbox.colliderect(self.hitbox):
                 object.interact()
             else:
-                return
+                object.disengage()
 
-    def checkCollision(self, direction):
+
+    def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 if direction == "Horizontal":
@@ -168,8 +172,6 @@ class Player(Entity):
                 self.createEquipmentTile()
                 self.usingItem = False
 
-
-
     def getInputs(self):
         keys = pg.key.get_pressed()
 
@@ -186,6 +188,7 @@ class Player(Entity):
                 self.idleState()
 
     def update(self):
+
         if self.displayInventory:
             self.inventory.display()
 
@@ -194,6 +197,8 @@ class Player(Entity):
             self.movement(playerSpeed)
             self.animate()
             self.pickUpItems()
+            self.interact()
+
 
 
 

@@ -106,9 +106,10 @@ class Level:
 
                         if style == "InteractableObjects":
                             if column == "Bed":
-                                self.bed = BedTile([self.interactableSprites], self)
+                                self.bedTile = BedTile([self.interactableSprites], self)
                             if column == "Chest":
-                                pass
+                                self.chestObject = ChestObject((x, y - tileSize),[self.visibleSprites,self.collisionSprites])
+                                self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject, self)
 
         self.player = Player(
             testSprites["Player"],
@@ -121,6 +122,7 @@ class Level:
             self
             )
 
+
     def plantGrowth(self):
         for soil in self.PlantedSoilTileList:
             if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
@@ -128,12 +130,6 @@ class Level:
 
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
-
-    def itemTileCollisionLogic(self):
-        for player in self.playerSprite:
-            itemCollided = pg.sprite.spritecollide(player,self.pickAbleItemSprites,False)
-            if itemCollided:
-                print("this")
 
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
@@ -171,25 +167,13 @@ class Level:
         if soilTile.currentPlant is None and soilTile.tilted:
 
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self)
-            print(self.pickAbleItemSprites)
+
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
 
-    def playerCollision(self):
-        for sprites in self.playerSprite:
-            itemCollided = pg.sprite.spritecollide(sprites, self.pickAbleItemSprites, False)
-
-            if itemCollided:
-                for items in itemCollided:
-                    self.player.updateInventory(items.data)
-                    items.kill()
-
     def update(self):
-
         self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
-        self.playerCollision()
         self.player.update()
-        self.itemTileCollisionLogic()
         self.timeManager.dayNightCycle()

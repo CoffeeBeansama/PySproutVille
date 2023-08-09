@@ -15,13 +15,45 @@ class InteractableObjects(Tile):
     def interact(self):
         pass
 
+    @abstractmethod
+    def disengage(self):
+        pass
+
+
+class ChestObject(pg.sprite.Sprite):
+    def __init__(self, pos, group):
+        super().__init__(group)
+        self.type = "object"
+        self.spriteIndex = 1
+        self.image = chestSprites[self.spriteIndex]
+        self.animationTime = 1 / 20
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0, 0)
+
+    def OpenAnimation(self):
+        self.image = chestSprites[5]
+
+    def CloseAnimation(self):
+        self.image = chestSprites[1]
+
 
 class ChestTile(InteractableObjects):
-    def __init__(self,image,pos,group):
+    def __init__(self,pos,group,chestObject,level,image=testSprites["Wall"]):
         super().__init__(image,pos,group)
 
+        self.level = level
+        self.type = "chest"
+        self.rect = image.get_rect(topleft=pos)
+        self.chestObject = chestObject
+
     def interact(self):
-        pass
+        if not self.interacted:
+            self.chestObject.OpenAnimation()
+            self.interacted = True
+
+    def disengage(self):
+        self.interacted = False
+        self.chestObject.CloseAnimation()
 
 
 class BedTile(InteractableObjects):
@@ -33,5 +65,12 @@ class BedTile(InteractableObjects):
         self.rect = image.get_rect(topleft=pos)
 
     def interact(self):
-        self.level.timeManager.newDay()
+        keys = pg.key.get_pressed()
 
+        if keys[pg.K_x]:
+            if not self.interacted:
+                self.level.timeManager.newDay()
+                self.interacted = True
+
+    def disengage(self):
+        self.interacted = False

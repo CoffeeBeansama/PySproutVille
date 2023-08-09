@@ -40,21 +40,35 @@ itemData = {
         "name": "Wheat",
         "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
+        "cropUiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
+        "cropUiSpriteSelected": loadSprite(f"{uiPath}WheatCropSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Wheat/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Wheat/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Wheat/3.png",(tileSize,tileSize)),
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Wheat/4.png",(tileSize,tileSize)),
         "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
+
         },
     "Tomato":{
         "name": "Tomato",
         "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
+        "cropUiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
+        "cropUiSpriteSelected": loadSprite(f"{uiPath}TomatoCropSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}Plants/Tomato/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}Plants/Tomato/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}Plants/Tomato/3.png",(tileSize,tileSize)),
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
     }
+
+}
+
+chestSprites = {
+    1: loadSprite(f"{spritePath}Chests/1.png",(tileSize,tileSize)),
+    2: loadSprite(f"{spritePath}Chests/2.png",(tileSize,tileSize)),
+    3: loadSprite(f"{spritePath}Chests/3.png",(tileSize,tileSize)),
+    4: loadSprite(f"{spritePath}Chests/4.png",(tileSize,tileSize)),
+    5: loadSprite(f"{spritePath}Chests/5.png",(tileSize,tileSize)),
 
 }
 
@@ -69,7 +83,7 @@ plantTileSprites = {
 testSprites = {"Wall": loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize)),
                "Player": loadSprite(f"{testSpritePath}player.png",(tileSize,tileSize)),
                "Apple": "Sprites/Sprout Lands - Sprites - Basic pack/Objects/AppleFruit Final.png",
-               "Chest": loadSprite(f"{testSpritePath}chest.png",(74,74))
+               "Chest": loadSprite(f"{spritePath}Chests/1.png",(tileSize,tileSize))
                }
 
 uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",

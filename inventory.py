@@ -99,7 +99,13 @@ class Inventory:
                 return False
 
     def AddItem(self,item):
-        item.kill()
+        for slotIndex,itemSlots in enumerate(self.slotList):
+            if itemSlots.itemHolding is None:
+                itemSlots.itemHolding = item.data
+                itemSlots.sprite = item.data["uiSprite"] if item.type != "Plants" else item.data["cropUiSprite"]
+                itemSlots.selectedSprite = item.data["uiSpriteSelected"] if item.type != "Plants" else item.data["cropUiSpriteSelected"]
+                return
+
 
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
