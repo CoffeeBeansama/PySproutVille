@@ -4,8 +4,6 @@ from enum import Enum
 from abc import ABC, abstractmethod
 
 
-
-
 class SoilTile(pg.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
@@ -29,11 +27,14 @@ class SoilTile(pg.sprite.Sprite):
 
 
 class PlantTile(pg.sprite.Sprite):
-    def __init__(self, pos, group, data,soil):
+    def __init__(self, pos, group, data,soil,level):
         super().__init__(group)
 
         self.type = "Plants"
+
         self.data = data
+        self.level = level
+
         self.image = self.data["PhaseOneSprite"]
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -46,8 +47,11 @@ class PlantTile(pg.sprite.Sprite):
             1: self.PhaseOne,
             2: self.PhaseTwo,
             3: self.PhaseThree,
-            4: self.PhaseFour
+            4: self.PhaseFour,
+            5: self.ProduceCrop
         }
+
+        self.cropProduced = False
 
     def NextPhase(self):
         soil = self.soil
@@ -59,9 +63,7 @@ class PlantTile(pg.sprite.Sprite):
                 getCurrentPhase = self.phases.get(self.currentPhase)
                 getCurrentPhase()
             else:
-                self.ProduceCrop()
-
-
+                return
 
     def PhaseOne(self):
         self.image = self.data["PhaseOneSprite"]
@@ -76,7 +78,9 @@ class PlantTile(pg.sprite.Sprite):
         self.image = self.data["PhaseFourSprite"]
 
     def ProduceCrop(self):
-        self.soil.currentPlant = None
-        self.kill()
+        self.image = self.data["CropSprite"]
+        self.cropProduced = True
+        # self.soil.currentPlant = None
+        # self.kill()
 
 

@@ -70,7 +70,7 @@ class Level:
         self.collisionSprites = pg.sprite.Group()
         self.equipmentSprites = pg.sprite.Group()
         self.soilTileSprites = pg.sprite.Group()
-        self.pickAbleItems = pg.sprite.Group()
+        self.pickAbleItemSprites = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
 
@@ -86,7 +86,8 @@ class Level:
 
         mapLayouts = {
             "boundary": import_csv_layout("Map/wall.csv"),
-            "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv")
+            "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv"),
+            "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv')
 
         }
         for style, layout in mapLayouts.items():
@@ -103,14 +104,20 @@ class Level:
                         if style == "soilTile":
                             SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
 
-        self.bed = Bed([self.visibleSprites,self.interactableSprites],self)
+                        if style == "InteractableObjects":
+                            if column == "Bed":
+                                self.bed = BedTile([self.interactableSprites], self)
+                            if column == "Chest":
+                                pass
 
         self.player = Player(
             testSprites["Player"],
-            [self.visibleSprites, self.playerSprite],
+            [self.visibleSprites,
+             self.playerSprite],
             self.collisionSprites,
             self.createEquipmentTile,
             self.interactableSprites,
+            self.pickAbleItemSprites,
             self
             )
 
@@ -121,6 +128,12 @@ class Level:
 
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
+
+    def itemTileCollisionLogic(self):
+        for player in self.playerSprite:
+            itemCollided = pg.sprite.spritecollide(player,self.pickAbleItemSprites,False)
+            if itemCollided:
+                print("this")
 
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
@@ -137,7 +150,6 @@ class Level:
                     
                 elif itemName in seedItems:
                     self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
-
 
         if self.currentEquipment is not None:
             pass
@@ -158,14 +170,15 @@ class Level:
     def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
 
-            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile)
+            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self)
+            print(self.pickAbleItemSprites)
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
 
     def playerCollision(self):
         for sprites in self.playerSprite:
-            itemCollided = pg.sprite.spritecollide(sprites, self.pickAbleItems, False)
+            itemCollided = pg.sprite.spritecollide(sprites, self.pickAbleItemSprites, False)
 
             if itemCollided:
                 for items in itemCollided:
@@ -178,4 +191,5 @@ class Level:
         self.equipmentTileCollisionLogic()
         self.playerCollision()
         self.player.update()
+        self.itemTileCollisionLogic()
         self.timeManager.dayNightCycle()

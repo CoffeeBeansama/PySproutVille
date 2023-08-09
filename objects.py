@@ -3,6 +3,8 @@ from tile import Tile
 from abc import abstractmethod
 from settings import *
 from timeManager import TimeManager
+
+
 class InteractableObjects(Tile):
     def __init__(self,image,pos,group):
         super().__init__(image,pos,group)
@@ -13,14 +15,16 @@ class InteractableObjects(Tile):
     def interact(self):
         pass
 
-class Chest(InteractableObjects):
+
+class ChestTile(InteractableObjects):
     def __init__(self,image,pos,group):
         super().__init__(image,pos,group)
 
     def interact(self):
         pass
 
-class Bed(InteractableObjects):
+
+class BedTile(InteractableObjects):
     def __init__(self,group,level,pos=(848,800),image=testSprites["Wall"]):
         super().__init__(image,pos,group)
 

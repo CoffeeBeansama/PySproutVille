@@ -62,10 +62,7 @@ class TimeManager:
         else:
             self.newDay()
 
-
-
     def dayNightCycle(self):
-
         self.currentTime = pg.time.get_ticks()
         self.screen.blit(self.nightDarknessSprite,(0,0))
 

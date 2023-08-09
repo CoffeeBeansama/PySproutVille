@@ -6,7 +6,7 @@ from inventory import Inventory
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,level):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,level):
         super().__init__(group)
 
         self.type = "player"
@@ -21,7 +21,10 @@ class Player(Entity):
         self.screen = pg.display.get_surface()
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
+
         self.collisionSprites = collidable_sprites
+        self.pickAbleItems = pickableItems
+        self.createEquipmentTile = useEquipmentTile
 
         self.inventory = Inventory()
         self.displayInventory = False
@@ -32,7 +35,7 @@ class Player(Entity):
 
         self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
-        self.createEquipmentTile = useEquipmentTile
+
         self.level = level
 
         self.usingItem = False
@@ -90,7 +93,6 @@ class Player(Entity):
         else:
             self.displayInventory = True
 
-
     def horizontalDirection(self, value, state):
         self.direction.x = value
         self.direction.y = 0
@@ -111,12 +113,17 @@ class Player(Entity):
         self.checkCollision("Vertical")
         self.rect.center = self.hitbox.center
 
+    def pickUpItems(self):
+        for items in self.pickAbleItems:
+            if items.hitbox.colliderect(self.hitbox):
+                print("this")
+                self.inventory.AddItem(items)
 
 
     def interact(self):
-        for sprite in self.interactableObjects:
-            if sprite.hitbox.colliderect(self.hitbox):
-                sprite.interact()
+        for object in self.interactableObjects:
+            if object.hitbox.colliderect(self.hitbox):
+                object.interact()
             else:
                 return
 
@@ -186,6 +193,7 @@ class Player(Entity):
             self.getInputs()
             self.movement(playerSpeed)
             self.animate()
+            self.pickUpItems()
 
 
 

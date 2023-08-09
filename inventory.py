@@ -98,6 +98,9 @@ class Inventory:
             else:
                 return False
 
+    def AddItem(self,item):
+        item.kill()
+
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
         return item
