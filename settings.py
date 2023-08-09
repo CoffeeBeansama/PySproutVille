@@ -38,6 +38,7 @@ itemData = {
          },
     "Wheat":{
         "name": "Wheat",
+        "cost": 10,
         "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
         "cropUiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
@@ -51,6 +52,7 @@ itemData = {
         },
     "Tomato":{
         "name": "Tomato",
+        "cost": 12,
         "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
         "cropUiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
@@ -91,6 +93,7 @@ uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/I
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["Wheat","Tomato"]
+sellableItems = ["Wheat","Tomato","Apple"]
 groundTiles = ["Soil","Plants"]
 
 map = [

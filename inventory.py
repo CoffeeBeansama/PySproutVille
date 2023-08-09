@@ -48,6 +48,7 @@ class Inventory:
         self.itemSwapIndex = 0
         self.inventoryCapacity = 9
 
+        self.sellableItems = []
         self.width = self.inventoryPos[0] // self.inventoryCapacity
 
         self.createSlots()
@@ -104,7 +105,15 @@ class Inventory:
                 itemSlots.itemHolding = item.data
                 itemSlots.sprite = item.data["uiSprite"] if item.type != "Plants" else item.data["cropUiSprite"]
                 itemSlots.selectedSprite = item.data["uiSpriteSelected"] if item.type != "Plants" else item.data["cropUiSpriteSelected"]
+                self.sellableItems.append(item)
                 return
+
+    def sellItems(self):
+        if len(self.sellableItems) > 0:
+            for items in self.sellableItems:
+                print(items)
+
+
 
 
     def getCurrentSelectedItem(self):

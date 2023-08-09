@@ -109,7 +109,7 @@ class Level:
                                 self.bedTile = BedTile([self.interactableSprites], self)
                             if column == "Chest":
                                 self.chestObject = ChestObject((x, y - tileSize),[self.visibleSprites,self.collisionSprites])
-                                self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject, self)
+                                self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player, self)
 
         self.player = Player(
             testSprites["Player"],
@@ -121,6 +121,8 @@ class Level:
             self.pickAbleItemSprites,
             self
             )
+
+        self.chestTile.player = self.player
 
 
     def plantGrowth(self):

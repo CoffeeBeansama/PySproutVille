@@ -38,18 +38,25 @@ class ChestObject(pg.sprite.Sprite):
 
 
 class ChestTile(InteractableObjects):
-    def __init__(self,pos,group,chestObject,level,image=testSprites["Wall"]):
+    def __init__(self,pos,group,chestObject,player,level,image=testSprites["Wall"]):
         super().__init__(image,pos,group)
 
         self.level = level
         self.type = "chest"
+        self.player = player
         self.rect = image.get_rect(topleft=pos)
         self.chestObject = chestObject
 
     def interact(self):
-        if not self.interacted:
-            self.chestObject.OpenAnimation()
-            self.interacted = True
+        keys = pg.key.get_pressed()
+        playerInventory = self.player.inventory
+        if keys[pg.K_x]:
+            if not self.interacted:
+                self.chestObject.OpenAnimation()
+                playerInventory.sellItems()
+                self.interacted = True
+            else:
+                return
 
     def disengage(self):
         self.interacted = False
