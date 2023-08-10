@@ -10,18 +10,12 @@ class Slot:
         self.pos = pos
         self.index = index
         self.itemHolding = item
-        self.sprite = self.itemHolding["uiSprite"]
-        self.selectedSprite = self.itemHolding["uiSpriteSelected"]
 
+        self.defaultSprite = uiSprites["EmptySlot"]
+        self.defaultSelectedSprite = uiSprites["EmptySlotSelected"]
 
-class EmptySlot:
-    def __init__(self, pos, item, index):
-        self.screen = pg.display.get_surface()
-        self.pos = pos
-        self.index = index
-        self.itemHolding = item
-        self.sprite = pg.transform.scale(pg.image.load("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlot.png"), slotScale)
-        self.selectedSprite = pg.transform.scale(pg.image.load("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlotSelected.png"), slotScale)
+        self.sprite = self.itemHolding["uiSprite"] if item is not None else self.defaultSprite
+        self.selectedSprite = self.itemHolding["uiSpriteSelected"] if item is not None else self.defaultSelectedSprite
 
 
 class Inventory:
@@ -30,6 +24,8 @@ class Inventory:
         self.inventoryPos = (80, 500)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
+
+
 
         self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
         self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
@@ -51,6 +47,7 @@ class Inventory:
         self.sellableItems = []
         self.width = self.inventoryPos[0] // self.inventoryCapacity
 
+        self.slotList = []
         self.createSlots()
 
     def selectFromRight(self):
@@ -106,31 +103,29 @@ class Inventory:
                 itemSlots.itemHolding = item.data
                 itemSlots.sprite = item.data["uiSprite"]
                 itemSlots.selectedSprite = item.data["uiSpriteSelected"]
-                self.sellableItems.append(item)
+                if item.data["name"] in sellableItems:
+                    self.sellableItems.append(itemSlots)
                 return
 
     def sellItems(self):
         if len(self.sellableItems) > 0:
-            for items in self.sellableItems:
-                print(items)
-
-
-
+            for itemSlots in self.sellableItems:
+                itemSlots.itemHolding = None
+                itemSlots.sprite = itemSlots.defaultSprite
+                itemSlots.selectedSprite = itemSlots.defaultSelectedSprite
 
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
         return item
 
     def createSlots(self):
-        self.slotList = []
-
         for index,item in enumerate(self.currentItems):
             inventoryWidth = 600  # less the borders
             increment = inventoryWidth // self.inventoryCapacity
 
             left = (index * increment) + (increment - self.width) + 37
 
-            newSlots = Slot((left,self.slotPosY),item,index) if self.currentItems[index] is not None else EmptySlot((left,self.slotPosY),item,index)
+            newSlots = Slot((left,self.slotPosY),item,index)
 
             self.slotList.append(newSlots)
 

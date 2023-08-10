@@ -104,11 +104,13 @@ testSprites = {"Wall": loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize
                }
 
 uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",
-             "Slot": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png",slotScale)}
+             "EmptySlot": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png",slotScale),
+             "EmptySlotSelected": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlotSelected.png",slotScale),
+             }
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["WheatSeed","TomatoSeed"]
-sellableItems = ["Wheat","Tomato","Apple"]
+sellableItems = ["WheatCrop","TomatoCrop","Apple"]
 groundTiles = ["Soil","Plants"]
 
 map = [
