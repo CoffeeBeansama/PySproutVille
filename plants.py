@@ -51,6 +51,8 @@ class PlantTile(pg.sprite.Sprite):
             5: self.ProduceCrop
         }
 
+        self.touched = False
+
     def NextPhase(self):
         soil = self.soil
         if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
@@ -87,6 +89,23 @@ class PlantTile(pg.sprite.Sprite):
         self.image = self.data["CropSprite"]
         self.add(self.level.pickAbleItemSprites)
         self.soil.currentPlant = None
+
+    def playerCollision(self,plantList):
+        print("this")
+        self.currentTime = pg.time.get_ticks()
+
+        white = (255, 255, 255)
+        coloredImage = pg.Surface(self.image.get_size()).convert_alpha()
+        coloredImage.fill(white)
+        self.image.blit(coloredImage, (0, 0), special_flags=pg.BLEND_MAX)
+
+        if not self.touched:
+            self.startTick = pg.time.get_ticks()
+            self.touched = True
+
+        if self.currentTime - self.startTick > 500:
+            plantList.remove(self)
+            self.kill()
 
 
 

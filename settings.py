@@ -65,6 +65,7 @@ itemData = {
     },
     "WheatCrop": {
         "name": "WheatCrop",
+        "costs": 10,
         "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
         "uiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatCropSelected.png", slotScale),
@@ -72,6 +73,7 @@ itemData = {
     },
     "TomatoCrop": {
         "name": "TomatoCrop",
+        "costs": 15,
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
         "uiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoCropSelected.png", slotScale),

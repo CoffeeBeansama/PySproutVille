@@ -22,11 +22,13 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
 
+        self.coins = 0
+
         self.collisionSprites = collidable_sprites
         self.pickAbleItems = pickableItems
         self.createEquipmentTile = useEquipmentTile
 
-        self.inventory = Inventory()
+        self.inventory = Inventory(self)
         self.displayInventory = False
 
         self.facingDirection = "Down"
@@ -41,6 +43,7 @@ class Player(Entity):
         self.usingItem = False
 
         self.interactableObjects = interactableObjects
+
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -77,7 +80,6 @@ class Player(Entity):
         self.image = self.animation[int(self.frame_index)]
 
         self.rect = self.image.get_rect(center=self.hitbox.center)
-
 
 
     @staticmethod
@@ -118,10 +120,9 @@ class Player(Entity):
             if items.hitbox.colliderect(self.hitbox):
 
                 if items.type == "Plants":
-                    self.level.timeManager.plantList.remove(items)
-
+                    items.playerCollision(self.level.timeManager.plantList)
                 self.inventory.AddItem(items)
-                items.kill()
+
 
     def interact(self):
         for objectIndex,object in enumerate(self.interactableObjects):
@@ -129,7 +130,6 @@ class Player(Entity):
                 object.interact()
             else:
                 object.disengage()
-
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:

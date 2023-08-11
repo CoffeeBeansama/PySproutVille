@@ -19,13 +19,13 @@ class Slot:
 
 
 class Inventory:
-    def __init__(self):
+    def __init__(self,player):
 
         self.inventoryPos = (80, 500)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
 
-
+        self.player = player
 
         self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
         self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
@@ -71,9 +71,10 @@ class Inventory:
                 self.itemSwapIndex = self.inventoryCapacity -1
 
     def swapItems(self):
-
+        print(self.slotList)
         # Item Swap Logic
         self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
+        self.slotList[self.itemSwapIndex].itemHolding, self.slotList[self.itemIndex].itemHolding = self.slotList[self.itemIndex].itemHolding,self.slotList[self.itemSwapIndex].itemHolding
         self.slotList[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
         self.slotList[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,self.slotList[self.itemSwapIndex].selectedSprite
 
@@ -109,10 +110,12 @@ class Inventory:
 
     def sellItems(self):
         if len(self.sellableItems) > 0:
-            for itemSlots in self.sellableItems:
+            for itemIndex,itemSlots in enumerate(self.sellableItems):
+                self.player.coins += itemSlots.itemHolding["costs"]
                 itemSlots.itemHolding = None
                 itemSlots.sprite = itemSlots.defaultSprite
                 itemSlots.selectedSprite = itemSlots.defaultSelectedSprite
+        self.sellableItems.clear()
 
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
