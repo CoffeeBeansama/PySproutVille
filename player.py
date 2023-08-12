@@ -120,9 +120,10 @@ class Player(Entity):
             if items.hitbox.colliderect(self.hitbox):
 
                 if items.type == "Plants":
-                    items.playerCollision(self.level.timeManager.plantList)
-                self.inventory.AddItem(items)
+                    self.level.timeManager.plantList.remove(items)
 
+                self.inventory.AddItem(items)
+                items.kill()
 
     def interact(self):
         for objectIndex,object in enumerate(self.interactableObjects):

@@ -21,9 +21,22 @@ class SoilTile(pg.sprite.Sprite):
         self.tilted = False
         self.watered = False
 
+    def tiltSoil(self):
+        if self.tilted is False:
+            self.image = self.tiledSprite
+            self.tilted = True
+        return
+
+    def waterSoil(self):
+        if self.tilted is True and self.watered is False:
+            self.image = self.wateredSprite
+            self.watered = True
+        return
+
     def update(self):
-        self.watered = False
-        self.image = self.tiledSprite
+        if self.tilted is True and self.watered is True and self.currentPlant is not None:
+            self.watered = False
+            self.image = self.tiledSprite
 
 
 class PlantTile(pg.sprite.Sprite):
@@ -53,6 +66,7 @@ class PlantTile(pg.sprite.Sprite):
 
         self.touched = False
 
+
     def NextPhase(self):
         soil = self.soil
         if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
@@ -60,7 +74,7 @@ class PlantTile(pg.sprite.Sprite):
 
             self.currentPhase += 1
             if self.currentPhase <= len(self.phases):
-                getCurrentPhase = self.phases.get(self.currentPhase)
+                getCurrentPhase = self.phases.get(self.currentPhase,self.PhaseOne)
                 getCurrentPhase()
             else:
                 return
@@ -90,22 +104,6 @@ class PlantTile(pg.sprite.Sprite):
         self.add(self.level.pickAbleItemSprites)
         self.soil.currentPlant = None
 
-    def playerCollision(self,plantList):
-        print("this")
-        self.currentTime = pg.time.get_ticks()
-
-        white = (255, 255, 255)
-        coloredImage = pg.Surface(self.image.get_size()).convert_alpha()
-        coloredImage.fill(white)
-        self.image.blit(coloredImage, (0, 0), special_flags=pg.BLEND_MAX)
-
-        if not self.touched:
-            self.startTick = pg.time.get_ticks()
-            self.touched = True
-
-        if self.currentTime - self.startTick > 500:
-            plantList.remove(self)
-            self.kill()
 
 
 

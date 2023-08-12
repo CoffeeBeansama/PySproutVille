@@ -9,6 +9,7 @@ from support import import_csv_layout
 from equipment import Equipment
 from timeManager import TimeManager
 from objects import *
+from tree import *
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -70,9 +71,11 @@ class Level:
         self.collisionSprites = pg.sprite.Group()
         self.equipmentSprites = pg.sprite.Group()
         self.soilTileSprites = pg.sprite.Group()
+        self.woodTileSprites = pg.sprite.Group()
         self.pickAbleItemSprites = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
+
 
         self.timeManager = TimeManager()
         self.PlantedSoilTileList = []
@@ -87,7 +90,9 @@ class Level:
         mapLayouts = {
             "boundary": import_csv_layout("Map/wall.csv"),
             "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv"),
-            "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv')
+            "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv'),
+            "Tree Leaves": import_csv_layout('Map/Tree leaves.csv'),
+            "Tree Trunks": import_csv_layout('Map/Tree trunks.csv'),
 
         }
         for style, layout in mapLayouts.items():
@@ -111,6 +116,11 @@ class Level:
                                 self.chestObject = ChestObject((x, y - tileSize),[self.visibleSprites,self.collisionSprites])
                                 self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player, self)
 
+                        if style == "Tree Trunks":
+                            TreeTrunk((x,y),[self.collisionSprites,self.woodTileSprites])
+                        if style == "Tree Leaves":
+                            TreeLeaves((x,y),[self.collisionSprites])
+
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
@@ -127,8 +137,7 @@ class Level:
 
     def plantGrowth(self):
         for soil in self.PlantedSoilTileList:
-            if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
-                soil.update()
+            soil.update()
 
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
@@ -137,33 +146,26 @@ class Level:
         inventory = self.player.inventory
         for sprites in self.equipmentSprites:
             soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
+            woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
+
+            itemName = inventory.currentItems[inventory.itemIndex]["name"]
+
             if soilTileCollided:
 
-                itemName = inventory.currentItems[inventory.itemIndex]["name"]
-
                 if itemName == "Hoe":
-                    self.tiltSoilTile(soilTileCollided[0])
+                    soilTileCollided[0].tiltSoil()
                 elif itemName == "WateringCan":
-                    self.waterSoilTile(soilTileCollided[0])
-                    
+                    soilTileCollided[0].waterSoil()
                 elif itemName in seedItems:
                     self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+
+            if woodTileCollided:
+                if itemName == "Axe":
+                    woodTileCollided[0].chopped()
 
         if self.currentEquipment is not None:
             pass
             self.currentEquipment.kill()
-
-    def waterSoilTile(self,soilTile):
-        if soilTile.tilted is True and soilTile.watered is False:
-            soilTile.image = soilTile.wateredSprite
-            soilTile.watered = True
-        return
-
-    def tiltSoilTile(self,soilTile):
-        if soilTile.tilted is False:
-            soilTile.image = soilTile.tiledSprite
-            soilTile.tilted = True
-        return
 
     def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
