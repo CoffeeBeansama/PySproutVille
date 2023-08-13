@@ -119,7 +119,7 @@ class Level:
                         if style == "Tree Trunks":
                             TreeTrunk((x,y),[self.collisionSprites,self.woodTileSprites])
                         if style == "Tree Leaves":
-                            TreeLeaves((x,y),[self.collisionSprites])
+                            TreeLeaves((x,y),[self.collisionSprites],self.visibleSprites)
 
         self.player = Player(
             testSprites["Player"],

@@ -83,12 +83,7 @@ class PlantTile(pg.sprite.Sprite):
         self.image = self.data["PhaseOneSprite"]
 
     def PhaseTwo(self):
-        oldDataName = self.data['name']
-        newDataName = oldDataName.replace("Seed", "Crop")
-        self.data = itemData[newDataName]
-        self.image = self.data["CropSprite"]
-        self.add(self.level.pickAbleItemSprites)
-        self.soil.currentPlant = None
+        self.ProduceCrop()
 
     def PhaseThree(self):
         self.image = self.data["PhaseThreeSprite"]
