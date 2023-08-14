@@ -91,7 +91,6 @@ class Level:
             "boundary": import_csv_layout("Map/wall.csv"),
             "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv"),
             "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv'),
-            "Tree Leaves": import_csv_layout('Map/Tree leaves.csv'),
             "Tree Trunks": import_csv_layout('Map/Tree trunks.csv'),
 
         }
@@ -109,6 +108,7 @@ class Level:
                         if style == "soilTile":
                             SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
 
+
                         if style == "InteractableObjects":
                             if column == "Bed":
                                 self.bedTile = BedTile([self.interactableSprites], self.timeManager)
@@ -117,9 +117,9 @@ class Level:
                                 self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player)
 
                         if style == "Tree Trunks":
-                            TreeTrunk((x,y),[self.collisionSprites,self.woodTileSprites])
-                        if style == "Tree Leaves":
-                            TreeLeaves((x,y),[self.collisionSprites],self.visibleSprites)
+                            Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.timeManager,self.pickAbleItemSprites)
+
+
 
         self.player = Player(
             testSprites["Player"],
@@ -131,6 +131,7 @@ class Level:
             self.pickAbleItemSprites,
             self.timeManager
             )
+
 
         self.chestTile.player = self.player
 
@@ -170,13 +171,14 @@ class Level:
     def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
 
-            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self.pickAbleItemSprites)
+            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self.pickAbleItemSprites,self.timeManager)
 
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
 
     def update(self):
+
         self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
         self.player.update()

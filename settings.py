@@ -32,6 +32,7 @@ itemData = {
         },
     "Apple": {
         "name": "Apple",
+        "CropSprite":  loadSprite(f"{spritePath}/Plants/Apple/2.png",(tileSize,tileSize)),
         "uiSprite": loadSprite(f"{uiPath}Apple.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}AppleSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Apple/1.png",(tileSize,tileSize)),

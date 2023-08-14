@@ -38,6 +38,7 @@ class TimeManager:
         self.day += 1
         if len(self.plantList) > 0:
             for plants in self.plantList:
+
                 plants.NextPhase()
 
         self.nightDarknessSprite.set_alpha(0)

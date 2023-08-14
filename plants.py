@@ -40,10 +40,11 @@ class SoilTile(pg.sprite.Sprite):
 
 
 class PlantTile(pg.sprite.Sprite):
-    def __init__(self, pos, group, data,soil,pickupitemSprites):
+    def __init__(self, pos, group, data,soil,pickupitemSprites,timeManager):
         super().__init__(group)
 
         self.type = "Plants"
+
         self.pickupitems = pickupitemSprites
         self.data = data
 
@@ -51,6 +52,7 @@ class PlantTile(pg.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
+        self.timeManager = timeManager
         self.soil = soil
 
         self.currentPhase = 1
@@ -63,8 +65,6 @@ class PlantTile(pg.sprite.Sprite):
         }
 
         self.touched = False
-
-
 
 
     def NextPhase(self):
@@ -97,8 +97,8 @@ class PlantTile(pg.sprite.Sprite):
         self.data = itemData[newDataName]
         self.image = self.data["CropSprite"].convert_alpha()
         self.add(self.pickupitems)
-
         self.soil.currentPlant = None
+
 
 
 

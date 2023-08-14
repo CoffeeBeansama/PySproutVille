@@ -119,8 +119,8 @@ class Player(Entity):
         for itemIndex,items in enumerate(self.pickAbleItems):
             if items.hitbox.colliderect(self.hitbox):
 
-                if items.type == "Plants":
-                    self.timeManager.plantList.remove(items)
+                plantList = self.timeManager.plantList
+                plantList.remove(items) if items in plantList else None
 
                 self.inventory.AddItem(items)
                 items.kill()

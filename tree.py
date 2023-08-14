@@ -3,42 +3,57 @@ from random import randint
 from settings import *
 
 
-class TreeTrunk(pg.sprite.Sprite):
-    def __init__(self,pos,group):
+class Tree(pg.sprite.Sprite):
+    def __init__(self,pos,group,appleFruitGroup,timeManager,pickUpSprites):
         super().__init__(group)
         self.type = "tree"
         self.image = testSprites["Wall"]
+
+        self.pickUpSprites = pickUpSprites
+        self.timeManager = timeManager
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,0)
 
+        x = pos[0]
+        y = pos[1]
+
+        randomX = randint(-3,3)
+        randomY = randint(-3,3)
+        appleFruitFinalPosY = y + tileSize + 5
+
+        TreeLeaves((x, y - tileSize), [group])
+
+        self.apple = Apple((x + randomX, (y - tileSize) + randomY), appleFruitGroup, (x, appleFruitFinalPosY), self.pickUpSprites,self.timeManager)
+        self.timeManager.plantList.append(self.apple)
 
     def chopped(self):
         print("chopped!")
 class TreeLeaves(pg.sprite.Sprite):
-    def __init__(self,pos,group,appleFruitGroup):
+    def __init__(self,pos,group):
         super().__init__(group)
-        self.type = "tree"
+        self.type = "Plants"
         self.image = testSprites["Wall"]
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,-5)
 
-        randomX = randint(pos[0] - 3, pos[0] + 3)
-        randomY = randint(pos[1] - 4, pos[1] + 5)
-        randomAppleOffset = (randomX, randomY)
-
-        RipeApple(itemData["Apple"]["PhaseOneSprite"].convert_alpha(),randomAppleOffset,appleFruitGroup)
-
-class RipeApple(pg.sprite.Sprite):
-    def __init__(self,image,pos,group):
+class Apple(pg.sprite.Sprite):
+    def __init__(self,pos,group,finalPos,pickUpSprites,timeManager):
         super().__init__(group)
-        self.type = "tree"
-        self.image = image
 
+        self.type = "Apple"
+
+        self.finalPos = finalPos
+        self.data = itemData["Apple"]
+
+        self.timeManager = timeManager
+
+        self.pickUpSprites = pickUpSprites
+        self.PhaseOne()
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-15,-5)
+        self.hitbox = self.rect.inflate(0,0)
 
         self.currentPhase = 1
 
@@ -46,19 +61,33 @@ class RipeApple(pg.sprite.Sprite):
             1: self.PhaseOne,
             2: self.PhaseTwo,
             3: self.PhaseThree,
+
         }
 
     def NextPhase(self):
-        pass
+        self.currentPhase += 1
+        if self.currentPhase <= len(self.phases):
+            getCurrentPhase = self.phases.get(self.currentPhase, self.PhaseOne)
+            getCurrentPhase()
+        else:
+            return
 
     def PhaseOne(self):
-        pass
+        self.image = self.data["PhaseOneSprite"].convert_alpha()
 
     def PhaseTwo(self):
-        pass
+        self.image = self.data["PhaseTwoSprite"].convert_alpha()
 
     def PhaseThree(self):
         self.ProduceCrop()
 
     def ProduceCrop(self):
-        pass
+
+        self.image = self.data["PhaseThreeSprite"].convert_alpha()
+
+        self.rect.centery = self.finalPos[1]
+        self.hitbox.centery = self.finalPos[1]
+
+        self.add(self.pickUpSprites)
+
+
