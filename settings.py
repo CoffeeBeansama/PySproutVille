@@ -32,9 +32,11 @@ itemData = {
         },
     "Apple": {
         "name": "Apple",
-        "sprite":  loadSprite(f"{spritePath}Apple.png",itemScale),
         "uiSprite": loadSprite(f"{uiPath}Apple.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}AppleSelected.png", slotScale)
+        "uiSpriteSelected": loadSprite(f"{uiPath}AppleSelected.png", slotScale),
+        "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Apple/1.png",(tileSize,tileSize)),
+        "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Apple/2.png",(tileSize,tileSize)),
+        "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Apple/3.png",(tileSize,tileSize)),
          },
     "WheatSeed":{
         "name": "WheatSeed",

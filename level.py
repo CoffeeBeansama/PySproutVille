@@ -111,10 +111,10 @@ class Level:
 
                         if style == "InteractableObjects":
                             if column == "Bed":
-                                self.bedTile = BedTile([self.interactableSprites], self)
+                                self.bedTile = BedTile([self.interactableSprites], self.timeManager)
                             if column == "Chest":
                                 self.chestObject = ChestObject((x, y - tileSize),[self.visibleSprites,self.collisionSprites])
-                                self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player, self)
+                                self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player)
 
                         if style == "Tree Trunks":
                             TreeTrunk((x,y),[self.collisionSprites,self.woodTileSprites])
@@ -129,7 +129,7 @@ class Level:
             self.createEquipmentTile,
             self.interactableSprites,
             self.pickAbleItemSprites,
-            self
+            self.timeManager
             )
 
         self.chestTile.player = self.player
@@ -170,7 +170,7 @@ class Level:
     def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
 
-            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self)
+            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self.pickAbleItemSprites)
 
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)

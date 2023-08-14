@@ -38,10 +38,10 @@ class ChestObject(pg.sprite.Sprite):
 
 
 class ChestTile(InteractableObjects):
-    def __init__(self,pos,group,chestObject,player,level,image=testSprites["Wall"]):
+    def __init__(self,pos,group,chestObject,player,image=testSprites["Wall"]):
         super().__init__(image,pos,group)
 
-        self.level = level
+
         self.type = "chest"
         self.player = player
         self.rect = image.get_rect(topleft=pos)
@@ -64,10 +64,10 @@ class ChestTile(InteractableObjects):
 
 
 class BedTile(InteractableObjects):
-    def __init__(self,group,level,pos=(848,800),image=testSprites["Wall"]):
+    def __init__(self,group,timeManager,pos=(848,800),image=testSprites["Wall"]):
         super().__init__(image,pos,group)
 
-        self.level = level
+        self.timeManager = timeManager
         self.type = "object"
         self.rect = image.get_rect(topleft=pos)
 
@@ -76,7 +76,7 @@ class BedTile(InteractableObjects):
 
         if keys[pg.K_x]:
             if not self.interacted:
-                self.level.timeManager.newDay()
+                self.timeManager.newDay()
                 self.interacted = True
 
     def disengage(self):

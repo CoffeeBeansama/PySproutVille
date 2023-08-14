@@ -40,15 +40,14 @@ class SoilTile(pg.sprite.Sprite):
 
 
 class PlantTile(pg.sprite.Sprite):
-    def __init__(self, pos, group, data,soil,level):
+    def __init__(self, pos, group, data,soil,pickupitemSprites):
         super().__init__(group)
 
         self.type = "Plants"
-
+        self.pickupitems = pickupitemSprites
         self.data = data
-        self.level = level
 
-        self.image = self.data["PhaseOneSprite"]
+        self.PhaseOne()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
@@ -61,10 +60,11 @@ class PlantTile(pg.sprite.Sprite):
             2: self.PhaseTwo,
             3: self.PhaseThree,
             4: self.PhaseFour,
-            5: self.ProduceCrop
         }
 
         self.touched = False
+
+
 
 
     def NextPhase(self):
@@ -80,24 +80,26 @@ class PlantTile(pg.sprite.Sprite):
                 return
 
     def PhaseOne(self):
-        self.image = self.data["PhaseOneSprite"]
+        self.image = self.data["PhaseOneSprite"].convert_alpha()
 
     def PhaseTwo(self):
-        self.ProduceCrop()
+        self.image = self.data["PhaseTwoSprite"].convert_alpha()
 
     def PhaseThree(self):
-        self.image = self.data["PhaseThreeSprite"]
+        self.image = self.data["PhaseThreeSprite"].convert_alpha()
 
     def PhaseFour(self):
-        self.image = self.data["PhaseFourSprite"]
+        self.ProduceCrop()
 
     def ProduceCrop(self):
         oldDataName = self.data['name']
         newDataName = oldDataName.replace("Seed", "Crop")
         self.data = itemData[newDataName]
-        self.image = self.data["CropSprite"]
-        self.add(self.level.pickAbleItemSprites)
+        self.image = self.data["CropSprite"].convert_alpha()
+        self.add(self.pickupitems)
+
         self.soil.currentPlant = None
+
 
 
 

@@ -6,7 +6,7 @@ from inventory import Inventory
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,level):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager):
         super().__init__(group)
 
         self.type = "player"
@@ -28,7 +28,7 @@ class Player(Entity):
         self.pickAbleItems = pickableItems
         self.createEquipmentTile = useEquipmentTile
 
-        self.inventory = Inventory(self)
+        self.inventory = Inventory(self.coins)
         self.displayInventory = False
 
         self.facingDirection = "Down"
@@ -38,7 +38,7 @@ class Player(Entity):
         self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
 
-        self.level = level
+        self.timeManager = timeManager
 
         self.usingItem = False
 
@@ -77,7 +77,7 @@ class Player(Entity):
                 self.createEquipmentTile()
                 self.usingItem = False
 
-        self.image = self.animation[int(self.frame_index)]
+        self.image = self.animation[int(self.frame_index)].convert_alpha()
 
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
@@ -120,7 +120,7 @@ class Player(Entity):
             if items.hitbox.colliderect(self.hitbox):
 
                 if items.type == "Plants":
-                    self.level.timeManager.plantList.remove(items)
+                    self.timeManager.plantList.remove(items)
 
                 self.inventory.AddItem(items)
                 items.kill()
