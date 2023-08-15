@@ -92,9 +92,6 @@ class PlantTile(PickAbleItems):
         self.ProduceCrop()
 
     def ProduceCrop(self):
-        oldDataName = self.data['name']
-        newDataName = oldDataName.replace("Seed", "Crop")
-        self.data = itemData[newDataName]
         self.image = self.data["CropSprite"].convert_alpha()
         self.add(self.pickupitems)
         self.soil.currentPlant = None

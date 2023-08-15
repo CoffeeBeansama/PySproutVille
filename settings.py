@@ -10,7 +10,7 @@ spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Objects/"
 uiPath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
 testSpritePath = "Sprites/test/"
 
-playerSpeed = 3
+playerSpeed = 2.5
 slotScale = (55, 55)
 itemScale = (24,24)
 
@@ -42,51 +42,33 @@ itemData = {
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Apple/collision.png",(tileSize,tileSize)),
          },
 
-    "WheatSeed":{
-        "name": "WheatSeed",
+    "Wheat":{
+        "name": "Wheat",
+        "costs": 10,
         "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
-        "cropUiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
-        "cropUiSpriteSelected": loadSprite(f"{uiPath}WheatCropSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Wheat/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Wheat/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Wheat/3.png",(tileSize,tileSize)),
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Wheat/4.png",(tileSize,tileSize)),
-
-
+        "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
+        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wheat/collision.png",(tileSize,tileSize)),
 
         },
-    "TomatoSeed":{
-        "name": "TomatoSeed",
+    "Tomato":{
+        "name": "Tomato",
+        "costs": 15,
         "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
-        "cropUiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
-        "cropUiSpriteSelected": loadSprite(f"{uiPath}TomatoCropSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}Plants/Tomato/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}Plants/Tomato/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}Plants/Tomato/3.png",(tileSize,tileSize)),
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Tomato/4.png",(tileSize,tileSize)),
-
-
-    },
-    "WheatCrop": {
-        "name": "WheatCrop",
-        "costs": 10,
-        "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
-        "uiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}WheatCropSelected.png", slotScale),
-        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wheat/collision.png",(tileSize,tileSize)),
-
-    },
-    "TomatoCrop": {
-        "name": "TomatoCrop",
-        "costs": 15,
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
-        "uiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}TomatoCropSelected.png", slotScale),
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Tomato/collision.png",(tileSize,tileSize)),
 
-    }
+
+    },
 
 }
 
@@ -120,8 +102,8 @@ uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/I
              }
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
-seedItems = ["WheatSeed","TomatoSeed"]
-sellableItems = ["WheatCrop","TomatoCrop","Apple"]
+seedItems = ["Wheat","Tomato"]
+sellableItems = ["Wheat","Tomato","Apple"]
 groundTiles = ["Soil","Plants"]
 
 

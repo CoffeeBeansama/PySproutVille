@@ -37,7 +37,7 @@ class Inventory:
 
         self.background = pg.image.load(uiSprites['InventoryHolder'])
 
-        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["WheatSeed"],itemData["TomatoSeed"],None,None,None,None]
+        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
         self.currentItems = self.defaultInventorySetup
 
         self.itemIndex = 0

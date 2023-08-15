@@ -109,10 +109,10 @@ class Player(Entity):
         self.facingDirection = state
 
     def movement(self, speed):
-        self.rect.center += self.direction * speed
-        self.hitbox.x += self.direction.x * speed
+
+        self.hitbox.x += self.direction.x * speed if self.direction.x < 0 else self.direction.x * speed / 1.5
         self.checkWallCollision("Horizontal")
-        self.hitbox.y += self.direction.y * speed
+        self.hitbox.y += self.direction.y * speed if self.direction.y < 0 else self.direction.y * speed / 1.5
         self.checkWallCollision("Vertical")
         self.rect.center = self.hitbox.center
 

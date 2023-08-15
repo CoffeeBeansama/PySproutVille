@@ -147,16 +147,11 @@ class Level:
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
 
     def playerPickUpItems(self):
-        player = self.player
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
-            if items.hitbox.colliderect(player.hitbox):
+            if items.hitbox.colliderect(self.player.hitbox):
 
-                items.pickUpItem(self.timeManager.plantList,
-                                 player.inventory,
-                                 (player.rect.x + tileSize,player.rect.y),
-                                 self.visibleSprites,
-                                 self.coinList)
-            self.player.inventory.sellItems()
+                items.pickUpItem(self.timeManager.plantList,self.player,self.visibleSprites,self.coinList)
+
 
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory

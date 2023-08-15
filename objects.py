@@ -28,7 +28,7 @@ class CoinOverHead(pg.sprite.Sprite):
         self.spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Coin/"
 
         self.frameIndex = 0
-        self.speed = 0.5
+        self.speed = 0.8
 
         self.sprites = {
             0: loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)).convert_alpha(),
@@ -59,7 +59,7 @@ class PickAbleItems(pg.sprite.Sprite):
         self.data = data
         self.collided = False
 
-    def pickUpItem(self, plantlist, inventory,coinPos,coinSpriteGroup,coinList):
+    def pickUpItem(self, plantlist,player,coinSpriteGroup,coinList):
 
         self.image = self.data["CollisionSprite"].convert_alpha()
         self.currentTime = pg.time.get_ticks()
@@ -71,11 +71,9 @@ class PickAbleItems(pg.sprite.Sprite):
             self.tickStart = pg.time.get_ticks()
 
         if self.currentTime - self.tickStart > 100 and self.collided:
-
-            inventory.AddItem(self)
-            coinList.append(CoinOverHead(coinPos, coinSpriteGroup))
+            player.coins += self.data["costs"]
+            coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
             self.kill()
-
 
 class ChestObject(pg.sprite.Sprite):
     def __init__(self, pos, group):
