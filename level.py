@@ -83,7 +83,10 @@ class Level:
         self.plantTile = None
         self.plantTileList = []
 
+        self.coinList = []
+
         self.createMap()
+
 
     def createMap(self):
 
@@ -143,6 +146,18 @@ class Level:
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
 
+    def playerPickUpItems(self):
+        player = self.player
+        for itemIndex, items in enumerate(self.pickAbleItemSprites):
+            if items.hitbox.colliderect(player.hitbox):
+
+                items.pickUpItem(self.timeManager.plantList,
+                                 player.inventory,
+                                 (player.rect.x + tileSize,player.rect.y),
+                                 self.visibleSprites,
+                                 self.coinList)
+            self.player.inventory.sellItems()
+
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
         for sprites in self.equipmentSprites:
@@ -177,9 +192,17 @@ class Level:
             self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
 
+    def updateCoinList(self):
+        if len(self.coinList) > 0:
+            for coins in self.coinList:
+                coins.update(self.coinList)
+
+
     def update(self):
 
         self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
         self.player.update()
+        self.playerPickUpItems()
+        self.updateCoinList()
         self.timeManager.dayNightCycle()

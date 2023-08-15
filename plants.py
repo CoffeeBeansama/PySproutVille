@@ -2,6 +2,8 @@ import pygame as pg
 from settings import *
 from enum import Enum
 from abc import ABC, abstractmethod
+from objects import PickAbleItems
+
 
 
 class SoilTile(pg.sprite.Sprite):
@@ -39,13 +41,14 @@ class SoilTile(pg.sprite.Sprite):
             self.image = self.tiledSprite
 
 
-class PlantTile(pg.sprite.Sprite):
+class PlantTile(PickAbleItems):
     def __init__(self, pos, group, data,soil,pickupitemSprites,timeManager):
-        super().__init__(group)
+        super().__init__(pos,group,data)
 
         self.type = "Plants"
 
         self.pickupitems = pickupitemSprites
+
         self.data = data
 
         self.PhaseOne()
@@ -63,9 +66,6 @@ class PlantTile(pg.sprite.Sprite):
             3: self.PhaseThree,
             4: self.PhaseFour,
         }
-
-        self.touched = False
-
 
     def NextPhase(self):
         soil = self.soil
@@ -98,9 +98,5 @@ class PlantTile(pg.sprite.Sprite):
         self.image = self.data["CropSprite"].convert_alpha()
         self.add(self.pickupitems)
         self.soil.currentPlant = None
-
-
-
-
 
 

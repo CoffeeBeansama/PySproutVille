@@ -20,6 +20,63 @@ class InteractableObjects(Tile):
         pass
 
 
+class CoinOverHead(pg.sprite.Sprite):
+    def __init__(self, pos, group):
+        super().__init__(group)
+
+        self.type = "object"
+        self.spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Coin/"
+
+        self.frameIndex = 0
+        self.speed = 0.5
+
+        self.sprites = {
+            0: loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)).convert_alpha(),
+            1: loadSprite(f"{self.spritePath}2.png", (tileSize, tileSize)).convert_alpha(),
+            2: loadSprite(f"{self.spritePath}3.png", (tileSize, tileSize)).convert_alpha(),
+            3: loadSprite(f"{self.spritePath}4.png", (tileSize, tileSize)).convert_alpha(),
+
+        }
+        self.image = self.sprites[self.frameIndex]
+        self.rect = self.image.get_rect(topleft=pos)
+
+        self.animationTime = 1 / 8
+
+    def update(self,coinList):
+        self.frameIndex += self.animationTime
+
+        if self.frameIndex >= len(self.sprites) - 1:
+            coinList.remove(self)
+            self.kill()
+
+        self.image = self.sprites[int(self.frameIndex)]
+        self.rect.y -= 1 * self.speed
+
+class PickAbleItems(pg.sprite.Sprite):
+    def __init__(self,pos,group,data):
+        super().__init__(group)
+
+        self.data = data
+        self.collided = False
+
+    def pickUpItem(self, plantlist, inventory,coinPos,coinSpriteGroup,coinList):
+
+        self.image = self.data["CollisionSprite"].convert_alpha()
+        self.currentTime = pg.time.get_ticks()
+
+        plantlist.remove(self) if self in plantlist else None
+
+        if not self.collided:
+            self.collided = True
+            self.tickStart = pg.time.get_ticks()
+
+        if self.currentTime - self.tickStart > 100 and self.collided:
+
+            inventory.AddItem(self)
+            coinList.append(CoinOverHead(coinPos, coinSpriteGroup))
+            self.kill()
+
+
 class ChestObject(pg.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)

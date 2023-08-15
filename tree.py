@@ -1,7 +1,7 @@
 import pygame as pg
 from random import randint
 from settings import *
-
+from objects import PickAbleItems
 
 class Tree(pg.sprite.Sprite):
     def __init__(self,pos,group,appleFruitGroup,timeManager,pickUpSprites):
@@ -11,6 +11,8 @@ class Tree(pg.sprite.Sprite):
 
         self.pickUpSprites = pickUpSprites
         self.timeManager = timeManager
+
+        self.lives = 3
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,0)
@@ -24,11 +26,15 @@ class Tree(pg.sprite.Sprite):
 
         TreeLeaves((x, y - tileSize), [group])
 
-        self.apple = Apple((x + randomX, (y - tileSize) + randomY), appleFruitGroup, (x, appleFruitFinalPosY), self.pickUpSprites,self.timeManager)
+        self.apple = Apple((x + randomX, (y - tileSize) + randomY), appleFruitGroup,itemData["Apple"], (x, appleFruitFinalPosY), self.pickUpSprites,self.timeManager)
         self.timeManager.plantList.append(self.apple)
 
     def chopped(self):
-        print("chopped!")
+        self.lives -= 1
+        if self.lives <= 0:
+            print("this")
+
+
 class TreeLeaves(pg.sprite.Sprite):
     def __init__(self,pos,group):
         super().__init__(group)
@@ -38,14 +44,14 @@ class TreeLeaves(pg.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,-5)
 
-class Apple(pg.sprite.Sprite):
-    def __init__(self,pos,group,finalPos,pickUpSprites,timeManager):
-        super().__init__(group)
+
+class Apple(PickAbleItems):
+    def __init__(self,pos,group,data,finalPos,pickUpSprites,timeManager):
+        super().__init__(pos,group,data)
 
         self.type = "Apple"
 
         self.finalPos = finalPos
-        self.data = itemData["Apple"]
 
         self.timeManager = timeManager
 
@@ -82,12 +88,9 @@ class Apple(pg.sprite.Sprite):
         self.ProduceCrop()
 
     def ProduceCrop(self):
-
         self.image = self.data["PhaseThreeSprite"].convert_alpha()
-
         self.rect.centery = self.finalPos[1]
         self.hitbox.centery = self.finalPos[1]
 
         self.add(self.pickUpSprites)
-
 

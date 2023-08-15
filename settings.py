@@ -32,16 +32,18 @@ itemData = {
         },
     "Apple": {
         "name": "Apple",
+        "costs": 5,
         "CropSprite":  loadSprite(f"{spritePath}/Plants/Apple/2.png",(tileSize,tileSize)),
         "uiSprite": loadSprite(f"{uiPath}Apple.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}AppleSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Apple/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Apple/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Apple/3.png",(tileSize,tileSize)),
+        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Apple/collision.png",(tileSize,tileSize)),
          },
+
     "WheatSeed":{
         "name": "WheatSeed",
-        "cost": 10,
         "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
         "cropUiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
@@ -52,10 +54,10 @@ itemData = {
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Wheat/4.png",(tileSize,tileSize)),
 
 
+
         },
     "TomatoSeed":{
         "name": "TomatoSeed",
-        "cost": 12,
         "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
         "cropUiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
@@ -65,6 +67,7 @@ itemData = {
         "PhaseThreeSprite": loadSprite(f"{spritePath}Plants/Tomato/3.png",(tileSize,tileSize)),
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Tomato/4.png",(tileSize,tileSize)),
 
+
     },
     "WheatCrop": {
         "name": "WheatCrop",
@@ -72,6 +75,7 @@ itemData = {
         "CropSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",(tileSize,tileSize)),
         "uiSprite": loadSprite(f"{uiPath}WheatCrop.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatCropSelected.png", slotScale),
+        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wheat/collision.png",(tileSize,tileSize)),
 
     },
     "TomatoCrop": {
@@ -80,6 +84,7 @@ itemData = {
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
         "uiSprite": loadSprite(f"{uiPath}TomatoCrop.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoCropSelected.png", slotScale),
+        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Tomato/collision.png",(tileSize,tileSize)),
 
     }
 
@@ -119,22 +124,4 @@ seedItems = ["WheatSeed","TomatoSeed"]
 sellableItems = ["WheatCrop","TomatoCrop","Apple"]
 groundTiles = ["Soil","Plants"]
 
-map = [
-    ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-    ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],
-
-]
 

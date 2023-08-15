@@ -3,6 +3,7 @@ from settings import *
 from entity import Entity
 from support import import_folder
 from inventory import Inventory
+from objects import CoinOverHead
 
 
 class Player(Entity):
@@ -115,15 +116,6 @@ class Player(Entity):
         self.checkWallCollision("Vertical")
         self.rect.center = self.hitbox.center
 
-    def pickUpItems(self):
-        for itemIndex,items in enumerate(self.pickAbleItems):
-            if items.hitbox.colliderect(self.hitbox):
-
-                plantList = self.timeManager.plantList
-                plantList.remove(items) if items in plantList else None
-
-                self.inventory.AddItem(items)
-                items.kill()
 
     def interact(self):
         for objectIndex,object in enumerate(self.interactableObjects):
@@ -197,7 +189,6 @@ class Player(Entity):
             self.getInputs()
             self.movement(playerSpeed)
             self.animate()
-            self.pickUpItems()
             self.interact()
 
 

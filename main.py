@@ -32,12 +32,9 @@ class Game:
                             player.inventory.renderSelector()
                         else:
                             player.useItemEquipped()
-                    if event.key == pg.K_x:
-                        player.interact()
+
                     if event.key == pg.K_TAB:
                         player.renderInventory()
-                    if event.key == pg.K_t:
-                        self.level.plantGrowth()
 
                 if event.type == pg.QUIT:
                     pg.quit()
