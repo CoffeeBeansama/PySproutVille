@@ -14,6 +14,11 @@ class TimeManager:
         self.nightDarknessSprite = pg.transform.scale(pg.image.load("Sprites/NightMask.png"),(WIDTH, HEIGHT)).convert_alpha()
         self.nightDarknessSprite.set_alpha(0)
 
+        self.transitionSpriteAlpha = 0
+        self.sleepTransitionSprite = pg.transform.scale(pg.image.load("Sprites/transitionSprite.png"),(WIDTH, HEIGHT)).convert_alpha()
+        self.sleepTransitionSprite.set_alpha(0)
+        self.transitionTickTime = None
+
         self.day = 1
         self.dayNightCyclePeriod = 300000
         self.fullDayDuration = 36000  # 10 minutes
@@ -31,7 +36,21 @@ class TimeManager:
 
         self.startTickTime = pg.time.get_ticks()
 
+        self.laidToBed = False
+
+        self.dayPeriod = {
+            "Day": self.DayTime,
+            "Night": self.NightTime
+        }
+
+    def NightTime(self):
+        pass
+
+    def DayTime(self):
+        pass
     def newDay(self):
+
+
         self.dayTime = True
         self.nightTime = False
 
@@ -43,6 +62,23 @@ class TimeManager:
 
         self.nightDarknessSprite.set_alpha(0)
         self.startTickTime = pg.time.get_ticks()
+
+    def daySleepTransitionAnimation(self):
+
+        if self.laidToBed:
+            if self.transitionSpriteAlpha <= 255:
+                self.transitionSpriteAlpha += 2.125
+                self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
+            else:
+                self.transitionTickTime = pg.time.get_ticks()
+                self.newDay()
+                self.laidToBed = False
+        else:
+            if self.transitionTickTime is not None:
+                if self.currentTime - self.transitionTickTime > 2000:
+                    if self.transitionSpriteAlpha >= 0:
+                        self.transitionSpriteAlpha -= 2.125
+                        self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
 
     def evening(self):
         self.nightTime = True
@@ -66,6 +102,7 @@ class TimeManager:
     def dayNightCycle(self):
         self.currentTime = pg.time.get_ticks()
         self.screen.blit(self.nightDarknessSprite,(0,0))
+        self.screen.blit(self.sleepTransitionSprite,(0,0))
 
         if self.dayTime:
             if self.currentTime - self.startTickTime > self.dayNightCyclePeriod:
@@ -76,6 +113,7 @@ class TimeManager:
                 self.sunrise()
 
 
+        self.daySleepTransitionAnimation()
 
 
 

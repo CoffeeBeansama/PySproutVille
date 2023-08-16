@@ -131,7 +131,7 @@ class BedTile(InteractableObjects):
 
         if keys[pg.K_x]:
             if not self.interacted:
-                self.timeManager.newDay()
+                self.timeManager.laidToBed = True
                 self.interacted = True
 
     def disengage(self):
