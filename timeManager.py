@@ -38,16 +38,7 @@ class TimeManager:
 
         self.laidToBed = False
 
-        self.dayPeriod = {
-            "Day": self.DayTime,
-            "Night": self.NightTime
-        }
 
-    def NightTime(self):
-        pass
-
-    def DayTime(self):
-        pass
     def newDay(self):
 
 
@@ -114,7 +105,3 @@ class TimeManager:
 
 
         self.daySleepTransitionAnimation()
-
-
-
-

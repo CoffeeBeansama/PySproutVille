@@ -120,7 +120,8 @@ class Level:
                                 self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player)
 
                         if style == "Tree Trunks":
-                            Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.timeManager,self.pickAbleItemSprites)
+                            Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
+
 
 
 
@@ -137,7 +138,6 @@ class Level:
 
 
         self.chestTile.player = self.player
-
 
     def plantGrowth(self):
         for soil in self.PlantedSoilTileList:

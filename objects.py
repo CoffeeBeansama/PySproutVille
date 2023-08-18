@@ -28,7 +28,7 @@ class CoinOverHead(pg.sprite.Sprite):
         self.spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Coin/"
 
         self.frameIndex = 0
-        self.speed = 0.8
+        self.speed = 0.5
 
         self.sprites = {
             0: loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)).convert_alpha(),
@@ -73,6 +73,8 @@ class PickAbleItems(pg.sprite.Sprite):
         if self.currentTime - self.tickStart > 100 and self.collided:
             player.coins += self.data["costs"]
             coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
+            if self.type == "Apple" and hasattr(self,"tree"):
+                self.tree.fruit = None
             self.kill()
 
 class ChestObject(pg.sprite.Sprite):

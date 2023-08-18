@@ -10,7 +10,7 @@ spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Objects/"
 uiPath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
 testSpritePath = "Sprites/test/"
 
-playerSpeed = 2.5
+playerSpeed = 2.3
 slotScale = (55, 55)
 itemScale = (24,24)
 

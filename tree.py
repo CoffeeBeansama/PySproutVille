@@ -4,15 +4,18 @@ from settings import *
 from objects import PickAbleItems
 
 class Tree(pg.sprite.Sprite):
-    def __init__(self,pos,group,appleFruitGroup,timeManager,pickUpSprites):
+    def __init__(self,pos,group,appleFruitGroup,pickUpSprites,timeManager):
         super().__init__(group)
         self.type = "tree"
         self.image = testSprites["Wall"]
 
         self.pickUpSprites = pickUpSprites
-        self.timeManager = timeManager
+        self.appleFruitGroup = appleFruitGroup
 
+        self.pos = pos
         self.lives = 3
+
+        self.timeManager = timeManager
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,0)
@@ -25,9 +28,27 @@ class Tree(pg.sprite.Sprite):
         appleFruitFinalPosY = y + tileSize + 5
 
         TreeLeaves((x, y - tileSize), [group])
+        apple = Apple((x + randomX, (y - tileSize) + randomY), appleFruitGroup,itemData["Apple"], (x, appleFruitFinalPosY), self.pickUpSprites,self)
+        self.fruit = apple
+        self.timeManager.plantList.append(self)
 
-        self.apple = Apple((x + randomX, (y - tileSize) + randomY), appleFruitGroup,itemData["Apple"], (x, appleFruitFinalPosY), self.pickUpSprites,self.timeManager)
-        self.timeManager.plantList.append(self.apple)
+    def NextPhase(self):
+        self.fruit.growth() if self.fruit is not None else self.resetFruit()
+
+
+    def resetFruit(self):
+        x = self.pos[0]
+        y = self.pos[1]
+
+        randomX = randint(-3,3)
+        randomY = randint(-3,3)
+        appleFruitFinalPosY = y + tileSize + 5
+
+        newApple = Apple((x + randomX, (y - tileSize) + randomY), self.appleFruitGroup, itemData["Apple"],
+                               (x, appleFruitFinalPosY), self.pickUpSprites,self)
+
+        self.fruit = newApple
+
 
     def chopped(self):
         self.lives -= 1
@@ -46,14 +67,13 @@ class TreeLeaves(pg.sprite.Sprite):
 
 
 class Apple(PickAbleItems):
-    def __init__(self,pos,group,data,finalPos,pickUpSprites,timeManager):
+    def __init__(self,pos,group,data,finalPos,pickUpSprites,tree):
         super().__init__(pos,group,data)
 
         self.type = "Apple"
 
         self.finalPos = finalPos
-
-        self.timeManager = timeManager
+        self.tree = tree
 
         self.pickUpSprites = pickUpSprites
         self.PhaseOne()
@@ -70,7 +90,7 @@ class Apple(PickAbleItems):
 
         }
 
-    def NextPhase(self):
+    def growth(self):
         self.currentPhase += 1
         if self.currentPhase <= len(self.phases):
             getCurrentPhase = self.phases.get(self.currentPhase, self.PhaseOne)
