@@ -49,6 +49,8 @@ class Player(Entity):
 
         self.interactableObjects = interactableObjects
 
+        self.laidToBed = False
+
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -66,23 +68,21 @@ class Player(Entity):
             self.animations_States[animation] = import_folder(full_path)
 
     def animate(self):
-        # increments the frame index when receiving input
-        # when frame index reaches to maximum it loops over again to repeat the animation cycle
 
-        self.animation = self.animations_States[self.state]
+        animation = self.animations_States[self.state]
         self.frame_index += self.eqpActionAnimationTime if self.usingItem else self.walkingAnimationTime
 
         notMoving = self.direction.x == 0 and self.direction.y == 0
 
-        if self.frame_index >= len(self.animation):
-            self.frame_index = 0 if not self.usingItem else len(self.animation) - 1
+        if self.frame_index >= len(animation):
+            self.frame_index = 0 if not self.usingItem else len(animation) - 1
 
             usingEquipment = not "idle" in self.state and notMoving
             if usingEquipment:
                 self.createEquipmentTile()
                 self.usingItem = False
 
-        self.image = self.animation[int(self.frame_index)].convert_alpha()
+        self.image = animation[int(self.frame_index)].convert_alpha()
 
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
@@ -179,7 +179,7 @@ class Player(Entity):
     def getInputs(self):
         keys = pg.key.get_pressed()
 
-        if not self.usingItem:
+        if not self.usingItem and not self.laidToBed:
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
             elif keys[pg.K_s]:
@@ -192,11 +192,12 @@ class Player(Entity):
                 self.idleState()
 
     def checkifSleepy(self,dayTime):
-        if self.mood != "Happy":
-            if dayTime == True:
-                self.mood = "Idle"
-            else:
+        if self.mood != "Happy" :
+
+            if dayTime == False or self.laidToBed:
                 self.mood = "Sleepy"
+            else:
+                self.mood = "Idle"
 
     def updateMood(self):
         if self.mood == "Happy":

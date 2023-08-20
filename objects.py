@@ -71,8 +71,9 @@ class PickAbleItems(pg.sprite.Sprite):
             self.tickStart = pg.time.get_ticks()
 
         if self.currentTime - self.tickStart > 100 and self.collided:
-            player.increaseCoin(self.data["costs"])
-            coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
+            if self.data["name"] in sellableItems:
+                player.increaseCoin(self.data["costs"])
+                coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
             if self.type == "Apple" and hasattr(self,"tree"):
                 self.tree.fruit = None
             self.kill()
@@ -93,7 +94,6 @@ class ChestObject(pg.sprite.Sprite):
     def CloseAnimation(self):
         self.image = chestSprites[1]
 
-
 class ChestTile(InteractableObjects):
     def __init__(self,pos,group,chestObject,player,image=testSprites["Wall"]):
         super().__init__(image,pos,group)
@@ -110,7 +110,6 @@ class ChestTile(InteractableObjects):
         if keys[pg.K_x]:
             if not self.interacted:
                 self.chestObject.OpenAnimation()
-                playerInventory.sellItems()
                 self.interacted = True
             else:
                 return
@@ -121,10 +120,10 @@ class ChestTile(InteractableObjects):
 
 
 class BedTile(InteractableObjects):
-    def __init__(self,group,timeManager,pos=(848,800),image=testSprites["Wall"]):
+    def __init__(self,group,player,pos=(848,800),image=testSprites["Wall"]):
         super().__init__(image,pos,group)
 
-        self.timeManager = timeManager
+        self.player = player
         self.type = "object"
         self.rect = image.get_rect(topleft=pos)
 
@@ -133,7 +132,7 @@ class BedTile(InteractableObjects):
 
         if keys[pg.K_x]:
             if not self.interacted:
-                self.timeManager.laidToBed = True
+                self.player.laidToBed = True
                 self.interacted = True
 
     def disengage(self):

@@ -108,16 +108,6 @@ class Inventory:
                     self.sellableItems.append(itemSlots)
                 return
 
-    def sellItems(self):
-        if len(self.sellableItems) > 0:
-            for itemIndex,itemSlots in enumerate(self.sellableItems):
-                self.player.increaseCoin(itemSlots)
-                print("this")
-                itemSlots.itemHolding = None
-
-                itemSlots.sprite = itemSlots.defaultSprite
-                itemSlots.selectedSprite = itemSlots.defaultSelectedSprite
-        self.sellableItems.clear()
 
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment

@@ -89,11 +89,10 @@ class Level:
 
         self.createMap()
 
-
-
-
-
-
+        self.getPlayerData([self.timeManager,
+                              self.ui,
+                              self.chestTile,
+                              self.bedTile])
 
     def createMap(self):
 
@@ -121,15 +120,13 @@ class Level:
 
                         if style == "InteractableObjects":
                             if column == "Bed":
-                                self.bedTile = BedTile([self.interactableSprites], self.timeManager)
+                                self.bedTile = BedTile([self.interactableSprites], None)
                             if column == "Chest":
                                 self.chestObject = ChestObject((x, y - tileSize),[self.visibleSprites,self.collisionSprites])
                                 self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player)
 
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
-
-
 
 
         self.player = Player(
@@ -143,9 +140,10 @@ class Level:
             self.timeManager
             )
 
-        self.timeManager.player = self.player
-        self.ui.player = self.player
-        self.chestTile.player = self.player
+    def getPlayerData(self,object):
+        for classes in object:
+            classes.player = self.player
+
 
     def plantGrowth(self):
         for soil in self.PlantedSoilTileList:
@@ -157,7 +155,6 @@ class Level:
     def playerPickUpItems(self):
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
             if items.hitbox.colliderect(self.player.hitbox):
-
                 items.pickUpItem(self.timeManager.plantList,self.player,self.visibleSprites,self.coinList)
 
 
