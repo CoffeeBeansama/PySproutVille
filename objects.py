@@ -72,6 +72,7 @@ class PickAbleItems(pg.sprite.Sprite):
 
         if self.currentTime - self.tickStart > 100 and self.collided:
             player.coins += self.data["costs"]
+
             coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
             if self.type == "Apple" and hasattr(self,"tree"):
                 self.tree.fruit = None

@@ -4,6 +4,8 @@ from entity import Entity
 from support import import_folder
 from inventory import Inventory
 from objects import CoinOverHead
+from enum import Enum
+
 
 
 class Player(Entity):
@@ -24,6 +26,8 @@ class Player(Entity):
         self.hitbox = self.rect.inflate(0, 0)
 
         self.coins = 0
+
+        self.mood = "Idle"
 
         self.collisionSprites = collidable_sprites
         self.pickAbleItems = pickableItems
