@@ -33,7 +33,7 @@ class Player(Entity):
         self.pickAbleItems = pickableItems
         self.createEquipmentTile = useEquipmentTile
 
-        self.inventory = Inventory(self.coins)
+        self.inventory = Inventory(self)
         self.displayInventory = False
 
         self.facingDirection = "Down"
@@ -142,6 +142,13 @@ class Player(Entity):
                     else:
                         self.hitbox.bottom = sprite.hitbox.top
 
+
+    def increaseCoin(self,cost):
+        self.mood = "Happy"
+        self.coins += cost
+        self.moodTickTime = pg.time.get_ticks()
+
+
     def idleState(self):
         self.direction.x = 0
         self.direction.y = 0
@@ -184,12 +191,27 @@ class Player(Entity):
             else:
                 self.idleState()
 
+    def checkifSleepy(self,dayTime):
+        if self.mood != "Happy":
+            if dayTime == True:
+                self.mood = "Idle"
+            else:
+                self.mood = "Sleepy"
+
+    def updateMood(self):
+        if self.mood == "Happy":
+            if self.currentTime - self.moodTickTime > 300:
+                self.mood = "Idle"
+
     def update(self):
+        self.currentTime = pg.time.get_ticks()
 
         if self.displayInventory:
             self.inventory.display()
 
         else:
+
+            self.updateMood()
             self.getInputs()
             self.movement(playerSpeed)
             self.animate()

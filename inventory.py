@@ -19,13 +19,13 @@ class Slot:
 
 
 class Inventory:
-    def __init__(self,playerCoins):
+    def __init__(self,player):
 
         self.inventoryPos = (80, 500)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
 
-        self.playerCoins = playerCoins
+        self.player = player
 
         self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
         self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
@@ -111,8 +111,10 @@ class Inventory:
     def sellItems(self):
         if len(self.sellableItems) > 0:
             for itemIndex,itemSlots in enumerate(self.sellableItems):
-                self.playerCoins += itemSlots.itemHolding["costs"]
+                self.player.increaseCoin(itemSlots)
+                print("this")
                 itemSlots.itemHolding = None
+
                 itemSlots.sprite = itemSlots.defaultSprite
                 itemSlots.selectedSprite = itemSlots.defaultSelectedSprite
         self.sellableItems.clear()

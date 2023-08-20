@@ -77,9 +77,9 @@ class Level:
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
 
+        self.ui = Ui(None)
+        self.timeManager = TimeManager(None)
 
-
-        self.timeManager = TimeManager()
         self.PlantedSoilTileList = []
 
         self.plantTile = None
@@ -89,7 +89,10 @@ class Level:
 
         self.createMap()
 
-        self.ui = Ui(self.player)
+
+
+
+
 
 
     def createMap(self):
@@ -140,7 +143,8 @@ class Level:
             self.timeManager
             )
 
-
+        self.timeManager.player = self.player
+        self.ui.player = self.player
         self.chestTile.player = self.player
 
     def plantGrowth(self):

@@ -4,7 +4,7 @@ from settings import *
 
 class TimeManager:
 
-    def __init__(self):
+    def __init__(self,player):
         self.plantList = []
         self.currentTime = 0
         self.startTickTime = 0
@@ -38,6 +38,7 @@ class TimeManager:
 
         self.laidToBed = False
 
+        self.player = player
 
     def newDay(self):
 
@@ -76,6 +77,7 @@ class TimeManager:
         self.dayTime = False
         self.startTickTime = pg.time.get_ticks()
 
+
     def sunset(self):
         if self.darknessOpacity <= 255:
             self.darknessOpacity += 0.07
@@ -103,5 +105,5 @@ class TimeManager:
             if self.currentTime - self.startTickTime > self.dayNightCyclePeriod:
                 self.sunrise()
 
-
+        self.player.checkifSleepy(self.dayTime)
         self.daySleepTransitionAnimation()

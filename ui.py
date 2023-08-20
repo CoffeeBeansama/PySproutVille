@@ -27,6 +27,7 @@ class Ui:
         self.frameIndex = 0
         self.animationTime = 1/16
 
+
         self.staticUi = {
             "FaceContainer": [self.faceContainerBackground,self.faceContainerBackgroundPos],
             "CoinHeartContainer": [self.coinHeartBackGround,self.coinHeartBackGroundPos],
@@ -54,7 +55,7 @@ class Ui:
         self.frameIndex += self.animationTime
 
         if self.frameIndex >= len(animation):
-            self.frameIndex = 0
+            self.frameIndex = 0 if self.player.mood != "Happy" else len(animation) -1
 
         self.faceSprite = animation[int(self.frameIndex)].convert_alpha()
         self.faceSprite = pg.transform.scale(self.faceSprite,(62,62))
