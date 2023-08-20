@@ -10,6 +10,7 @@ from equipment import Equipment
 from timeManager import TimeManager
 from objects import *
 from tree import *
+from ui import Ui
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -77,6 +78,7 @@ class Level:
         self.interactableSprites = pg.sprite.Group()
 
 
+
         self.timeManager = TimeManager()
         self.PlantedSoilTileList = []
 
@@ -86,6 +88,8 @@ class Level:
         self.coinList = []
 
         self.createMap()
+
+        self.ui = Ui(self.player)
 
 
     def createMap(self):
@@ -200,4 +204,5 @@ class Level:
         self.player.update()
         self.playerPickUpItems()
         self.updateCoinList()
+        self.ui.display()
         self.timeManager.dayNightCycle()

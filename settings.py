@@ -96,9 +96,14 @@ testSprites = {"Wall": loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize
                "AppleFruit": loadSprite(f"{testSpritePath}AppleFruit.png",(tileSize // 2,tileSize // 2)),
                }
 
-uiSprites = {"InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",
+uiSprites = {
+             "InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",
              "EmptySlot": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png",slotScale),
              "EmptySlotSelected": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlotSelected.png",slotScale),
+             "FaceContainer":loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/FaceContainer.png",(100,100)),
+             "HeartCoinContainer":loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/CoinHeartContainer.png",(130,130)),
+             "DefaultFace": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/DefaultFace.png",(62,62)),
+
              }
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
