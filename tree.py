@@ -4,13 +4,13 @@ from settings import *
 from objects import PickAbleItems
 
 class Tree(pg.sprite.Sprite):
-    def __init__(self,pos,group,appleFruitGroup,pickUpSprites,timeManager):
+    def __init__(self,pos,group,visibleSprites,pickUpSprites,timeManager):
         super().__init__(group)
         self.type = "tree"
         self.image = testSprites["Wall"]
 
         self.pickUpSprites = pickUpSprites
-        self.appleFruitGroup = appleFruitGroup
+        self.visibleSprites = visibleSprites
 
         self.pos = pos
         self.lives = 3
@@ -28,9 +28,11 @@ class Tree(pg.sprite.Sprite):
         appleFruitFinalPosY = y + tileSize + 5
 
         TreeLeaves((x, y - tileSize), [group])
-        apple = Apple((x + randomX, (y - tileSize) + randomY), appleFruitGroup,itemData["Apple"], (x, appleFruitFinalPosY), self.pickUpSprites,self)
+        apple = Apple((x + randomX, (y - tileSize) + randomY), visibleSprites,itemData["Apple"], (x, appleFruitFinalPosY), self.pickUpSprites,self)
         self.fruit = apple
         self.timeManager.plantList.append(self)
+
+        self.producedWood = False
 
     def NextPhase(self):
         self.fruit.growth() if self.fruit is not None else self.resetFruit()
@@ -42,18 +44,18 @@ class Tree(pg.sprite.Sprite):
 
         randomX = randint(-3,3)
         randomY = randint(-3,3)
-        appleFruitFinalPosY = y + tileSize + 5
+        self.finalYPos = y + tileSize + 5
 
-        newApple = Apple((x + randomX, (y - tileSize) + randomY), self.appleFruitGroup, itemData["Apple"],
-                               (x, appleFruitFinalPosY), self.pickUpSprites,self)
+        newApple = Apple((x + randomX, (y - tileSize) + randomY), self.visibleSprites, itemData["Apple"],
+                         (x, self.finalYPos), self.pickUpSprites, self)
 
         self.fruit = newApple
 
 
     def chopped(self):
         self.lives -= 1
-        if self.lives <= 0:
-            print("this")
+        if self.lives <= 0 and not self.producedWood:
+            Wood((x,self.finalYPos),self.visibleSprites,itemData["Wood"],self.pickUpSprites,self)
 
 
 class TreeLeaves(pg.sprite.Sprite):
@@ -114,3 +116,15 @@ class Apple(PickAbleItems):
 
         self.add(self.pickUpSprites)
 
+class Wood(PickAbleItems):
+    def __init__(self,pos,group,data,pickUpSprites,tree):
+        super().__init__(pos,group,data)
+
+        self.type = "Wood"
+
+        self.tree = tree
+
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0, 0)
+
+        self.pickUpSprites = pickUpSprites

@@ -15,6 +15,7 @@ slotScale = (55, 55)
 itemScale = (24,24)
 
 
+
 itemData = {
     "Hoe":{
         "name": "Hoe",
@@ -67,9 +68,11 @@ itemData = {
         "PhaseFourSprite": loadSprite(f"{spritePath}/Plants/Tomato/4.png",(tileSize,tileSize)),
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Tomato/collision.png",(tileSize,tileSize)),
-
-
     },
+    "Wood":{
+        "name" : "Wood",
+
+    }
 
 }
 
@@ -111,5 +114,7 @@ equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["Wheat","Tomato"]
 sellableItems = ["Wheat","Tomato","Apple"]
 groundTiles = ["Soil","Plants"]
+
+letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
 

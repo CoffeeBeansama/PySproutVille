@@ -6,7 +6,7 @@ class Ui:
     def __init__(self,player):
 
         self.screen = pg.display.get_surface()
-
+        self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
         self.player = player
 
         self.faceContainerBackground = uiSprites["FaceContainer"].convert_alpha()
@@ -27,6 +27,7 @@ class Ui:
         self.frameIndex = 0
         self.animationTime = 1/16
 
+        self.letterSprites = None
 
         self.staticUi = {
             "FaceContainer": [self.faceContainerBackground,self.faceContainerBackgroundPos],
@@ -35,6 +36,15 @@ class Ui:
         }
 
         self.importPlayerMoodSprites()
+        self.importFontSprites()
+
+    def importFontSprites(self):
+        self.letterSprites = {
+        }
+        for i in letters:
+            self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png",(32,32)).convert_alpha()
+
+        print(self.letterSprites)
 
     def importPlayerMoodSprites(self):
         faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/face/"
