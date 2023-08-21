@@ -19,9 +19,9 @@ class Ui:
         self.faceSprite = uiSprites["DefaultFace"].convert_alpha()
         self.faceSpritePos = (30,30)
 
-        self.font = pg.font.Font("Font/ThaleahFat.ttf",42)
-        self.fontColor = (0,0,0)
-        self.coinCounterLocation = (160,95)
+        self.font = pg.font.Font("Font/PeaberryBase.ttf",26)
+        self.fontColor = (128,0,0)
+        self.coinCounterLocation = (160,102)
         self.coinText = None
 
         self.frameIndex = 0
@@ -44,7 +44,7 @@ class Ui:
         for i in letters:
             self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png",(32,32)).convert_alpha()
 
-        print(self.letterSprites)
+
 
     def importPlayerMoodSprites(self):
         faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/face/"
