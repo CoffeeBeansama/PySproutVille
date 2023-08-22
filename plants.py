@@ -48,7 +48,7 @@ class PlantTile(PickAbleItems):
         self.pickupitems = pickupitemSprites
 
         self.data = data
-
+        self.image = None
         self.PhaseOne()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-20, -20)

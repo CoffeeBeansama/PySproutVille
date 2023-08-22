@@ -28,7 +28,7 @@ class TimeManager:
 
         self.startTickTime = pg.time.get_ticks()
 
-        self.transitioned = False
+        self.dayTransitioned = False
 
         self.player = player
 
@@ -50,7 +50,7 @@ class TimeManager:
     def daySleepTransitionAnimation(self):
 
         if self.player.laidToBed:
-            if not self.transitioned:
+            if not self.dayTransitioned:
                 self.darknessFadeAnimation()
             else:
                 self.relightAnimation()
@@ -62,7 +62,8 @@ class TimeManager:
         else:
             self.transitionTickTime = pg.time.get_ticks()
             self.newDay()
-            self.transitioned = True
+            self.dayTransitioned = True
+            self.player.resetLives()
 
     def relightAnimation(self):
         if self.currentTime - self.transitionTickTime > 2000:
@@ -71,8 +72,9 @@ class TimeManager:
                 self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
 
             else:
-                self.transitioned = False
+                self.dayTransitioned = False
                 self.player.laidToBed = False
+
     def evening(self):
         self.nightTime = True
         self.dayTime = False

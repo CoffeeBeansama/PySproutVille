@@ -13,6 +13,7 @@ class Tree(pg.sprite.Sprite):
         self.visibleSprites = visibleSprites
 
         self.pos = pos
+        self.maxLives = 3
         self.lives = 3
 
         self.timeManager = timeManager
@@ -35,9 +36,9 @@ class Tree(pg.sprite.Sprite):
         self.producedWood = False
 
     def NextPhase(self):
-        self.fruit.growth() if self.fruit is not None else self.resetFruit()
+        self.fruit.growth() if self.fruit is not None else self.reset()
 
-    def resetFruit(self):
+    def reset(self):
         x = self.pos[0]
         y = self.pos[1]
 
@@ -48,8 +49,11 @@ class Tree(pg.sprite.Sprite):
         newApple = Apple((x + randomX, (y - tileSize) + randomY), self.visibleSprites, itemData["Apple"],
                          (x, applePos), self.pickUpSprites, self)
 
-
         self.fruit = newApple
+
+        self.lives = self.maxLives
+        self.producedWood = False
+
 
 
     def chopped(self):
@@ -69,7 +73,6 @@ class TreeLeaves(pg.sprite.Sprite):
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,-5)
-
 
 class Apple(PickAbleItems):
     def __init__(self,pos,group,data,finalPos,pickUpSprites,tree):

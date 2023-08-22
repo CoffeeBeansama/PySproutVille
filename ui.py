@@ -73,6 +73,7 @@ class DynamicUI:
         self.faceSpritePos = (30, 30)
         self.faceSpriteScale = (62,62)
 
+
         self.playerLives = self.player.lives
         self.frameIndex = 0
         self.fullHeartSprite = uiSprites["FullHeart"].convert_alpha()
@@ -137,6 +138,11 @@ class DynamicUI:
         else:
             self.hearts[1][0] = self.emptyHeartSprite
 
+    def resetPlayerHeart(self):
+        if self.player.laidToBed:
+            self.hearts[self.player.lives][0] = self.fullHeartSprite
+
+
     def display(self):
 
         for key,values in enumerate(self.hearts.values()):
@@ -144,7 +150,7 @@ class DynamicUI:
 
         self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
         self.screen.blit(self.coinText, self.coinCounterLocation)
-
+        self.resetPlayerHeart()
         self.animateFace()
         self.screen.blit(self.faceSprite, self.faceSpritePos)
 

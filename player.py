@@ -16,7 +16,7 @@ class Player(Entity):
         self.animations_States = None
         self.startingPos = (948, 866)
 
-        self.maxLives = 6
+        self.maxLives = 3
         self.lives = 3
 
         self.frame_index = 0
@@ -195,6 +195,8 @@ class Player(Entity):
             else:
                 self.idleState()
 
+    def resetLives(self):
+        self.lives = self.maxLives
     def checkifSleepy(self,dayTime):
         if self.mood != "Happy" :
 
