@@ -71,6 +71,7 @@ class DynamicUI:
 
         self.player = player
         self.faceSpritePos = (30, 30)
+        self.faceSpriteScale = (62,62)
 
         self.playerLives = self.player.lives
         self.frameIndex = 0
@@ -88,7 +89,10 @@ class DynamicUI:
         self.importPlayerMoodSprites()
 
         self.heartList = []
+        self.heartPosX = 133
+        self.heartPosY = 19
         self.createHearts()
+
 
     def importPlayerMoodSprites(self):
         faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/face/"
@@ -111,49 +115,33 @@ class DynamicUI:
         if self.frameIndex >= len(animation):
             self.frameIndex = 0 if self.player.mood != "Happy" else len(animation) -1
 
-        self.faceSprite = animation[int(self.frameIndex)].convert_alpha()
-        self.faceSprite = pg.transform.scale(self.faceSprite,(62,62))
-
-
+        self.faceSprite = pg.transform.scale(animation[int(self.frameIndex)],self.faceSpriteScale).convert_alpha()
 
     def createHearts(self):
+
         self.hearts = {
-            1 : [self.fullHeartSprite,(133,19)],
-            2: [self.fullHeartSprite, (163, 19)],
-            3: [self.fullHeartSprite, (193, 19)]
+            1: [self.fullHeartSprite,(self.heartPosX,self.heartPosY)],
+            2: [self.fullHeartSprite, (self.heartPosX + 30, self.heartPosY)],
+            3: [self.fullHeartSprite, (self.heartPosX + 60, self.heartPosY)]
         }
 
         for i in self.hearts.values():
             self.heartList.append(i)
 
-        self.playerHearts = {
-            0 : self.ZeroLive,
-            1 : self.OneLive,
-            2 : self.TwoLives,
-            3 : self.ThreeLives
+    def decreasePlayerHeart(self):
+        self.playerLives = self.player.lives
 
-        }
-
-    def ZeroLive(self):
-        for i in range(1, 3):
-            self.hearts[i][0] = self.emptyHeartSprite
-    def OneLive(self):
-        for i in range(1, 3):
-            self.hearts[i][0] = self.emptyHeartSprite
-        self.hearts[1][0] = self.fullHeartSprite
-
-    def TwoLives(self):
-        for i in range(1, 2):
-            self.hearts[i][0] = self.fullHeartSprite
-        self.hearts[3][0] = self.emptyHeartSprite
-
-    def ThreeLives(self):
-        for i in range(1,3):
-            self.hearts[i][0] = self.fullHeartSprite
-
+        if self.player.lives > 0:
+            self.hearts[self.player.lives][0] = self.fullHeartSprite
+            self.hearts[self.player.lives + 1][0] = self.emptyHeartSprite
+        else:
+            self.hearts[1][0] = self.emptyHeartSprite
 
     def display(self):
-        self.playerLives = self.player.lives
+
+        for key,values in enumerate(self.hearts.values()):
+            self.screen.blit(values[0],values[1])
+
         self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
         self.screen.blit(self.coinText, self.coinCounterLocation)
 
@@ -162,10 +150,6 @@ class DynamicUI:
 
 
 
-        if self.playerLives >= 0:
-            getPlayerRemainingHearts = self.playerHearts.get(self.playerLives)
-            getPlayerRemainingHearts()
 
-        for key,values in enumerate(self.hearts.values()):
-            self.screen.blit(values[0],values[1])
+
 

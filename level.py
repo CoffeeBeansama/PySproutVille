@@ -93,6 +93,7 @@ class Level:
                               self.bedTile])
 
         self.ui = Ui(self.player)
+        self.dynamicUi = self.ui.dynamicUi
 
     def createMap(self):
 
@@ -137,6 +138,10 @@ class Level:
             self.pickAbleItemSprites,
             self.timeManager,
             )
+
+    def DecreasePlayerLives(self):
+        self.player.lives -= 1
+        self.dynamicUi.decreasePlayerHeart()
 
 
     def getPlayerData(self,object):
