@@ -4,8 +4,6 @@ from enum import Enum
 from abc import ABC, abstractmethod
 from objects import PickAbleItems
 
-
-
 class SoilTile(pg.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
@@ -53,7 +51,7 @@ class PlantTile(PickAbleItems):
 
         self.PhaseOne()
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hitbox = self.rect.inflate(-20, -20)
 
         self.timeManager = timeManager
         self.soil = soil

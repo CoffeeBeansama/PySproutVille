@@ -77,7 +77,6 @@ class Level:
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
 
-        self.ui = Ui(None)
         self.timeManager = TimeManager(None)
 
         self.PlantedSoilTileList = []
@@ -90,9 +89,10 @@ class Level:
         self.createMap()
 
         self.getPlayerData([self.timeManager,
-                              self.ui,
                               self.chestTile,
                               self.bedTile])
+
+        self.ui = Ui(self.player)
 
     def createMap(self):
 
@@ -117,7 +117,6 @@ class Level:
                         if style == "soilTile":
                             SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
 
-
                         if style == "InteractableObjects":
                             if column == "Bed":
                                 self.bedTile = BedTile([self.interactableSprites], None)
@@ -127,7 +126,6 @@ class Level:
 
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
-
 
         self.player = Player(
             testSprites["Player"],

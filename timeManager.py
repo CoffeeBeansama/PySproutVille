@@ -21,15 +21,7 @@ class TimeManager:
 
         self.day = 1
         self.dayNightCyclePeriod = 300000
-        self.fullDayDuration = 36000  # 10 minutes
-
-        # sunrise at 5am
-        # sunset 6pm-9pm
-        # 7.08 minutes sunset starts
-        # 8.33 minutes at full darkness
-        # 1000 per second
-        # 60000 per minute
-        # 25000 in game one hour
+        self.fullDayDuration = 36000
 
         self.dayTime = True
         self.nightTime = False

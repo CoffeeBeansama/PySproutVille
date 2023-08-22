@@ -104,8 +104,6 @@ class Inventory:
                 itemSlots.itemHolding = item.data
                 itemSlots.sprite = item.data["uiSprite"]
                 itemSlots.selectedSprite = item.data["uiSpriteSelected"]
-                if item.data["name"] in sellableItems:
-                    self.sellableItems.append(itemSlots)
                 return
 
 

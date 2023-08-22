@@ -25,10 +25,10 @@ class Tree(pg.sprite.Sprite):
 
         randomX = randint(-3,3)
         randomY = randint(-3,3)
-        appleFruitFinalPosY = y + tileSize + 5
+        self.dropZoneY = y + tileSize + 5
 
         TreeLeaves((x, y - tileSize), [group])
-        apple = Apple((x + randomX, (y - tileSize) + randomY), visibleSprites,itemData["Apple"], (x, appleFruitFinalPosY), self.pickUpSprites,self)
+        apple = Apple((x + randomX, (y - tileSize) + randomY), visibleSprites,itemData["Apple"], (x, self.dropZoneY), self.pickUpSprites,self)
         self.fruit = apple
         self.timeManager.plantList.append(self)
 
@@ -37,25 +37,28 @@ class Tree(pg.sprite.Sprite):
     def NextPhase(self):
         self.fruit.growth() if self.fruit is not None else self.resetFruit()
 
-
     def resetFruit(self):
         x = self.pos[0]
         y = self.pos[1]
 
         randomX = randint(-3,3)
         randomY = randint(-3,3)
-        self.finalYPos = y + tileSize + 5
+        applePos = y + tileSize + 5
 
         newApple = Apple((x + randomX, (y - tileSize) + randomY), self.visibleSprites, itemData["Apple"],
-                         (x, self.finalYPos), self.pickUpSprites, self)
+                         (x, applePos), self.pickUpSprites, self)
+
 
         self.fruit = newApple
 
 
     def chopped(self):
+        x = self.pos[0]
         self.lives -= 1
         if self.lives <= 0 and not self.producedWood:
-            Wood((x,self.finalYPos),self.visibleSprites,itemData["Wood"],self.pickUpSprites,self)
+            Wood((x,self.dropZoneY),self.visibleSprites,itemData["Wood"],self.pickUpSprites,self)
+
+            self.producedWood = True
 
 
 class TreeLeaves(pg.sprite.Sprite):
@@ -81,7 +84,7 @@ class Apple(PickAbleItems):
         self.PhaseOne()
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0,0)
+        self.hitbox = self.rect.inflate(-15,-15)
 
         self.currentPhase = 1
 
@@ -110,11 +113,14 @@ class Apple(PickAbleItems):
         self.ProduceCrop()
 
     def ProduceCrop(self):
+
         self.image = self.data["PhaseThreeSprite"].convert_alpha()
         self.rect.centery = self.finalPos[1]
         self.hitbox.centery = self.finalPos[1]
 
         self.add(self.pickUpSprites)
+        self.tree.fruit = None
+
 
 class Wood(PickAbleItems):
     def __init__(self,pos,group,data,pickUpSprites,tree):
@@ -123,8 +129,11 @@ class Wood(PickAbleItems):
         self.type = "Wood"
 
         self.tree = tree
+        self.data = data
+        self.image = self.data["CropSprite"].convert_alpha()
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0, 0)
-
+        self.hitbox = self.rect.inflate(-15, -15)
+        self.hitbox.centery = pos[1]
         self.pickUpSprites = pickUpSprites
+        self.add(self.pickUpSprites)

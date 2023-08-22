@@ -52,6 +52,7 @@ class CoinOverHead(pg.sprite.Sprite):
         self.image = self.sprites[int(self.frameIndex)]
         self.rect.y -= 1 * self.speed
 
+
 class PickAbleItems(pg.sprite.Sprite):
     def __init__(self,pos,group,data):
         super().__init__(group)
@@ -74,8 +75,9 @@ class PickAbleItems(pg.sprite.Sprite):
             if self.data["name"] in sellableItems:
                 player.increaseCoin(self.data["costs"])
                 coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
-            if self.type == "Apple" and hasattr(self,"tree"):
-                self.tree.fruit = None
+            else:
+                player.inventory.AddItem(self)
+
             self.kill()
 
 class ChestObject(pg.sprite.Sprite):
@@ -97,7 +99,6 @@ class ChestObject(pg.sprite.Sprite):
 class ChestTile(InteractableObjects):
     def __init__(self,pos,group,chestObject,player,image=testSprites["Wall"]):
         super().__init__(image,pos,group)
-
 
         self.type = "chest"
         self.player = player

@@ -70,7 +70,11 @@ itemData = {
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Tomato/collision.png",(tileSize,tileSize)),
     },
     "Wood":{
-        "name" : "Wood",
+        "name": "Wood",
+        "CropSprite":  loadSprite(f"{spritePath}/Plants/Wood/Wood.png",(tileSize,tileSize)),
+        "uiSprite": loadSprite(f"{uiPath}Wood.png", slotScale),
+        "uiSpriteSelected": loadSprite(f"{uiPath}WoodSelected.png", slotScale),
+        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wood/collision.png",(tileSize,tileSize)),
 
     }
 
@@ -115,6 +119,6 @@ seedItems = ["Wheat","Tomato"]
 sellableItems = ["Wheat","Tomato","Apple"]
 groundTiles = ["Soil","Plants"]
 
-letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","!"]
+
 
 
