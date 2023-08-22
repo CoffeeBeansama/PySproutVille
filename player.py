@@ -16,6 +16,9 @@ class Player(Entity):
         self.animations_States = None
         self.startingPos = (948, 866)
 
+        self.maxLives = 3
+        self.lives = 3
+
         self.frame_index = 0
         self.walkingAnimationTime = 1 / 8
         self.eqpActionAnimationTime = 1 / 20
@@ -162,6 +165,8 @@ class Player(Entity):
         self.equippedItem = equipmentItems[self.itemIndex]
 
     def useItemEquipped(self):
+        self.lives -= 1
+
         inventory = self.inventory
         notMoving = self.direction.x == 0 and self.direction.y == 0
 

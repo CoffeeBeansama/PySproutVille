@@ -59,6 +59,7 @@ class StaticUI:
 
         }
 
+
     def display(self):
         for keys, values in enumerate(self.staticUi.values()):
             self.screen.blit(values[0], values[1])
@@ -71,7 +72,11 @@ class DynamicUI:
         self.player = player
         self.faceSpritePos = (30, 30)
 
+        self.playerLives = self.player.lives
         self.frameIndex = 0
+        self.fullHeartSprite = uiSprites["FullHeart"].convert_alpha()
+        self.emptyHeartSprite = uiSprites["EmptyHeart"].convert_alpha()
+
         self.animationTime = 1 / 16
 
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 26)
@@ -81,6 +86,9 @@ class DynamicUI:
 
         self.animationStates = None
         self.importPlayerMoodSprites()
+
+        self.heartList = []
+        self.createHearts()
 
     def importPlayerMoodSprites(self):
         faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/face/"
@@ -106,10 +114,58 @@ class DynamicUI:
         self.faceSprite = animation[int(self.frameIndex)].convert_alpha()
         self.faceSprite = pg.transform.scale(self.faceSprite,(62,62))
 
+
+
+    def createHearts(self):
+        self.hearts = {
+            1 : [self.fullHeartSprite,(133,19)],
+            2: [self.fullHeartSprite, (163, 19)],
+            3: [self.fullHeartSprite, (193, 19)]
+        }
+
+        for i in self.hearts.values():
+            self.heartList.append(i)
+
+        self.playerHearts = {
+            0 : self.ZeroLive,
+            1 : self.OneLive,
+            2 : self.TwoLives,
+            3 : self.ThreeLives
+
+        }
+
+    def ZeroLive(self):
+        for i in range(1, 3):
+            self.hearts[i][0] = self.emptyHeartSprite
+    def OneLive(self):
+        for i in range(1, 3):
+            self.hearts[i][0] = self.emptyHeartSprite
+        self.hearts[1][0] = self.fullHeartSprite
+
+    def TwoLives(self):
+        for i in range(1, 2):
+            self.hearts[i][0] = self.fullHeartSprite
+        self.hearts[3][0] = self.emptyHeartSprite
+
+    def ThreeLives(self):
+        for i in range(1,3):
+            self.hearts[i][0] = self.fullHeartSprite
+
+
     def display(self):
+        self.playerLives = self.player.lives
         self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
         self.screen.blit(self.coinText, self.coinCounterLocation)
 
         self.animateFace()
         self.screen.blit(self.faceSprite, self.faceSpritePos)
+
+
+
+        if self.playerLives >= 0:
+            getPlayerRemainingHearts = self.playerHearts.get(self.playerLives)
+            getPlayerRemainingHearts()
+
+        for key,values in enumerate(self.hearts.values()):
+            self.screen.blit(values[0],values[1])
 

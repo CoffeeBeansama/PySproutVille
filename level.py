@@ -135,8 +135,9 @@ class Level:
             self.createEquipmentTile,
             self.interactableSprites,
             self.pickAbleItemSprites,
-            self.timeManager
+            self.timeManager,
             )
+
 
     def getPlayerData(self,object):
         for classes in object:
@@ -149,6 +150,7 @@ class Level:
 
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
+
 
     def playerPickUpItems(self):
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
