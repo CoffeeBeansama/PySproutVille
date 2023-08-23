@@ -23,17 +23,20 @@ class DialogueSystem:
     def __init__(self,player):
 
         self.screen = pg.display.get_surface()
-        self.textPos = (500 // 2, 500 // 2)
+        self.textPos = (200, 500)
         self.textList = []
         self.player = player
         self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
 
+        self.dialogueBoxSprite = uiSprites["DialogueBox"].convert_alpha()
+        self.boxPos = (30,440)
+
         self.letterSprites = None
-        self.speaker = "Aigo"
+        self.speaker = None
 
         self.dialogueIndex = 1
         self.charIndex = 0
-        self.spaceBetweenChar = 10
+        self.xStartText = 175
 
         self.ticked = False
         self.lineFinished = False
@@ -44,7 +47,7 @@ class DialogueSystem:
         self.letterSprites = {
         }
         for i in letters:
-            self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (32, 32)).convert_alpha()
+            self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (24, 24)).convert_alpha()
 
     def renderText(self, txt):
         if not self.lineFinished:
@@ -53,13 +56,20 @@ class DialogueSystem:
                     self.ticked = True
                     for txts in range(len(txt)):
                         char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
-                        self.spaceBetweenChar += 24
-                        self.textList.append([char, self.spaceBetweenChar])
+                        self.xStartText += 12
+                        self.textList.append([char, self.xStartText])
                         self.charIndex += 1
                         self.tickTime = pg.time.get_ticks()
                         return
             else:
                 self.lineFinished = True
+
+    def nextDialogue(self):
+        self.charIndex = 0
+        self.dialogueIndex += 1
+        self.xStartText = 175
+        self.textList.clear()
+        self.lineFinished = False
 
     def display(self):
         currentTime = pg.time.get_ticks()
@@ -75,18 +85,15 @@ class DialogueSystem:
             if currentTime - self.tickTime > 50:
                 self.ticked = False
 
-        # if self.dialogueIndex <= len(dialogues[self.speaker]):
-            # self.renderText(dialogues[self.speaker][self.dialogueIndex])
+        if self.speaker is not None:
+            if self.dialogueIndex <= len(dialogues[self.speaker]):
+                self.renderText(dialogues[self.speaker][self.dialogueIndex])
+                self.screen.blit(self.dialogueBoxSprite,self.boxPos)
 
-        # for i in self.textList:
-            # self.screen.blit(i[0], (i[1], self.pos[1]))
+        for i in self.textList:
+            self.screen.blit(i[0], (i[1], self.textPos[1]))
 
-    def nextDialogue(self):
-        self.charIndex = 0
-        self.dialogueIndex += 1
-        self.spaceBetweenChar = 10
-        self.textList.clear()
-        self.lineFinished = False
+
 
 
 class StaticUI:

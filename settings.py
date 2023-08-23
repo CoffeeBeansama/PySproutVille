@@ -114,6 +114,8 @@ uiSprites = {
              "FullHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Full.png",(40,38)),
              "HalfHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Half.png",(40,38)),
              "EmptyHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Empty.png",(40,38)),
+             "DialogueBox": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/DialogueBox.png",(750,150)),
+
              }
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]

@@ -95,6 +95,7 @@ class Level:
 
         self.ui = Ui(self.player)
         self.dynamicUi = self.ui.dynamicUi
+        self.merchant.dialogueSystem = self.ui.dialogueSystem
 
     def createMap(self):
 
@@ -124,12 +125,10 @@ class Level:
                                 self.bedTile = Bed([self.interactableSprites], None)
                             if column == "Chest":
                                 self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites)
-
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
 
-
-        self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites)
+        self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None)
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
