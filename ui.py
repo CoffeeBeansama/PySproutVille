@@ -140,7 +140,8 @@ class DynamicUI:
 
     def resetPlayerHeart(self):
         if self.player.laidToBed:
-            self.hearts[self.player.lives][0] = self.fullHeartSprite
+            for i in range(1,4):
+                self.hearts[i][0] = self.fullHeartSprite
 
 
     def display(self):

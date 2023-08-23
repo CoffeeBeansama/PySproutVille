@@ -87,7 +87,7 @@ class Apple(PickAbleItems):
         self.PhaseOne()
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-15,-15)
+        self.hitbox = self.rect.inflate(-10,-10)
 
         self.currentPhase = 1
 
@@ -116,7 +116,6 @@ class Apple(PickAbleItems):
         self.ProduceCrop()
 
     def ProduceCrop(self):
-
         self.image = self.data["PhaseThreeSprite"].convert_alpha()
         self.rect.centery = self.finalPos[1]
         self.hitbox.centery = self.finalPos[1]
@@ -136,7 +135,7 @@ class Wood(PickAbleItems):
         self.image = self.data["CropSprite"].convert_alpha()
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-15, -15)
+        self.hitbox = self.rect.inflate(-10, -10)
         self.hitbox.centery = pos[1]
         self.pickUpSprites = pickUpSprites
         self.add(self.pickUpSprites)

@@ -34,6 +34,7 @@ class Game:
                             player.useItemEquipped()
 
 
+
                     if event.key == pg.K_TAB:
                         player.renderInventory()
 

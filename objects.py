@@ -5,9 +5,9 @@ from settings import *
 from timeManager import TimeManager
 
 
-class InteractableObjects(Tile):
-    def __init__(self,image,pos,group):
-        super().__init__(image,pos,group)
+class InteractableObjects(pg.sprite.Sprite):
+    def __init__(self,groups):
+        super().__init__(groups)
 
         self.interacted = False
 
@@ -80,15 +80,37 @@ class PickAbleItems(pg.sprite.Sprite):
 
             self.kill()
 
-class ChestObject(pg.sprite.Sprite):
-    def __init__(self, pos, group):
+
+class Chest(pg.sprite.Sprite):
+    def __init__(self, pos, group,player,interactableSprites):
         super().__init__(group)
         self.type = "object"
+
+        self.player = player
         self.spriteIndex = 1
         self.image = chestSprites[self.spriteIndex]
         self.animationTime = 1 / 20
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
+
+        self.interactRect = self.image.get_rect(topleft=(pos[0], pos[1] + tileSize))
+        self.interactHitbox = self.interactRect.inflate(-40, -40)
+
+        self.interactableSprites = interactableSprites
+        self.add(self.interactableSprites)
+
+    def interact(self):
+        keys = pg.key.get_pressed()
+        if keys[pg.K_x]:
+            if not self.interacted:
+                self.OpenAnimation()
+                self.interacted = True
+            else:
+                return
+
+    def disengage(self):
+        self.interacted = False
+        self.CloseAnimation()
 
     def OpenAnimation(self):
         self.image = chestSprites[5]
@@ -96,37 +118,18 @@ class ChestObject(pg.sprite.Sprite):
     def CloseAnimation(self):
         self.image = chestSprites[1]
 
-class ChestTile(InteractableObjects):
-    def __init__(self,pos,group,chestObject,player,image=testSprites["Wall"]):
-        super().__init__(image,pos,group)
 
-        self.type = "chest"
-        self.player = player
-        self.rect = image.get_rect(topleft=pos)
-        self.chestObject = chestObject
-
-    def interact(self):
-        keys = pg.key.get_pressed()
-        playerInventory = self.player.inventory
-        if keys[pg.K_x]:
-            if not self.interacted:
-                self.chestObject.OpenAnimation()
-                self.interacted = True
-            else:
-                return
-
-    def disengage(self):
-        self.interacted = False
-        self.chestObject.CloseAnimation()
-
-
-class BedTile(InteractableObjects):
+class Bed(InteractableObjects):
     def __init__(self,group,player,pos=(848,800),image=testSprites["Wall"]):
-        super().__init__(image,pos,group)
+        super().__init__(group)
 
         self.player = player
         self.type = "object"
         self.rect = image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0, 0)
+
+        self.interactRect = image.get_rect(topleft=(pos[0], pos[1] + tileSize))
+        self.interactHitbox = self.interactRect.inflate(-40, -40)
 
     def interact(self):
         keys = pg.key.get_pressed()

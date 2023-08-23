@@ -126,10 +126,11 @@ class Player(Entity):
 
     def interact(self):
         for objectIndex,object in enumerate(self.interactableObjects):
-            if object.hitbox.colliderect(self.hitbox):
-                object.interact()
-            else:
-                object.disengage()
+            if hasattr(object,"interactHitbox"):
+                if object.interactHitbox.colliderect(self.hitbox):
+                    object.interact()
+                else:
+                    object.disengage()
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
@@ -165,20 +166,19 @@ class Player(Entity):
         self.equippedItem = equipmentItems[self.itemIndex]
 
     def useItemEquipped(self):
+        if not self.laidToBed:
+            inventory = self.inventory
+            notMoving = self.direction.x == 0 and self.direction.y == 0
+            if notMoving and self.inventory.selectingEquipmentSlot():
+                self.frame_index = 0
 
-        inventory = self.inventory
-        notMoving = self.direction.x == 0 and self.direction.y == 0
-
-        if notMoving and self.inventory.selectingEquipmentSlot():
-            self.frame_index = 0
-
-            self.usingItem = True
-            if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
-                self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
-            elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
-                self.state = f"{self.facingDirection}_idle"
-                self.createEquipmentTile()
-                self.usingItem = False
+                self.usingItem = True
+                if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
+                    self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
+                elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
+                    self.state = f"{self.facingDirection}_idle"
+                    self.createEquipmentTile()
+                    self.usingItem = False
 
     def getInputs(self):
         keys = pg.key.get_pressed()

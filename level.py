@@ -11,6 +11,7 @@ from timeManager import TimeManager
 from objects import *
 from tree import *
 from ui import Ui
+from npc import *
 
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
@@ -89,7 +90,7 @@ class Level:
         self.createMap()
 
         self.getPlayerData([self.timeManager,
-                              self.chestTile,
+
                               self.bedTile])
 
         self.ui = Ui(self.player)
@@ -120,14 +121,16 @@ class Level:
 
                         if style == "InteractableObjects":
                             if column == "Bed":
-                                self.bedTile = BedTile([self.interactableSprites], None)
+                                self.bedTile = Bed([self.interactableSprites], None)
                             if column == "Chest":
-                                self.chestObject = ChestObject((x, y - tileSize),[self.visibleSprites,self.collisionSprites])
-                                self.chestTile = ChestTile((x, y), [self.interactableSprites], self.chestObject,self.player)
+                                self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites)
+
 
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
 
+
+        self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites)
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
@@ -168,9 +171,7 @@ class Level:
         for sprites in self.equipmentSprites:
             soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
             woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
-
             itemName = inventory.currentItems[inventory.itemIndex]["name"]
-
             if soilTileCollided:
 
                 if itemName == "Hoe":
@@ -188,6 +189,7 @@ class Level:
             pass
             self.currentEquipment.kill()
 
+
     def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
 
@@ -196,6 +198,7 @@ class Level:
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
+
 
     def updateCoinList(self):
         if len(self.coinList) > 0:
