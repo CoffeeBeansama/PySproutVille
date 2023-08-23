@@ -125,7 +125,6 @@ class Level:
                             if column == "Chest":
                                 self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites)
 
-
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
 

@@ -14,8 +14,6 @@ playerSpeed = 2.3
 slotScale = (55, 55)
 itemScale = (24,24)
 
-
-
 itemData = {
     "Hoe":{
         "name": "Hoe",

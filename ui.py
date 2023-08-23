@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 from support import *
+from dialogues import *
 
 
 class Ui:
@@ -22,24 +23,70 @@ class DialogueSystem:
     def __init__(self,player):
 
         self.screen = pg.display.get_surface()
+        self.textPos = (500 // 2, 500 // 2)
+        self.textList = []
         self.player = player
         self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
-        self.letterSprites = None
 
-        self.letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-                   "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "!","SPACE"]
+        self.letterSprites = None
+        self.speaker = "Aigo"
+
+        self.dialogueIndex = 1
+        self.charIndex = 0
+        self.spaceBetweenChar = 10
+
+        self.ticked = False
+        self.lineFinished = False
 
         self.importFontSprites()
 
     def importFontSprites(self):
         self.letterSprites = {
-
         }
-        for i in self.letters:
+        for i in letters:
             self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (32, 32)).convert_alpha()
 
+    def renderText(self, txt):
+        if not self.lineFinished:
+            if self.charIndex < len(txt):
+                if not self.ticked:
+                    self.ticked = True
+                    for txts in range(len(txt)):
+                        char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
+                        self.spaceBetweenChar += 24
+                        self.textList.append([char, self.spaceBetweenChar])
+                        self.charIndex += 1
+                        self.tickTime = pg.time.get_ticks()
+                        return
+            else:
+                self.lineFinished = True
+
     def display(self):
-        pass
+        currentTime = pg.time.get_ticks()
+        keys = pg.key.get_pressed()
+
+        if keys[pg.K_SPACE] and self.lineFinished:
+            self.nextDialogue()
+
+        if keys[pg.K_x]:
+            self.dialogueIndex = 1
+
+        if self.ticked:
+            if currentTime - self.tickTime > 50:
+                self.ticked = False
+
+        # if self.dialogueIndex <= len(dialogues[self.speaker]):
+            # self.renderText(dialogues[self.speaker][self.dialogueIndex])
+
+        # for i in self.textList:
+            # self.screen.blit(i[0], (i[1], self.pos[1]))
+
+    def nextDialogue(self):
+        self.charIndex = 0
+        self.dialogueIndex += 1
+        self.spaceBetweenChar = 10
+        self.textList.clear()
+        self.lineFinished = False
 
 
 class StaticUI:
