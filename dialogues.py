@@ -4,7 +4,7 @@ letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 
 dialogues = {
             'Merchant': {
-                1: 'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG',
+                1: 'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
                 2: '123456789',
                 3: 'THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG'
             },

@@ -23,7 +23,7 @@ class DialogueSystem:
     def __init__(self,player):
 
         self.screen = pg.display.get_surface()
-        self.textPos = (200, 500)
+        self.textStartPos = [200, 500]
         self.textList = []
         self.player = player
         self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
@@ -36,7 +36,15 @@ class DialogueSystem:
 
         self.dialogueIndex = 1
         self.charIndex = 0
+
         self.xStartText = 175
+        self.textXPos = self.xStartText
+
+        self.yStartText = 500
+        self.textYPos = self.yStartText
+        self.textYOffset = 18
+
+        self.maximumXTextBounds = 700
 
         self.ticked = False
         self.lineFinished = False
@@ -50,24 +58,38 @@ class DialogueSystem:
             self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (24, 24)).convert_alpha()
 
     def renderText(self, txt):
-        if not self.lineFinished:
-            if self.charIndex < len(txt):
-                if not self.ticked:
-                    self.ticked = True
-                    for txts in range(len(txt)):
-                        char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
-                        self.xStartText += 12
-                        self.textList.append([char, self.xStartText])
-                        self.charIndex += 1
-                        self.tickTime = pg.time.get_ticks()
-                        return
-            else:
-                self.lineFinished = True
+        if self.lineFinished:
+            return
+
+        if self.charIndex >= len(txt):
+            self.lineFinished = True
+            return
+
+        self.checkTextOutOfBounds()
+
+        if not self.ticked:
+            self.ticked = True
+            for texts in range(len(txt)):
+                char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
+                self.textXPos += 13
+                self.textList.append([char, self.textXPos,self.textYPos])
+                self.charIndex += 1
+                self.tickTime = pg.time.get_ticks()
+                return
+
+    def renderDialogueBox(self):
+        self.screen.blit(self.dialogueBoxSprite, self.boxPos)
+
+    def checkTextOutOfBounds(self):
+        if self.textXPos > self.maximumXTextBounds:
+            self.textXPos = self.xStartText
+            self.textYPos += self.textYOffset
 
     def nextDialogue(self):
         self.charIndex = 0
         self.dialogueIndex += 1
-        self.xStartText = 175
+        self.textXPos = 175
+        self.textYPos = self.yStartText
         self.textList.clear()
         self.lineFinished = False
 
@@ -88,10 +110,10 @@ class DialogueSystem:
         if self.speaker is not None:
             if self.dialogueIndex <= len(dialogues[self.speaker]):
                 self.renderText(dialogues[self.speaker][self.dialogueIndex])
-                self.screen.blit(self.dialogueBoxSprite,self.boxPos)
+                self.renderDialogueBox()
 
         for i in self.textList:
-            self.screen.blit(i[0], (i[1], self.textPos[1]))
+            self.screen.blit(i[0], (i[1], i[2]))
 
 
 
