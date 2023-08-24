@@ -29,7 +29,8 @@ class Merchant(InteractableObjects):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:
             if not self.interacted:
-                self.dialogueSystem.speaker = self.dialogueId
+                self.dialogueSystem.startDialogue(self.dialogueId)
+
                 self.interacted = True
             else:
                 return

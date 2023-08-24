@@ -9,7 +9,7 @@ from enum import Enum
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem):
         super().__init__(group)
 
         self.type = "player"
@@ -35,6 +35,7 @@ class Player(Entity):
         self.collisionSprites = collidable_sprites
         self.pickAbleItems = pickableItems
         self.createEquipmentTile = useEquipmentTile
+        self.dialogueSystem = dialogueSystem
 
         self.inventory = Inventory(self)
         self.displayInventory = False
@@ -166,7 +167,8 @@ class Player(Entity):
         self.equippedItem = equipmentItems[self.itemIndex]
 
     def useItemEquipped(self):
-        if not self.laidToBed:
+        canUseItem = not self.laidToBed and not self.dialogueSystem.dialogueActive
+        if canUseItem:
             inventory = self.inventory
             notMoving = self.direction.x == 0 and self.direction.y == 0
             if notMoving and self.inventory.selectingEquipmentSlot():
@@ -182,8 +184,8 @@ class Player(Entity):
 
     def getInputs(self):
         keys = pg.key.get_pressed()
-
-        if not self.usingItem and not self.laidToBed:
+        allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive
+        if allowedToMove:
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
             elif keys[pg.K_s]:
@@ -217,7 +219,6 @@ class Player(Entity):
             self.inventory.display()
 
         else:
-
             self.updateMood()
             self.getInputs()
             self.movement(playerSpeed)

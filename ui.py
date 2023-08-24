@@ -33,12 +33,15 @@ class DialogueSystem:
 
         self.letterSprites = None
         self.speaker = None
+        self.lastSpace = None
 
+        self.typingSpeed = 20
         self.dialogueIndex = 1
         self.charIndex = 0
 
-        self.xStartText = 175
+        self.xStartText = 185
         self.textXPos = self.xStartText
+        self.xDistanceBetween = 13
 
         self.yStartText = 500
         self.textYPos = self.yStartText
@@ -46,8 +49,12 @@ class DialogueSystem:
 
         self.maximumXTextBounds = 700
 
+        self.lineCutted = False
+        self.dialogueActive = False
         self.ticked = False
         self.lineFinished = False
+        self.skippedDialogue = False
+
 
         self.importFontSprites()
 
@@ -56,6 +63,18 @@ class DialogueSystem:
         }
         for i in letters:
             self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (24, 24)).convert_alpha()
+
+    def startDialogue(self,speaker):
+        self.speaker = speaker
+        self.dialogueActive = True
+
+    def endDialogue(self):
+        self.speaker = None
+        self.dialogueActive = False
+
+    def skipDialogue(self):
+        if not self.skippedDialogue:
+            pass
 
     def renderText(self, txt):
         if self.lineFinished:
@@ -67,28 +86,51 @@ class DialogueSystem:
 
         self.checkTextOutOfBounds()
 
-        if not self.ticked:
-            self.ticked = True
-            for texts in range(len(txt)):
-                char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
-                self.textXPos += 13
-                self.textList.append([char, self.textXPos,self.textYPos])
-                self.charIndex += 1
-                self.tickTime = pg.time.get_ticks()
-                return
+        if not self.lineCutted:
+            if not self.ticked:
+                self.ticked = True
+                for texts in range(len(txt)):
+
+                    char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
+                    self.textList.append([char, self.textXPos,self.textYPos,txt[self.charIndex].replace(" ", "SPACE"),self.charIndex])
+
+                    self.textXPos += 13
+                    self.charIndex += 1
+                    self.tickTime = pg.time.get_ticks()
+                    return
+
 
     def renderDialogueBox(self):
         self.screen.blit(self.dialogueBoxSprite, self.boxPos)
 
+
     def checkTextOutOfBounds(self):
+        self.textToMove = []
         if self.textXPos > self.maximumXTextBounds:
+            self.lineCutted = True
             self.textXPos = self.xStartText
             self.textYPos += self.textYOffset
+
+            for i,j in enumerate(self.textList[::-1]):
+                if j[3] != "SPACE":
+                    self.textToMove.append(j)
+                else:
+                    reversedInt = self.textToMove[::-1]
+                    for k,l in enumerate(reversedInt):
+
+                        self.newTextXOffset = self.xStartText + (k * self.xDistanceBetween )
+                        self.textList[l[4]][1] = self.newTextXOffset
+                        self.textList[l[4]][2] += self.textYOffset
+                    self.textXPos = self.newTextXOffset + self.xDistanceBetween
+                    self.textToMove.clear()
+                    self.lineCutted = False
+                    return
+
 
     def nextDialogue(self):
         self.charIndex = 0
         self.dialogueIndex += 1
-        self.textXPos = 175
+        self.textXPos = self.xStartText
         self.textYPos = self.yStartText
         self.textList.clear()
         self.lineFinished = False
@@ -97,25 +139,29 @@ class DialogueSystem:
         currentTime = pg.time.get_ticks()
         keys = pg.key.get_pressed()
 
-        if keys[pg.K_SPACE] and self.lineFinished:
-            self.nextDialogue()
+        if keys[pg.K_SPACE]:
+            if self.lineFinished:
+                self.nextDialogue()
+            else:
+                self.skipDialogue()
 
         if keys[pg.K_x]:
             self.dialogueIndex = 1
 
         if self.ticked:
-            if currentTime - self.tickTime > 50:
+            if currentTime - self.tickTime > self.typingSpeed:
                 self.ticked = False
 
         if self.speaker is not None:
             if self.dialogueIndex <= len(dialogues[self.speaker]):
                 self.renderText(dialogues[self.speaker][self.dialogueIndex])
                 self.renderDialogueBox()
+            else:
+                self.endDialogue()
+
 
         for i in self.textList:
             self.screen.blit(i[0], (i[1], i[2]))
-
-
 
 
 class StaticUI:

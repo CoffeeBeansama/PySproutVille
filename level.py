@@ -90,12 +90,12 @@ class Level:
         self.createMap()
 
         self.getPlayerData([self.timeManager,
-
                               self.bedTile])
 
         self.ui = Ui(self.player)
         self.dynamicUi = self.ui.dynamicUi
         self.merchant.dialogueSystem = self.ui.dialogueSystem
+        self.player.dialogueSystem = self.ui.dialogueSystem
 
     def createMap(self):
 
@@ -138,6 +138,7 @@ class Level:
             self.interactableSprites,
             self.pickAbleItemSprites,
             self.timeManager,
+            None
             )
 
     def DecreasePlayerLives(self):
