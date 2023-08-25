@@ -4,7 +4,9 @@ from support import *
 from dialogues import *
 from support import import_folder
 
+
 class Ui:
+
     def __init__(self,player):
         self.screen = pg.display.get_surface()
         self.player = player
@@ -24,7 +26,13 @@ class DialogueSystem:
 
         self.screen = pg.display.get_surface()
         self.textStartPos = [200, 500]
-        self.textList = []
+
+        self.textList = {
+
+        }
+
+        self.textToMove = []
+
         self.player = player
 
         self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
@@ -50,12 +58,12 @@ class DialogueSystem:
         self.xStartText = 185
         self.textXPos = self.xStartText
         self.xDistanceBetween = 13
+        self.maximumXTextXBounds = 740
 
         self.yStartText = 495
         self.textYPos = self.yStartText
         self.textYOffset = 18
-
-        self.maximumXTextBounds = 740
+        self.maximumXTextYBounds = 531
 
         self.lineCut = False
         self.dialogueActive = False
@@ -84,8 +92,6 @@ class DialogueSystem:
             fullPath = spritePath + animation
             self.spriteFaces[animation] = import_folder(fullPath)
 
-
-
     def animateFaceSprites(self):
         currentFaceAnimation = self.spriteFaces["Player"]
         if self.faceFrameIndex >= len(currentFaceAnimation) or self.lineFinished:
@@ -106,6 +112,17 @@ class DialogueSystem:
         if not self.skippedDialogue:
             pass
 
+    def addToTextList(self,txt):
+        characterSprite = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
+        currentTxt = txt[self.charIndex].replace(" ", "SPACE")
+        self.textList[f"{currentTxt}{self.charIndex}"] = {
+            "LetterSprite": characterSprite,
+            "XPos": self.textXPos,
+            "YPos": self.textYPos,
+            "LetterStored": txt[self.charIndex].replace(" ", "SPACE"),
+            "IndexPos": self.charIndex
+        }
+
     def renderText(self, txt):
         if self.lineFinished:
             return
@@ -121,12 +138,10 @@ class DialogueSystem:
                 self.ticked = True
                 for texts in range(len(txt)):
                     self.faceFrameIndex += 0.3
-                    char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
-                    self.textList.append([char, self.textXPos,self.textYPos,txt[self.charIndex].replace(" ", "SPACE"),self.charIndex])
+                    self.addToTextList(txt)
                     self.textXPos += 13
                     self.animateFaceSprites()
                     self.charIndex += 1
-
                     self.tickTime = pg.time.get_ticks()
                     return
 
@@ -138,24 +153,22 @@ class DialogueSystem:
         self.screen.blit(nameText,self.speakerNameTextPos)
 
     def checkTextOutOfBounds(self):
-        self.textToMove = []
-        if self.textYPos <= 531:
-            if self.textXPos > self.maximumXTextBounds:
+        if self.textYPos <= self.maximumXTextYBounds:
+            if self.textXPos > self.maximumXTextXBounds:
                 self.lineCut = True
                 self.textXPos = self.xStartText
                 self.textYPos += self.textYOffset
 
-                for textIndex,text in enumerate(self.textList[::-1]):
-                    if text[3] != "SPACE":
+                for textIndex,text in enumerate(reversed(self.textList.values())):
+                    if text["LetterStored"] != "SPACE":
                         self.textToMove.append(text)
                     else:
                         reversedInt = self.textToMove[::-1]
-                        for i,j in enumerate(reversedInt):
-                            newTextXOffset = self.xStartText + (i * self.xDistanceBetween)
-                            self.textList[j[4]][1] = newTextXOffset
-                            self.textList[j[4]][2] += self.textYOffset
+                        for index,texts in enumerate(reversedInt):
+                            newTextXOffset = self.xStartText + (index * self.xDistanceBetween)
+                            texts["XPos"] = newTextXOffset
+                            texts["YPos"] += self.textYOffset
                             self.textXPos = newTextXOffset + self.xDistanceBetween
-
                         self.textToMove.clear()
                         self.lineCut = False
                         return
@@ -163,7 +176,6 @@ class DialogueSystem:
             self.textXPos = self.xStartText
             self.textYPos = self.yStartText
             self.textList.clear()
-
 
     def nextDialogue(self):
         self.charIndex = 0
@@ -197,9 +209,8 @@ class DialogueSystem:
             else:
                 self.endDialogue()
 
-
-        for i in self.textList:
-            self.screen.blit(i[0], (i[1], i[2]))
+        for text in self.textList.values():
+            self.screen.blit(text["LetterSprite"], (text["XPos"], text["YPos"]))
 
 
 class StaticUI:
