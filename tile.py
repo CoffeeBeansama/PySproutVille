@@ -9,7 +9,7 @@ class Tile(pg.sprite.Sprite):
         self.image = image
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0,0)
+        self.hitbox = self.rect.inflate(-10,0)
 
 
 

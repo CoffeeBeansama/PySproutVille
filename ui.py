@@ -3,6 +3,7 @@ from settings import *
 from support import *
 from dialogues import *
 from support import import_folder
+from pygame import mixer
 
 
 class Ui:
@@ -27,15 +28,18 @@ class DialogueSystem:
         self.screen = pg.display.get_surface()
         self.textStartPos = [200, 500]
 
-        self.textList = {
-
-        }
+        self.textList = {}
 
         self.textToMove = []
 
         self.player = player
 
+
+        self.voice = mixer.Sound("SFX/Voices/voice2.wav")
+        self.voice.set_volume(0.1)
+
         self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
+        self.fontSpriteColor = (144, 98, 93)
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 16)
         self.fontColor = (0, 0, 0)
 
@@ -51,11 +55,11 @@ class DialogueSystem:
         self.speakerNameTextPos = (74,562)
         self.faceFrameIndex = 0
 
-        self.typingSpeed = 30
+        self.typingSpeed = 35
         self.dialogueIndex = 1
         self.charIndex = 0
 
-        self.xStartText = 185
+        self.xStartText = 190
         self.textXPos = self.xStartText
         self.xDistanceBetween = 13
         self.maximumXTextXBounds = 740
@@ -80,7 +84,9 @@ class DialogueSystem:
         for i in letters:
             self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (24, 24)).convert_alpha()
 
+
     def importFaceSprites(self):
+        
         spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/Face/"
 
         self.spriteFaces = {
@@ -123,21 +129,26 @@ class DialogueSystem:
             "IndexPos": self.charIndex
         }
 
+        self.playVoiceSFX(self.textList[f"{currentTxt}{self.charIndex}"]["LetterStored"])
+
+
+    def playVoiceSFX(self,txt):
+        if txt != "SPACE":
+            pg.mixer.Sound.play(self.voice)
+
     def renderText(self, txt):
         if self.lineFinished:
             return
-
         if self.charIndex >= len(txt):
             self.lineFinished = True
             return
-
         self.checkTextOutOfBounds()
 
         if not self.lineCut:
             if not self.ticked:
                 self.ticked = True
                 for texts in range(len(txt)):
-                    self.faceFrameIndex += 0.3
+                    self.faceFrameIndex += 0.6
                     self.addToTextList(txt)
                     self.textXPos += 13
                     self.animateFaceSprites()
@@ -225,15 +236,20 @@ class StaticUI:
         self.coinHeartBackGroundPos = (120, 10)
 
         self.staticUi = {
-            "FaceContainer": [self.faceContainerBackground, self.faceContainerBackgroundPos],
-            "CoinHeartContainer": [self.coinHeartBackGround, self.coinHeartBackGroundPos],
+            "FaceContainer": {
+                "Sprite": self.faceContainerBackground,
+                "Position": self.faceContainerBackgroundPos,
+            },
+            "CoinHeartContainer": {
+                "Sprite": self.coinHeartBackGround,
+                "Position": self.coinHeartBackGroundPos
+            },
 
         }
 
-
     def display(self):
         for keys, values in enumerate(self.staticUi.values()):
-            self.screen.blit(values[0], values[1])
+            self.screen.blit(values["Sprite"], values["Position"])
 
 
 class DynamicUI:
@@ -292,9 +308,18 @@ class DynamicUI:
     def createHearts(self):
 
         self.hearts = {
-            1: [self.fullHeartSprite,(self.heartPosX,self.heartPosY)],
-            2: [self.fullHeartSprite, (self.heartPosX + 30, self.heartPosY)],
-            3: [self.fullHeartSprite, (self.heartPosX + 60, self.heartPosY)]
+            1: {
+                "Sprite": self.fullHeartSprite,
+                "Position":(self.heartPosX,self.heartPosY)
+            },
+            2: {
+                "Sprite": self.fullHeartSprite,
+                "Position": (self.heartPosX + 30, self.heartPosY)
+            },
+            3: {
+                "Sprite": self.fullHeartSprite,
+                "Position": (self.heartPosX + 60, self.heartPosY)
+            }
         }
 
         for i in self.hearts.values():
@@ -302,23 +327,20 @@ class DynamicUI:
 
     def decreasePlayerHeart(self):
         self.playerLives = self.player.lives
-
         if self.player.lives > 0:
-            self.hearts[self.player.lives][0] = self.fullHeartSprite
-            self.hearts[self.player.lives + 1][0] = self.emptyHeartSprite
+            self.hearts[self.player.lives]["Sprite"] = self.fullHeartSprite
+            self.hearts[self.player.lives + 1]["Sprite"] = self.emptyHeartSprite
         else:
-            self.hearts[1][0] = self.emptyHeartSprite
+            self.hearts[1]["Sprite"] = self.emptyHeartSprite
 
     def resetPlayerHeart(self):
         if self.player.laidToBed:
             for i in range(1,4):
-                self.hearts[i][0] = self.fullHeartSprite
-
+                self.hearts[i]["Sprite"] = self.fullHeartSprite
 
     def display(self):
-
         for key,values in enumerate(self.hearts.values()):
-            self.screen.blit(values[0],values[1])
+            self.screen.blit(values["Sprite"],values["Position"])
 
         self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
         self.screen.blit(self.coinText, self.coinCounterLocation)
