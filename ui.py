@@ -2,7 +2,7 @@ import pygame as pg
 from settings import *
 from support import *
 from dialogues import *
-
+from support import import_folder
 
 class Ui:
     def __init__(self,player):
@@ -26,7 +26,10 @@ class DialogueSystem:
         self.textStartPos = [200, 500]
         self.textList = []
         self.player = player
+
         self.fontSpritePath = "Font/SpriteSheet/WhitePeaberry/Alphabet/"
+        self.font = pg.font.Font("Font/PeaberryBase.ttf", 16)
+        self.fontColor = (0, 0, 0)
 
         self.dialogueBoxSprite = uiSprites["DialogueBox"].convert_alpha()
         self.boxPos = (30,440)
@@ -35,7 +38,12 @@ class DialogueSystem:
         self.speaker = None
         self.lastSpace = None
 
-        self.typingSpeed = 20
+        self.faceSpriteScale = (75,75)
+        self.faceSpritePos = (70,475)
+        self.speakerNameTextPos = (74,562)
+        self.faceFrameIndex = 0
+
+        self.typingSpeed = 30
         self.dialogueIndex = 1
         self.charIndex = 0
 
@@ -43,19 +51,19 @@ class DialogueSystem:
         self.textXPos = self.xStartText
         self.xDistanceBetween = 13
 
-        self.yStartText = 500
+        self.yStartText = 495
         self.textYPos = self.yStartText
         self.textYOffset = 18
 
-        self.maximumXTextBounds = 700
+        self.maximumXTextBounds = 740
 
-        self.lineCutted = False
+        self.lineCut = False
         self.dialogueActive = False
         self.ticked = False
         self.lineFinished = False
         self.skippedDialogue = False
 
-
+        self.importFaceSprites()
         self.importFontSprites()
 
     def importFontSprites(self):
@@ -63,6 +71,28 @@ class DialogueSystem:
         }
         for i in letters:
             self.letterSprites[str(i)] = loadSprite(f"{self.fontSpritePath}{i}.png", (24, 24)).convert_alpha()
+
+    def importFaceSprites(self):
+        spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/Face/"
+
+        self.spriteFaces = {
+            "Player": [],
+            "Merchant": []
+        }
+
+        for animation in self.spriteFaces.keys():
+            fullPath = spritePath + animation
+            self.spriteFaces[animation] = import_folder(fullPath)
+
+
+
+    def animateFaceSprites(self):
+        currentFaceAnimation = self.spriteFaces["Player"]
+        if self.faceFrameIndex >= len(currentFaceAnimation) or self.lineFinished:
+            self.faceFrameIndex = 0
+        currentSpeakerSprite = dialogues[self.speaker][self.dialogueIndex][0]
+        scaledSprite = pg.transform.scale(self.spriteFaces[currentSpeakerSprite][int(self.faceFrameIndex)].convert_alpha(), self.faceSpriteScale)
+        self.screen.blit(scaledSprite, self.faceSpritePos)
 
     def startDialogue(self,speaker):
         self.speaker = speaker
@@ -86,45 +116,53 @@ class DialogueSystem:
 
         self.checkTextOutOfBounds()
 
-        if not self.lineCutted:
+        if not self.lineCut:
             if not self.ticked:
                 self.ticked = True
                 for texts in range(len(txt)):
-
+                    self.faceFrameIndex += 0.3
                     char = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
                     self.textList.append([char, self.textXPos,self.textYPos,txt[self.charIndex].replace(" ", "SPACE"),self.charIndex])
-
                     self.textXPos += 13
+                    self.animateFaceSprites()
                     self.charIndex += 1
+
                     self.tickTime = pg.time.get_ticks()
                     return
 
-
     def renderDialogueBox(self):
         self.screen.blit(self.dialogueBoxSprite, self.boxPos)
-
+        self.animateFaceSprites()
+        currentSpeakerSprite = dialogues[self.speaker][self.dialogueIndex][0]
+        nameText = self.font.render(currentSpeakerSprite,True,self.fontColor)
+        self.screen.blit(nameText,self.speakerNameTextPos)
 
     def checkTextOutOfBounds(self):
         self.textToMove = []
-        if self.textXPos > self.maximumXTextBounds:
-            self.lineCutted = True
+        if self.textYPos <= 531:
+            if self.textXPos > self.maximumXTextBounds:
+                self.lineCut = True
+                self.textXPos = self.xStartText
+                self.textYPos += self.textYOffset
+
+                for textIndex,text in enumerate(self.textList[::-1]):
+                    if text[3] != "SPACE":
+                        self.textToMove.append(text)
+                    else:
+                        reversedInt = self.textToMove[::-1]
+                        for i,j in enumerate(reversedInt):
+                            newTextXOffset = self.xStartText + (i * self.xDistanceBetween)
+                            self.textList[j[4]][1] = newTextXOffset
+                            self.textList[j[4]][2] += self.textYOffset
+                            self.textXPos = newTextXOffset + self.xDistanceBetween
+
+                        self.textToMove.clear()
+                        self.lineCut = False
+                        return
+        else:
             self.textXPos = self.xStartText
-            self.textYPos += self.textYOffset
-
-            for i,j in enumerate(self.textList[::-1]):
-                if j[3] != "SPACE":
-                    self.textToMove.append(j)
-                else:
-                    reversedInt = self.textToMove[::-1]
-                    for k,l in enumerate(reversedInt):
-
-                        self.newTextXOffset = self.xStartText + (k * self.xDistanceBetween )
-                        self.textList[l[4]][1] = self.newTextXOffset
-                        self.textList[l[4]][2] += self.textYOffset
-                    self.textXPos = self.newTextXOffset + self.xDistanceBetween
-                    self.textToMove.clear()
-                    self.lineCutted = False
-                    return
+            self.textYPos = self.yStartText
+            self.textList.clear()
 
 
     def nextDialogue(self):
@@ -154,8 +192,8 @@ class DialogueSystem:
 
         if self.speaker is not None:
             if self.dialogueIndex <= len(dialogues[self.speaker]):
-                self.renderText(dialogues[self.speaker][self.dialogueIndex])
                 self.renderDialogueBox()
+                self.renderText(dialogues[self.speaker][self.dialogueIndex][1].upper())
             else:
                 self.endDialogue()
 
