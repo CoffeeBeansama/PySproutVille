@@ -57,6 +57,7 @@ class PickAbleItems(pg.sprite.Sprite):
     def __init__(self,pos,group,data):
         super().__init__(group)
 
+        self.rect = None
         self.data = data
         self.collided = False
 
@@ -80,8 +81,15 @@ class PickAbleItems(pg.sprite.Sprite):
 
             self.kill()
 
-    def animate(self):
-        print("this")
+
+
+
+
+
+
+
+
+
 
 class Chest(pg.sprite.Sprite):
     def __init__(self, pos, group,player,interactableSprites):

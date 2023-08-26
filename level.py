@@ -211,10 +211,7 @@ class Level:
             for coins in self.coinList:
                 coins.update(self.coinList)
 
-    def pickAbleObjectAnimations(self):
-        if len(self.pickAbleItemSprites) > 0:
-            for items in self.pickAbleItemSprites:
-                items.animate()
+
 
 
 
@@ -222,12 +219,13 @@ class Level:
 
         self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
+
         self.player.update()
         self.playerPickUpItems()
         self.updateCoinList()
         self.ui.display()
         self.timeManager.dayNightCycle()
-        self.pickAbleObjectAnimations()
+
 
 
         for animals in self.animalsList:

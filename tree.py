@@ -97,7 +97,7 @@ class Apple(PickAbleItems):
             3: self.PhaseThree,
 
         }
-
+        
     def growth(self):
         self.currentPhase += 1
         if self.currentPhase <= len(self.phases):
