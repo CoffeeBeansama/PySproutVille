@@ -13,6 +13,7 @@ from tree import *
 from ui import Ui
 from npc import *
 
+
 class CameraGroup(pg.sprite.Group):
     def __init__(self):
         super().__init__()
@@ -60,6 +61,8 @@ class CameraGroup(pg.sprite.Group):
 
 
 
+
+
 class Level:
     def __init__(self, main):
 
@@ -85,6 +88,8 @@ class Level:
         self.plantTile = None
         self.plantTileList = []
 
+        self.animalsList = []
+
         self.coinList = []
 
         self.createMap()
@@ -94,8 +99,9 @@ class Level:
 
         self.ui = Ui(self.player)
         self.dynamicUi = self.ui.dynamicUi
-        self.merchant.dialogueSystem = self.ui.dialogueSystem
+        self.merchant.dialogueSystem,dynamicUi = self.ui.dialogueSystem,self.dynamicUi
         self.player.dialogueSystem = self.ui.dialogueSystem
+        self.animalsList.append(self.chicken)
 
     def createMap(self):
 
@@ -128,7 +134,8 @@ class Level:
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
 
-        self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None)
+        self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
+        self.chicken = Chicken((990, 866),[self.visibleSprites])
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
@@ -204,6 +211,12 @@ class Level:
             for coins in self.coinList:
                 coins.update(self.coinList)
 
+    def pickAbleObjectAnimations(self):
+        if len(self.pickAbleItemSprites) > 0:
+            for items in self.pickAbleItemSprites:
+                items.animate()
+
+
 
     def update(self):
 
@@ -214,3 +227,9 @@ class Level:
         self.updateCoinList()
         self.ui.display()
         self.timeManager.dayNightCycle()
+        self.pickAbleObjectAnimations()
+
+
+        for animals in self.animalsList:
+            animals.update()
+

@@ -4,7 +4,8 @@ letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 
 dialogues = {
             'Merchant': {
-                1: ["Merchant",'Welcome to my shop'],
+                1: ["Merchant",'Well hello there!'],
+
             },
 
             'Bocchi': {

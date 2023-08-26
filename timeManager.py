@@ -34,7 +34,6 @@ class TimeManager:
 
     def newDay(self):
 
-
         self.dayTime = True
         self.nightTime = False
 
@@ -79,7 +78,6 @@ class TimeManager:
         self.nightTime = True
         self.dayTime = False
         self.startTickTime = pg.time.get_ticks()
-
 
     def sunset(self):
         if self.darknessOpacity <= 255:

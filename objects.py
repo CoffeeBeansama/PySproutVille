@@ -80,6 +80,8 @@ class PickAbleItems(pg.sprite.Sprite):
 
             self.kill()
 
+    def animate(self):
+        print("this")
 
 class Chest(pg.sprite.Sprite):
     def __init__(self, pos, group,player,interactableSprites):

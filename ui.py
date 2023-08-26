@@ -14,7 +14,7 @@ class Ui:
 
         self.staticUi = StaticUI()
         self.dynamicUi = DynamicUI(self.player)
-        self.dialogueSystem = DialogueSystem(self.player)
+        self.dialogueSystem = DialogueSystem(self.player,self.dynamicUi)
 
     def display(self):
         self.staticUi.display()
@@ -23,17 +23,17 @@ class Ui:
 
 
 class DialogueSystem:
-    def __init__(self,player):
+    def __init__(self,player,dynamicUi):
 
         self.screen = pg.display.get_surface()
+        self.dynamicUi = dynamicUi
         self.textStartPos = [200, 500]
 
-        self.textList = {}
+        self.renderedText = {}
 
         self.textToMove = []
 
         self.player = player
-
 
         self.voice = mixer.Sound("SFX/Voices/voice2.wav")
         self.voice.set_volume(0.1)
@@ -69,6 +69,10 @@ class DialogueSystem:
         self.textYOffset = 18
         self.maximumXTextYBounds = 531
 
+        self.keyPressedCount = 0
+        self.skipKeyPressed = False
+        self.buttonPressedTime = None
+
         self.lineCut = False
         self.dialogueActive = False
         self.ticked = False
@@ -86,9 +90,7 @@ class DialogueSystem:
 
 
     def importFaceSprites(self):
-        
         spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/Face/"
-
         self.spriteFaces = {
             "Player": [],
             "Merchant": []
@@ -109,19 +111,48 @@ class DialogueSystem:
     def startDialogue(self,speaker):
         self.speaker = speaker
         self.dialogueActive = True
+        self.skippedDialogue = False
 
     def endDialogue(self):
+        self.dialogueIndex = 1
+        if self.speaker == "Merchant":
+            self.dynamicUi.displayMerchandise = True
         self.speaker = None
         self.dialogueActive = False
 
-    def skipDialogue(self):
-        if not self.skippedDialogue:
-            pass
 
-    def addToTextList(self,txt):
+
+    def checkPlayerInput(self):
+        keys = pg.key.get_pressed()
+        if keys[pg.K_SPACE]:
+            if not self.skipKeyPressed:
+                if self.lineFinished:
+                    self.nextDialogue()
+                else:
+                    self.skippedDialogue = True
+            self.buttonPressedTime = pg.time.get_ticks()
+            self.skipKeyPressed = True
+
+
+    def checkSkipDialogue(self):
+        if not self.skippedDialogue:
+            return
+        self.typingSpeed = 0
+
+    def nextDialogue(self):
+        self.charIndex = 0
+        self.dialogueIndex += 1
+        self.textXPos = self.xStartText
+        self.textYPos = self.yStartText
+        self.renderedText.clear()
+        self.lineFinished = False
+        self.typingSpeed = 35
+        self.skippedDialogue = False
+
+    def addRenderedText(self, txt):
         characterSprite = self.letterSprites[txt[self.charIndex].replace(" ", "SPACE")]
         currentTxt = txt[self.charIndex].replace(" ", "SPACE")
-        self.textList[f"{currentTxt}{self.charIndex}"] = {
+        self.renderedText[f"{currentTxt}{self.charIndex}"] = {
             "LetterSprite": characterSprite,
             "XPos": self.textXPos,
             "YPos": self.textYPos,
@@ -129,32 +160,33 @@ class DialogueSystem:
             "IndexPos": self.charIndex
         }
 
-        self.playVoiceSFX(self.textList[f"{currentTxt}{self.charIndex}"]["LetterStored"])
-
+        self.playVoiceSFX(self.renderedText[f"{currentTxt}{self.charIndex}"]["LetterStored"])
 
     def playVoiceSFX(self,txt):
-        if txt != "SPACE":
+        if txt != "SPACE" and not self.skippedDialogue:
             pg.mixer.Sound.play(self.voice)
 
-    def renderText(self, txt):
-        if self.lineFinished:
-            return
+    def displayText(self, txt):
+        if self.lineFinished : return
+
         if self.charIndex >= len(txt):
             self.lineFinished = True
             return
-        self.checkTextOutOfBounds()
 
+        self.checkSkipDialogue()
+        self.checkTextOutOfBounds()
         if not self.lineCut:
             if not self.ticked:
                 self.ticked = True
                 for texts in range(len(txt)):
                     self.faceFrameIndex += 0.6
-                    self.addToTextList(txt)
+                    self.addRenderedText(txt)
                     self.textXPos += 13
                     self.animateFaceSprites()
                     self.charIndex += 1
                     self.tickTime = pg.time.get_ticks()
                     return
+
 
     def renderDialogueBox(self):
         self.screen.blit(self.dialogueBoxSprite, self.boxPos)
@@ -163,51 +195,43 @@ class DialogueSystem:
         nameText = self.font.render(currentSpeakerSprite,True,self.fontColor)
         self.screen.blit(nameText,self.speakerNameTextPos)
 
+
+    def fixOutOfBoundsText(self):
+        self.textXPos = self.xStartText
+        self.textYPos += self.textYOffset
+        for textIndex, text in enumerate(reversed(self.renderedText.values())):
+            if text["LetterStored"] != "SPACE":
+                self.textToMove.append(text)
+            else:
+                reversedInt = self.textToMove[::-1]
+                for index, texts in enumerate(reversedInt):
+                    newTextXOffset = self.xStartText + (index * self.xDistanceBetween)
+                    texts["XPos"] = newTextXOffset
+                    texts["YPos"] += self.textYOffset
+                    self.textXPos = newTextXOffset + self.xDistanceBetween
+                self.textToMove.clear()
+                self.lineCut = False
+                return
+
     def checkTextOutOfBounds(self):
         if self.textYPos <= self.maximumXTextYBounds:
             if self.textXPos > self.maximumXTextXBounds:
                 self.lineCut = True
-                self.textXPos = self.xStartText
-                self.textYPos += self.textYOffset
+                self.fixOutOfBoundsText()
 
-                for textIndex,text in enumerate(reversed(self.textList.values())):
-                    if text["LetterStored"] != "SPACE":
-                        self.textToMove.append(text)
-                    else:
-                        reversedInt = self.textToMove[::-1]
-                        for index,texts in enumerate(reversedInt):
-                            newTextXOffset = self.xStartText + (index * self.xDistanceBetween)
-                            texts["XPos"] = newTextXOffset
-                            texts["YPos"] += self.textYOffset
-                            self.textXPos = newTextXOffset + self.xDistanceBetween
-                        self.textToMove.clear()
-                        self.lineCut = False
-                        return
         else:
             self.textXPos = self.xStartText
             self.textYPos = self.yStartText
-            self.textList.clear()
-
-    def nextDialogue(self):
-        self.charIndex = 0
-        self.dialogueIndex += 1
-        self.textXPos = self.xStartText
-        self.textYPos = self.yStartText
-        self.textList.clear()
-        self.lineFinished = False
+            self.renderedText.clear()
 
     def display(self):
         currentTime = pg.time.get_ticks()
-        keys = pg.key.get_pressed()
 
-        if keys[pg.K_SPACE]:
-            if self.lineFinished:
-                self.nextDialogue()
-            else:
-                self.skipDialogue()
+        self.checkPlayerInput()
 
-        if keys[pg.K_x]:
-            self.dialogueIndex = 1
+        if self.skipKeyPressed:
+            if currentTime - self.buttonPressedTime > 50:
+                self.skipKeyPressed = False
 
         if self.ticked:
             if currentTime - self.tickTime > self.typingSpeed:
@@ -216,11 +240,11 @@ class DialogueSystem:
         if self.speaker is not None:
             if self.dialogueIndex <= len(dialogues[self.speaker]):
                 self.renderDialogueBox()
-                self.renderText(dialogues[self.speaker][self.dialogueIndex][1].upper())
+                self.displayText(dialogues[self.speaker][self.dialogueIndex][1].upper())
             else:
                 self.endDialogue()
 
-        for text in self.textList.values():
+        for text in self.renderedText.values():
             self.screen.blit(text["LetterSprite"], (text["XPos"], text["YPos"]))
 
 
@@ -281,6 +305,8 @@ class DynamicUI:
         self.heartPosY = 19
         self.createHearts()
 
+        self.displayMerchandise = False
+
 
     def importPlayerMoodSprites(self):
         faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/face/"
@@ -338,10 +364,15 @@ class DynamicUI:
             for i in range(1,4):
                 self.hearts[i]["Sprite"] = self.fullHeartSprite
 
+    def displayMerchantStore(self):
+        if not self.displayMerchandise: return
+
+
     def display(self):
         for key,values in enumerate(self.hearts.values()):
             self.screen.blit(values["Sprite"],values["Position"])
 
+        self.displayMerchantStore()
         self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
         self.screen.blit(self.coinText, self.coinCounterLocation)
         self.resetPlayerHeart()

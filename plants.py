@@ -50,6 +50,7 @@ class PlantTile(PickAbleItems):
         self.data = data
         self.image = None
         self.PhaseOne()
+
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-20, -20)
 
@@ -93,5 +94,6 @@ class PlantTile(PickAbleItems):
         self.image = self.data["CropSprite"].convert_alpha()
         self.add(self.pickupitems)
         self.soil.currentPlant = None
+
 
 
