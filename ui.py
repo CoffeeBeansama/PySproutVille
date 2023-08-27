@@ -4,11 +4,12 @@ from support import *
 from dialogues import *
 from support import *
 from pygame import mixer
+from timer import Timer
 
 
 class Ui:
 
-    def __init__(self,player,gamePause):
+    def __init__(self,player,gamePause,gameUnPause):
         self.screen = pg.display.get_surface()
         self.player = player
 
@@ -17,6 +18,7 @@ class Ui:
         self.dialogueSystem = DialogueSystem(self.player,self.dynamicUi)
 
         self.gamePaused = gamePause
+        self.gameUnPause = gameUnPause
 
     def display(self):
 
@@ -26,6 +28,8 @@ class Ui:
 
         if self.dynamicUi.displayMerchandise:
             self.gamePaused()
+        else:
+            self.gameUnPause()
 
 
 class DialogueSystem:
@@ -311,7 +315,7 @@ class DynamicUI:
         self.heartPosY = 19
         self.createHearts()
 
-        self.store = MerchantStore()
+        self.store = MerchantStore(self.player,self.closeMerchantStore)
         self.displayMerchandise = False
 
 
@@ -374,9 +378,11 @@ class DynamicUI:
 
     def displayMerchantStore(self):
         if not self.displayMerchandise: return
-
         self.store.display()
 
+    def closeMerchantStore(self):
+        if self.displayMerchandise:
+            self.displayMerchandise = False
 
     def display(self):
         self.displayMerchantStore()
@@ -391,15 +397,125 @@ class DynamicUI:
             self.screen.blit(self.faceSprite, self.faceSpritePos)
 
 
+class ItemSlot:
+    def __init__(self,pos,item,index):
+
+        self.pos = pos
+        self.index = index
+
+        self.data = item
+        self.itemName = item["name"]
+        self.itemCost = item["storeCost"]
+        self.itemSprite = pg.transform.scale(item["CropSprite"], (32, 32)).convert_alpha()
+
+        spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Merchant/ItemSlot.png"
+        selectedSpritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Merchant/ItemSlotSelected.png"
+
+        self.slotSize = (375,60)
+        self.sprite = loadSprite(spritePath,self.slotSize).convert_alpha()
+        self.selectedSprite = loadSprite(selectedSpritePath,self.slotSize).convert_alpha()
+
+
 class MerchantStore:
-    def __init__(self):
+    def __init__(self,player,action):
         self.screen = pg.display.get_surface()
 
+        self.player = player
+        self.playerCoinPos = (320,490)
         backGroundSpritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Merchant/BackGround.png"
         self.backGroundSpiteSize = (450,500)
-        self.backGroundSprite = loadSprite(backGroundSpritePath,self.backGroundSpiteSize)
+        self.backGroundSprite = loadSprite(backGroundSpritePath,self.backGroundSpiteSize).convert_alpha()
         self.backGroundSpritePos = (160,50)
         self.backGroundSpriteRect = self.backGroundSprite.get_rect(topleft=self.backGroundSpritePos)
+        self.backGroundLength = self.backGroundSpiteSize[1]
+
+        self.font = pg.font.Font("Font/PeaberryBase.ttf", 32)
+        self.fontColor = (144, 98, 93)
+
+        self.renderedItems = []
+
+        self.itemSetup = [itemData["Wheat"], itemData["Tomato"], itemData["Chicken"], itemData["Cow"]]
+
+        self.slotPosX = 195
+
+        self.padding = 1.3
+        self.lengthDistance = self.backGroundSpritePos[1] // len(self.itemSetup) + 1
+
+        self.itemSlots = None
+        self.createItems()
+
+        self.closeMenu = action
+
+        self.itemIndex = 0
+
+        self.timer = Timer(200)
+
+    def createItems(self):
+        for index,items in enumerate(self.itemSetup):
+
+            lengthIncrement = self.backGroundLength // len(self.itemSetup)
+
+            y = (index * lengthIncrement // self.padding) + (lengthIncrement - self.lengthDistance)
+
+            Item = ItemSlot((self.slotPosX,y),items,index)
+            self.renderedItems.append(Item)
+
+    def purchaseItem(self):
+        canPurchase = self.player.coins >= self.renderedItems[self.itemIndex].itemCost
+
+        if canPurchase:
+            self.player.inventory.AddItem(self.renderedItems[self.itemIndex])
+            self.player.coins -= self.renderedItems[self.itemIndex].itemCost
+        else:
+            print("not enough cash")
+
+    def getPlayerInputs(self):
+        keys = pg.key.get_pressed()
+
+        if self.itemIndex >= len(self.itemSetup):
+            self.itemIndex = 0
+        elif self.itemIndex < 0:
+            self.itemIndex = len(self.itemSetup) - 1
+
+        if not self.timer.activated:
+            if keys[pg.K_w]:
+                self.itemIndex -= 1
+                self.timer.activate()
+            if keys[pg.K_s]:
+                self.itemIndex += 1
+                self.timer.activate()
+
+            if keys[pg.K_ESCAPE]:
+                self.closeMenu()
+                self.timer.activate()
+
+            if keys[pg.K_SPACE]:
+                self.purchaseItem()
+                self.timer.activate()
+
 
     def display(self):
+        self.timer.update()
+        self.getPlayerInputs()
+
         self.screen.blit(self.backGroundSprite,self.backGroundSpriteRect)
+
+        if len(self.renderedItems) > 0:
+            for items in self.renderedItems:
+
+                self.screen.blit(items.sprite if self.itemIndex != items.index else items.selectedSprite,items.pos)
+
+                self.screen.blit(items.itemSprite, (items.pos[0] + 30, items.pos[1] + 15))
+
+                itemName = self.font.render(str(items.itemName), True, self.fontColor)
+                self.screen.blit(itemName, (items.pos[0] + 80,items.pos[1] + 15))
+
+                itemCost = self.font.render(str(items.itemCost), True, self.fontColor)
+                self.screen.blit(itemCost,(items.pos[0] + 315, items.pos[1] + 16))
+
+        playerCoin = self.font.render(str(f"Cash: {self.player.coins}"),True,self.fontColor)
+        self.screen.blit(playerCoin,self.playerCoinPos)
+
+
+
+

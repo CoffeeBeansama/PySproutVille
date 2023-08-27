@@ -3,19 +3,19 @@ from settings import *
 from items import *
 
 
-class Slot:
+class InventorySlot:
     def __init__(self,pos,item,index):
 
         self.screen = pg.display.get_surface()
         self.pos = pos
         self.index = index
-        self.itemHolding = item
+        self.data = item
 
         self.defaultSprite = uiSprites["EmptySlot"]
         self.defaultSelectedSprite = uiSprites["EmptySlotSelected"]
 
-        self.sprite = self.itemHolding["uiSprite"] if item is not None else self.defaultSprite
-        self.selectedSprite = self.itemHolding["uiSpriteSelected"] if item is not None else self.defaultSelectedSprite
+        self.sprite = self.data["uiSprite"] if item is not None else self.defaultSprite
+        self.selectedSprite = self.data["uiSpriteSelected"] if item is not None else self.defaultSelectedSprite
 
 
 class Inventory:
@@ -74,7 +74,7 @@ class Inventory:
 
         # Item Swap Logic
         self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
-        self.slotList[self.itemSwapIndex].itemHolding, self.slotList[self.itemIndex].itemHolding = self.slotList[self.itemIndex].itemHolding,self.slotList[self.itemSwapIndex].itemHolding
+        self.slotList[self.itemSwapIndex].data, self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data, self.slotList[self.itemSwapIndex].data
         self.slotList[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
         self.slotList[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,self.slotList[self.itemSwapIndex].selectedSprite
 
@@ -97,15 +97,17 @@ class Inventory:
             else:
                 return False
 
+
     def AddItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):
-            if itemSlots.itemHolding is None:
 
-                itemSlots.itemHolding = item.data
+            if itemSlots.data is None and self.currentItems[slotIndex] is None:
+                itemSlots.data = item.data
+                self.currentItems[slotIndex] = item.data
                 itemSlots.sprite = item.data["uiSprite"]
                 itemSlots.selectedSprite = item.data["uiSpriteSelected"]
                 return
-
+            
 
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
@@ -118,7 +120,7 @@ class Inventory:
 
             left = (index * increment) + (increment - self.width) + 37
 
-            newSlots = Slot((left,self.slotPosY),item,index)
+            newSlots = InventorySlot((left, self.slotPosY), item, index)
 
             self.slotList.append(newSlots)
 
@@ -137,7 +139,6 @@ class Inventory:
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):
-
             self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
         self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 

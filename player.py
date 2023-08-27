@@ -28,7 +28,7 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
 
-        self.coins = 0
+        self.coins = 10
 
         self.mood = "Idle"
 
@@ -179,6 +179,7 @@ class Player(Entity):
                 if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
                     self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
                 elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
+
                     self.state = f"{self.facingDirection}_idle"
                     self.createEquipmentTile()
                     self.usingItem = False

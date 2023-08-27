@@ -98,7 +98,7 @@ class Level:
         self.getPlayerData([self.timeManager,
                               self.bedTile])
 
-        self.ui = Ui(self.player,self.pauseGame)
+        self.ui = Ui(self.player,self.pauseGame,self.unpauseGame)
         self.dynamicUi = self.ui.dynamicUi
         self.merchant.dialogueSystem,dynamicUi = self.ui.dialogueSystem,self.dynamicUi
         self.player.dialogueSystem = self.ui.dialogueSystem
@@ -156,7 +156,9 @@ class Level:
     def pauseGame(self):
         if not self.gamePaused:
             self.gamePaused = True
-        else:
+
+    def unpauseGame(self):
+        if self.gamePaused:
             self.gamePaused = False
 
     def getPlayerData(self,object):

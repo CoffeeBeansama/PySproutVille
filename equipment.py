@@ -25,4 +25,5 @@ class Equipment(pg.sprite.Sprite):
                 self.rect = self.image.get_rect(midleft=player.rect.midright - pg.math.Vector2(tileSize, 0))
 
         elif playerItemEquipped in seedItems:
+            print("tis")
             self.rect = self.image.get_rect(center=player.rect.center)
