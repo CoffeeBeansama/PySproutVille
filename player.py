@@ -5,7 +5,7 @@ from support import import_folder
 from inventory import Inventory
 from objects import CoinOverHead
 from enum import Enum
-
+from timer import Timer
 
 
 class Player(Entity):
@@ -55,6 +55,7 @@ class Player(Entity):
 
         self.laidToBed = False
 
+        self.timer = Timer(200)
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -184,7 +185,9 @@ class Player(Entity):
 
     def getInputs(self):
         keys = pg.key.get_pressed()
-        allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive
+
+        allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive and not self.displayInventory
+
         if allowedToMove:
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
@@ -196,6 +199,24 @@ class Player(Entity):
                 self.getState(self.horizontalDirection, 1, "Right")
             else:
                 self.idleState()
+
+        if not self.timer.activated:
+            if self.displayInventory:
+                if keys[pg.K_q]:
+                    self.inventory.selectFromLeft()
+                    self.timer.activate()
+                if keys[pg.K_e]:
+                    self.inventory.selectFromRight()
+                    self.timer.activate()
+            if keys[pg.K_SPACE]:
+                if self.displayInventory:
+                    self.inventory.renderSelector()
+                else:
+                    self.useItemEquipped()
+                self.timer.activate()
+            if keys[pg.K_TAB]:
+                self.renderInventory()
+                self.timer.activate()
 
     def resetLives(self):
         self.lives = self.maxLives
@@ -214,12 +235,15 @@ class Player(Entity):
     def update(self):
         self.currentTime = pg.time.get_ticks()
 
+        self.timer.update()
+        self.getInputs()
+
         if self.displayInventory:
             self.inventory.display()
 
         else:
             self.updateMood()
-            self.getInputs()
+
             self.movement(playerSpeed)
             self.animate()
             self.interact()

@@ -70,6 +70,7 @@ class Level:
         self.player = None
         self.screen = pg.display.get_surface()
 
+        self.gamePaused = False
         self.currentEquipment = None
 
         self.visibleSprites = CameraGroup()
@@ -97,7 +98,7 @@ class Level:
         self.getPlayerData([self.timeManager,
                               self.bedTile])
 
-        self.ui = Ui(self.player)
+        self.ui = Ui(self.player,self.pauseGame)
         self.dynamicUi = self.ui.dynamicUi
         self.merchant.dialogueSystem,dynamicUi = self.ui.dialogueSystem,self.dynamicUi
         self.player.dialogueSystem = self.ui.dialogueSystem
@@ -152,6 +153,11 @@ class Level:
         self.player.lives -= 1
         self.dynamicUi.decreasePlayerHeart()
 
+    def pauseGame(self):
+        if not self.gamePaused:
+            self.gamePaused = True
+        else:
+            self.gamePaused = False
 
     def getPlayerData(self,object):
         for classes in object:
@@ -212,22 +218,20 @@ class Level:
                 coins.update(self.coinList)
 
 
-
-
-
     def update(self):
 
         self.visibleSprites.custom_draw(self.player)
         self.equipmentTileCollisionLogic()
 
-        self.player.update()
         self.playerPickUpItems()
         self.updateCoinList()
         self.ui.display()
-        self.timeManager.dayNightCycle()
 
+        if not self.gamePaused:
+            for animals in self.animalsList:
+                animals.update()
 
+            self.timeManager.dayNightCycle()
+            self.player.update()
 
-        for animals in self.animalsList:
-            animals.update()
 

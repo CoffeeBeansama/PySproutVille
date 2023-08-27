@@ -2,24 +2,30 @@ import pygame as pg
 from settings import *
 from support import *
 from dialogues import *
-from support import import_folder
+from support import *
 from pygame import mixer
 
 
 class Ui:
 
-    def __init__(self,player):
+    def __init__(self,player,gamePause):
         self.screen = pg.display.get_surface()
         self.player = player
 
-        self.staticUi = StaticUI()
         self.dynamicUi = DynamicUI(self.player)
+        self.staticUi = StaticUI(self.dynamicUi)
         self.dialogueSystem = DialogueSystem(self.player,self.dynamicUi)
 
+        self.gamePaused = gamePause
+
     def display(self):
+
         self.staticUi.display()
         self.dynamicUi.display()
         self.dialogueSystem.display()
+
+        if self.dynamicUi.displayMerchandise:
+            self.gamePaused()
 
 
 class DialogueSystem:
@@ -119,8 +125,6 @@ class DialogueSystem:
             self.dynamicUi.displayMerchandise = True
         self.speaker = None
         self.dialogueActive = False
-
-
 
     def checkPlayerInput(self):
         keys = pg.key.get_pressed()
@@ -249,9 +253,10 @@ class DialogueSystem:
 
 
 class StaticUI:
-    def __init__(self):
+    def __init__(self,dynamicUi):
         self.screen = pg.display.get_surface()
 
+        self.dynamicUi = dynamicUi
         self.faceContainerBackground = uiSprites["FaceContainer"].convert_alpha()
         self.faceContainerBackgroundPos = (10, 10)
         self.faceContainerBackgroundRect = self.faceContainerBackground.get_rect()
@@ -272,8 +277,9 @@ class StaticUI:
         }
 
     def display(self):
-        for keys, values in enumerate(self.staticUi.values()):
-            self.screen.blit(values["Sprite"], values["Position"])
+        if not self.dynamicUi.displayMerchandise:
+            for keys, values in enumerate(self.staticUi.values()):
+                self.screen.blit(values["Sprite"], values["Position"])
 
 
 class DynamicUI:
@@ -305,7 +311,9 @@ class DynamicUI:
         self.heartPosY = 19
         self.createHearts()
 
+        self.store = MerchantStore()
         self.displayMerchandise = False
+
 
 
     def importPlayerMoodSprites(self):
@@ -367,20 +375,31 @@ class DynamicUI:
     def displayMerchantStore(self):
         if not self.displayMerchandise: return
 
+        self.store.display()
+
 
     def display(self):
-        for key,values in enumerate(self.hearts.values()):
-            self.screen.blit(values["Sprite"],values["Position"])
-
         self.displayMerchantStore()
-        self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
-        self.screen.blit(self.coinText, self.coinCounterLocation)
-        self.resetPlayerHeart()
-        self.animateFace()
-        self.screen.blit(self.faceSprite, self.faceSpritePos)
+
+        if not self.displayMerchandise:
+            for key,values in enumerate(self.hearts.values()):
+                self.screen.blit(values["Sprite"],values["Position"])
+            self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
+            self.screen.blit(self.coinText, self.coinCounterLocation)
+            self.resetPlayerHeart()
+            self.animateFace()
+            self.screen.blit(self.faceSprite, self.faceSpritePos)
 
 
+class MerchantStore:
+    def __init__(self):
+        self.screen = pg.display.get_surface()
 
+        backGroundSpritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Merchant/BackGround.png"
+        self.backGroundSpiteSize = (450,500)
+        self.backGroundSprite = loadSprite(backGroundSpritePath,self.backGroundSpiteSize)
+        self.backGroundSpritePos = (160,50)
+        self.backGroundSpriteRect = self.backGroundSprite.get_rect(topleft=self.backGroundSpritePos)
 
-
-
+    def display(self):
+        self.screen.blit(self.backGroundSprite,self.backGroundSpriteRect)

@@ -25,6 +25,7 @@ class Merchant(InteractableObjects):
         self.interactableSprites = interactableSprites
         self.add(self.interactableSprites)
 
+
     def interact(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:

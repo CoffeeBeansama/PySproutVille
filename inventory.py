@@ -71,7 +71,7 @@ class Inventory:
                 self.itemSwapIndex = self.inventoryCapacity -1
 
     def swapItems(self):
-        print(self.slotList)
+
         # Item Swap Logic
         self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
         self.slotList[self.itemSwapIndex].itemHolding, self.slotList[self.itemIndex].itemHolding = self.slotList[self.itemIndex].itemHolding,self.slotList[self.itemSwapIndex].itemHolding
