@@ -108,6 +108,17 @@ class Inventory:
                 itemSlots.selectedSprite = item.data["uiSpriteSelected"]
                 return
             
+    def PurchaseItem(self,item):
+        for slotIndex,itemSlots in enumerate(self.slotList):
+            if itemSlots.data is None and self.currentItems[slotIndex] is None:
+                print("item purchased")
+                self.player.coins -= item.itemCost
+                newData = itemData[f"{item.data['name']}"]
+                itemSlots.data = newData
+                self.currentItems[slotIndex] = newData
+                itemSlots.sprite = newData["uiSprite"]
+                itemSlots.selectedSprite = newData["uiSpriteSelected"]
+                return
 
     def getCurrentSelectedItem(self):
         item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment

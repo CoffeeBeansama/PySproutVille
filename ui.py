@@ -315,6 +315,8 @@ class DynamicUI:
         self.heartPosY = 19
         self.createHearts()
 
+        self.timer = Timer(200)
+
         self.store = MerchantStore(self.player,self.closeMerchantStore)
         self.displayMerchandise = False
 
@@ -378,13 +380,15 @@ class DynamicUI:
 
     def displayMerchantStore(self):
         if not self.displayMerchandise: return
-        self.store.display()
 
+        self.store.display()
     def closeMerchantStore(self):
         if self.displayMerchandise:
             self.displayMerchandise = False
+            self.store.allowedToPurchase = False
 
     def display(self):
+        self.timer.update()
         self.displayMerchantStore()
 
         if not self.displayMerchandise:
@@ -406,7 +410,7 @@ class ItemSlot:
         self.data = item
         self.itemName = item["name"]
         self.itemCost = item["storeCost"]
-        self.itemSprite = pg.transform.scale(item["CropSprite"], (32, 32)).convert_alpha()
+        self.itemSprite = item["StoreSprite"].convert_alpha()
 
         spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Merchant/ItemSlot.png"
         selectedSpritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Merchant/ItemSlotSelected.png"
@@ -429,12 +433,36 @@ class MerchantStore:
         self.backGroundSpriteRect = self.backGroundSprite.get_rect(topleft=self.backGroundSpritePos)
         self.backGroundLength = self.backGroundSpiteSize[1]
 
+        self.itemStoreSpriteSize = (35,35)
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 32)
         self.fontColor = (144, 98, 93)
 
         self.renderedItems = []
 
-        self.itemSetup = [itemData["Wheat"], itemData["Tomato"], itemData["Chicken"], itemData["Cow"]]
+        self.itemsAvailable = {
+            "Wheat": {
+                "name": "Wheat",
+                "storeCost": 1,
+                "StoreSprite": loadSprite(f"{spritePath}/Plants/Wheat/5.png",self.itemStoreSpriteSize),
+            },
+            "Tomato": {
+                "name": "Tomato",
+                "storeCost": 3,
+                "StoreSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png", self.itemStoreSpriteSize),
+            },
+            "Chicken": {
+                "name": "Chicken",
+                "storeCost": 60,
+                "StoreSprite": loadSprite("Sprites/Chicken/Idle/0.png",self.itemStoreSpriteSize),
+            },
+            "Cow": {
+                "name": "Cow",
+                "storeCost": 90,
+                "StoreSprite": loadSprite("Sprites/Cow/Idle/0.png",(38,38)),
+            },
+        }
+
+        self.itemSetup = [self.itemsAvailable["Wheat"], self.itemsAvailable["Tomato"], self.itemsAvailable["Chicken"], self.itemsAvailable["Cow"]]
 
         self.slotPosX = 195
 
@@ -449,6 +477,7 @@ class MerchantStore:
         self.itemIndex = 0
 
         self.timer = Timer(200)
+        self.allowedToPurchase = False
 
     def createItems(self):
         for index,items in enumerate(self.itemSetup):
@@ -462,41 +491,50 @@ class MerchantStore:
 
     def purchaseItem(self):
         canPurchase = self.player.coins >= self.renderedItems[self.itemIndex].itemCost
-
         if canPurchase:
-            self.player.inventory.AddItem(self.renderedItems[self.itemIndex])
-            self.player.coins -= self.renderedItems[self.itemIndex].itemCost
+            if self.renderedItems[self.itemIndex].itemName in seedItems:
+                self.player.inventory.PurchaseItem(self.renderedItems[self.itemIndex])
+            else:
+                pass
         else:
             print("not enough cash")
 
+        return
+
     def getPlayerInputs(self):
-        keys = pg.key.get_pressed()
+        if self.allowedToPurchase:
+            keys = pg.key.get_pressed()
 
-        if self.itemIndex >= len(self.itemSetup):
-            self.itemIndex = 0
-        elif self.itemIndex < 0:
-            self.itemIndex = len(self.itemSetup) - 1
+            if self.itemIndex >= len(self.itemSetup):
+                self.itemIndex = 0
+            elif self.itemIndex < 0:
+                self.itemIndex = len(self.itemSetup) - 1
 
-        if not self.timer.activated:
-            if keys[pg.K_w]:
-                self.itemIndex -= 1
-                self.timer.activate()
-            if keys[pg.K_s]:
-                self.itemIndex += 1
-                self.timer.activate()
+            if not self.timer.activated:
+                if keys[pg.K_w]:
+                    self.itemIndex -= 1
+                    self.timer.activate()
+                if keys[pg.K_s]:
+                    self.itemIndex += 1
+                    self.timer.activate()
 
-            if keys[pg.K_ESCAPE]:
-                self.closeMenu()
-                self.timer.activate()
+                if keys[pg.K_ESCAPE]:
+                    self.closeMenu()
+                    self.timer.activate()
 
-            if keys[pg.K_SPACE]:
-                self.purchaseItem()
-                self.timer.activate()
+                if keys[pg.K_SPACE]:
+                    self.purchaseItem()
+                    self.timer.activate()
 
 
     def display(self):
         self.timer.update()
         self.getPlayerInputs()
+
+        if not self.timer.activated and not self.allowedToPurchase:
+            self.allowedToPurchase = True
+            self.timer.activate()
+
 
         self.screen.blit(self.backGroundSprite,self.backGroundSpriteRect)
 

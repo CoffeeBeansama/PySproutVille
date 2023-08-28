@@ -45,12 +45,10 @@ class Tree(pg.sprite.Sprite):
         randomX = randint(-3,3)
         randomY = randint(-3,3)
         applePos = y + tileSize + 5
-
         newApple = Apple((x + randomX, (y - tileSize) + randomY), self.visibleSprites, itemData["Apple"],
                          (x, applePos), self.pickUpSprites, self)
 
         self.fruit = newApple
-
         self.lives = self.maxLives
         self.producedWood = False
 

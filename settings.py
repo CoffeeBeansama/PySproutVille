@@ -45,7 +45,6 @@ itemData = {
     "Wheat":{
         "name": "Wheat",
         "costs": 10,
-        "storeCost": 1,
         "uiSprite": loadSprite(f"{uiPath}Wheat.png",slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}WheatSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Wheat/1.png",(tileSize,tileSize)),
@@ -59,7 +58,6 @@ itemData = {
     "Tomato":{
         "name": "Tomato",
         "costs": 15,
-        "storeCost": 3,
         "uiSprite": loadSprite(f"{uiPath}Tomato.png", slotScale),
         "uiSpriteSelected": loadSprite(f"{uiPath}TomatoSelected.png", slotScale),
         "PhaseOneSprite": loadSprite(f"{spritePath}Plants/Tomato/1.png",(tileSize,tileSize)),
@@ -77,19 +75,7 @@ itemData = {
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wood/collision.png",(tileSize,tileSize)),
 
     },
-    "Chicken":{
-        "name": "Chicken",
-        "costs": 60,
-        "storeCost": 60,
-        "CropSprite": loadSprite("Sprites/Chicken/Idle/0.png",(tileSize,tileSize)),
-    },
 
-    "Cow":{
-        "name": "Cow",
-        "costs": 80,
-        "storeCost": 90,
-        "CropSprite": loadSprite("Sprites/Cow/Idle/0.png",(64,64)),
-    }
 
 }
 

@@ -118,6 +118,7 @@ class Player(Entity):
         self.facingDirection = state
 
     def movement(self, speed):
+        # bug
 
         self.hitbox.x += self.direction.x * speed if self.direction.x > 0 else self.direction.x * speed / 1.5
         self.checkWallCollision("Horizontal")

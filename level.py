@@ -135,8 +135,9 @@ class Level:
                         if style == "Tree Trunks":
                             Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
 
+
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
-        self.chicken = Chicken((990, 866),[self.visibleSprites])
+        self.chicken = Chicken((990, 866),[self.visibleSprites],self.collisionSprites)
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
