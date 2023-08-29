@@ -48,8 +48,7 @@ class PlantTile(PickAbleItems):
         self.pickupitems = pickupitemSprites
 
         self.data = data
-        self.image = None
-        self.PhaseOne()
+        self.image = self.data["PhaseOneSprite"]
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-20, -20)
@@ -60,10 +59,10 @@ class PlantTile(PickAbleItems):
         self.currentPhase = 1
 
         self.phases = {
-            1: self.PhaseOne,
-            2: self.PhaseTwo,
-            3: self.PhaseThree,
-            4: self.PhaseFour,
+            1: self.data["PhaseOneSprite"].convert_alpha(),
+            2: self.data["PhaseTwoSprite"].convert_alpha(),
+            3: self.data["PhaseThreeSprite"].convert_alpha(),
+            4: self.data["CropSprite"].convert_alpha(),
         }
 
     def NextPhase(self):
@@ -72,28 +71,17 @@ class PlantTile(PickAbleItems):
             soil.update()
 
             self.currentPhase += 1
-            if self.currentPhase <= len(self.phases):
-                getCurrentPhase = self.phases.get(self.currentPhase,self.PhaseOne)
-                getCurrentPhase()
-            else:
-                return
+            if self.currentPhase >= len(self.phases):
+                self.add(self.pickupitems)
+                self.soil.currentPlant = None
 
-    def PhaseOne(self):
-        self.image = self.data["PhaseOneSprite"].convert_alpha()
+            getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
+            self.image = getCurrentSprite
 
-    def PhaseTwo(self):
-        self.image = self.data["PhaseTwoSprite"].convert_alpha()
 
-    def PhaseThree(self):
-        self.image = self.data["PhaseThreeSprite"].convert_alpha()
 
-    def PhaseFour(self):
-        self.ProduceCrop()
 
-    def ProduceCrop(self):
-        self.image = self.data["CropSprite"].convert_alpha()
-        self.add(self.pickupitems)
-        self.soil.currentPlant = None
+
 
 
 

@@ -118,11 +118,9 @@ class Player(Entity):
         self.facingDirection = state
 
     def movement(self, speed):
-        # bug
-
-        self.hitbox.x += self.direction.x * speed if self.direction.x > 0 else self.direction.x * speed / 1.5
+        self.hitbox.x += self.direction.x * speed
         self.checkWallCollision("Horizontal")
-        self.hitbox.y += self.direction.y * speed if self.direction.y > 0 else self.direction.y * speed / 1.5
+        self.hitbox.y += self.direction.y * speed
         self.checkWallCollision("Vertical")
         self.rect.center = self.hitbox.center
 
@@ -175,12 +173,10 @@ class Player(Entity):
             notMoving = self.direction.x == 0 and self.direction.y == 0
             if notMoving and self.inventory.selectingEquipmentSlot():
                 self.frame_index = 0
-
                 self.usingItem = True
                 if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
                     self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
                 elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
-
                     self.state = f"{self.facingDirection}_idle"
                     self.createEquipmentTile()
                     self.usingItem = False
@@ -189,7 +185,6 @@ class Player(Entity):
         keys = pg.key.get_pressed()
 
         allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive and not self.displayInventory
-
         if allowedToMove:
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
@@ -220,8 +215,10 @@ class Player(Entity):
                 self.renderInventory()
                 self.timer.activate()
 
+
     def resetLives(self):
         self.lives = self.maxLives
+
     def checkifSleepy(self,dayTime):
         if self.mood != "Happy" :
             if dayTime is False or self.laidToBed:

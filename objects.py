@@ -31,10 +31,10 @@ class CoinOverHead(pg.sprite.Sprite):
         self.speed = 0.5
 
         self.sprites = {
-            0: loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)).convert_alpha(),
-            1: loadSprite(f"{self.spritePath}2.png", (tileSize, tileSize)).convert_alpha(),
-            2: loadSprite(f"{self.spritePath}3.png", (tileSize, tileSize)).convert_alpha(),
-            3: loadSprite(f"{self.spritePath}4.png", (tileSize, tileSize)).convert_alpha(),
+            0: loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)),
+            1: loadSprite(f"{self.spritePath}2.png", (tileSize, tileSize)),
+            2: loadSprite(f"{self.spritePath}3.png", (tileSize, tileSize)),
+            3: loadSprite(f"{self.spritePath}4.png", (tileSize, tileSize)),
 
         }
         self.image = self.sprites[self.frameIndex]
@@ -49,7 +49,7 @@ class CoinOverHead(pg.sprite.Sprite):
             coinList.remove(self)
             self.kill()
 
-        self.image = self.sprites[int(self.frameIndex)]
+        self.image = self.sprites[int(self.frameIndex)].convert_alpha()
         self.rect.y -= 1 * self.speed
 
 
@@ -80,15 +80,6 @@ class PickAbleItems(pg.sprite.Sprite):
                 player.inventory.AddItem(self)
 
             self.kill()
-
-
-
-
-
-
-
-
-
 
 
 class Chest(pg.sprite.Sprite):

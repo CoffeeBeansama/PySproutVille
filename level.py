@@ -207,9 +207,7 @@ class Level:
 
     def seedPlantTile(self, soilTile,data):
         if soilTile.currentPlant is None and soilTile.tilted:
-
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self.pickAbleItemSprites,self.timeManager)
-
             soilTile.currentPlant = plantTile
             self.timeManager.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)

@@ -73,7 +73,7 @@ class Chicken(pg.sprite.Sprite):
         }
 
         self.chooseDirection = False
-        self.walkSpeed = 0.1
+        self.walkSpeed = 1
         self.availableDirections = ["Up", "Down", "Left", "Right"]
         self.chosenDirection = "Left"
 
@@ -122,10 +122,9 @@ class Chicken(pg.sprite.Sprite):
         self.direction = newDirection
 
     def movement(self,speed):
-        # bug
-        self.hitbox.x += self.direction.x * speed if self.direction.x < 0 else self.direction.x * (speed * 10)
+        self.hitbox.x += self.direction.x * speed
         self.checkWallCollision("Horizontal")
-        self.hitbox.y += self.direction.y * speed if self.direction.y < 0 else self.direction.y * (speed * 10)
+        self.hitbox.y += self.direction.y * speed
         self.checkWallCollision("Vertical")
         self.rect.center = self.hitbox.center
 
