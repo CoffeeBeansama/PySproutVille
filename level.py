@@ -60,6 +60,7 @@ class CameraGroup(pg.sprite.Group):
         self.display_canvas.blit(scaledSurface, scaledRect)
 
 
+
 class Level:
     def __init__(self, main):
 
