@@ -4,8 +4,8 @@ from settings import *
 
 class TimeManager:
 
-    def __init__(self,player):
-        self.plantList = []
+    def __init__(self,player,updateEntities):
+
         self.currentTime = 0
         self.startTickTime = 0
         self.screen = pg.display.get_surface()
@@ -30,6 +30,8 @@ class TimeManager:
 
         self.dayTransitioned = False
 
+        self.updateEntities = updateEntities
+
         self.player = player
 
     def newDay(self):
@@ -38,10 +40,7 @@ class TimeManager:
         self.nightTime = False
 
         self.day += 1
-        if len(self.plantList) > 0:
-            for plants in self.plantList:
-
-                plants.NextPhase()
+        self.updateEntities()
 
         self.nightDarknessSprite.set_alpha(0)
         self.startTickTime = pg.time.get_ticks()

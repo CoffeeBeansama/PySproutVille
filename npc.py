@@ -1,12 +1,13 @@
 import random
-
 import pygame as pg
 from support import loadSprite
 from settings import *
-from objects import InteractableObjects
+from objects import *
 from timer import Timer
 from support import import_folder
 import random
+from abc import ABC,abstractmethod
+
 
 class Merchant(InteractableObjects):
     def __init__(self,group,interactableSprites,dialogue,dynamicUi):
@@ -43,8 +44,42 @@ class Merchant(InteractableObjects):
     def disengage(self):
         self.interacted = False
 
-class Chicken(pg.sprite.Sprite):
-    def __init__(self,pos,group,collisionSprites):
+class FarmAnimals(pg.sprite.Sprite,ABC):
+    def __init__(self,group):
+        super().__init__(group)
+
+    @abstractmethod
+    def IdleState(self):
+        pass
+
+    @abstractmethod
+    def RoamState(self):
+        pass
+
+    @abstractmethod
+    def produce(self):
+        pass
+
+    @abstractmethod
+    def update(self):
+        pass
+
+class Egg(PickAbleItems):
+    def __init__(self,pos,group,pickAbleSprites,data=itemData["Egg"]):
+        super().__init__(pos,group,data)
+        self.type = "item"
+
+        self.imagePath = spritePath + "Egg.png"
+        self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize))
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0,0)
+
+        self.pickAbleSprites = pickAbleSprites
+        self.add(self.pickAbleSprites)
+
+
+class Chicken(FarmAnimals):
+    def __init__(self,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(group)
 
         self.type = "npc"
@@ -54,6 +89,8 @@ class Chicken(pg.sprite.Sprite):
         self.image = pg.image.load(self.imagePath).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(10, 0)
+
+        self.group = group
 
         self.ImportSprites()
 
@@ -85,6 +122,7 @@ class Chicken(pg.sprite.Sprite):
         }
 
         self.timer = Timer(self.stateDuration)
+        self.pickAbleSprites = pickAbleSprites
 
     def ImportSprites(self):
         imagePath = "Sprites/Chicken/"
@@ -142,6 +180,9 @@ class Chicken(pg.sprite.Sprite):
                     else:
                         self.hitbox.bottom = sprite.hitbox.top
 
+    def produce(self):
+        Egg(self.rect.topleft,self.group,self.pickAbleSprites)
+
     def update(self):
         self.timer.update()
         self.animate()
@@ -153,3 +194,4 @@ class Chicken(pg.sprite.Sprite):
 
         self.getCurrentState()
         self.movement(self.walkSpeed)
+

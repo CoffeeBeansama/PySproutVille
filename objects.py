@@ -3,6 +3,7 @@ from tile import Tile
 from abc import abstractmethod
 from settings import *
 from timeManager import TimeManager
+from timer import Timer
 
 
 class InteractableObjects(pg.sprite.Sprite):
@@ -21,7 +22,7 @@ class InteractableObjects(pg.sprite.Sprite):
 
 
 class CoinOverHead(pg.sprite.Sprite):
-    def __init__(self, pos, group):
+    def __init__(self, pos, group,coinList):
         super().__init__(group)
 
         self.type = "object"
@@ -29,28 +30,23 @@ class CoinOverHead(pg.sprite.Sprite):
 
         self.frameIndex = 0
         self.speed = 0.5
+        self.coinList = coinList
 
-        self.sprites = {
-            0: loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)),
-            1: loadSprite(f"{self.spritePath}2.png", (tileSize, tileSize)),
-            2: loadSprite(f"{self.spritePath}3.png", (tileSize, tileSize)),
-            3: loadSprite(f"{self.spritePath}4.png", (tileSize, tileSize)),
+        self.timer = Timer(200,self.killself)
 
-        }
-        self.image = self.sprites[self.frameIndex]
+        self.image = loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize))
         self.rect = self.image.get_rect(topleft=pos)
 
-        self.animationTime = 1 / 8
+    def killself(self):
+        self.coinList.remove(self)
+        self.kill()
 
     def update(self,coinList):
-        self.frameIndex += self.animationTime
-
-        if self.frameIndex >= len(self.sprites) - 1:
-            coinList.remove(self)
-            self.kill()
-
-        self.image = self.sprites[int(self.frameIndex)].convert_alpha()
         self.rect.y -= 1 * self.speed
+        self.timer.update()
+
+        if not self.timer.activated:
+            self.timer.activate()
 
 
 class PickAbleItems(pg.sprite.Sprite):
@@ -75,7 +71,7 @@ class PickAbleItems(pg.sprite.Sprite):
         if self.currentTime - self.tickStart > 100 and self.collided:
             if self.data["name"] in sellableItems:
                 player.increaseCoin(self.data["costs"])
-                coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup))
+                coinList.append(CoinOverHead((player.rect.x + tileSize,player.rect.y), coinSpriteGroup,coinList))
             else:
                 player.inventory.AddItem(self)
 

@@ -49,7 +49,7 @@ class CameraGroup(pg.sprite.Group):
         self.internalSurface.blit(self.groundSprite, floor_offset_pos)
 
 
-        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type in groundTiles else sprite.rect.centery):
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery - 15 if sprite.type in OverlapTiles else sprite.rect.centery):
             self.offset_rect = sprite.rect.topleft - self.offset + self.internalOffset
 
             self.internalSurface.blit(sprite.image, self.offset_rect)
@@ -58,9 +58,6 @@ class CameraGroup(pg.sprite.Group):
         scaledSurface = pg.transform.scale(self.internalSurface, self.zoomInSize)
         scaledRect = scaledSurface.get_rect(center=(self.half_width, self.half_height))
         self.display_canvas.blit(scaledSurface, scaledRect)
-
-
-
 
 
 class Level:
@@ -82,12 +79,12 @@ class Level:
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
 
-        self.timeManager = TimeManager(None)
+        self.timeManager = TimeManager(None,self.updateEntities)
 
         self.PlantedSoilTileList = []
 
         self.plantTile = None
-        self.plantTileList = []
+        self.plantList = []
 
         self.animalsList = []
 
@@ -133,11 +130,11 @@ class Level:
                             if column == "Chest":
                                 self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites)
                         if style == "Tree Trunks":
-                            Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager)
+                            Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.plantList)
 
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
-        self.chicken = Chicken((990, 866),[self.visibleSprites],self.collisionSprites)
+        self.chicken = Chicken((990, 866),[self.visibleSprites],self.collisionSprites,self.pickAbleItemSprites)
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
@@ -174,11 +171,18 @@ class Level:
     def createEquipmentTile(self):
         self.currentEquipment = Equipment([self.equipmentSprites], self.player)
 
+    def updateEntities(self):
+        for plants in self.plantList:
+            plants.NextPhase()
+
+        for animals in self.animalsList:
+            animals.produce()
+
 
     def playerPickUpItems(self):
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
             if items.hitbox.colliderect(self.player.hitbox):
-                items.pickUpItem(self.timeManager.plantList,self.player,self.visibleSprites,self.coinList)
+                items.pickUpItem(self.plantList,self.player,self.visibleSprites,self.coinList)
 
 
     def equipmentTileCollisionLogic(self):
@@ -209,7 +213,7 @@ class Level:
         if soilTile.currentPlant is None and soilTile.tilted:
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,soilTile,self.pickAbleItemSprites,self.timeManager)
             soilTile.currentPlant = plantTile
-            self.timeManager.plantList.append(plantTile)
+            self.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
 
 

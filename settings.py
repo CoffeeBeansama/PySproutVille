@@ -75,6 +75,11 @@ itemData = {
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wood/collision.png",(tileSize,tileSize)),
 
     },
+    "Egg":{
+        "name": "Egg",
+        "costs": 20,
+        "CollisionSprite": loadSprite(f"{spritePath}/EggCollision.png",(tileSize,tileSize)),
+    }
 
 
 }
@@ -121,8 +126,8 @@ uiSprites = {
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["Wheat","Tomato"]
-sellableItems = ["Wheat","Tomato","Apple"]
-groundTiles = ["Soil","Plants"]
+sellableItems = ["Wheat","Tomato","Apple","Egg"]
+OverlapTiles = ["Soil", "Plants","npc"]
 
 
 

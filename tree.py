@@ -4,7 +4,7 @@ from settings import *
 from objects import PickAbleItems
 
 class Tree(pg.sprite.Sprite):
-    def __init__(self,pos,group,visibleSprites,pickUpSprites,timeManager):
+    def __init__(self,pos,group,visibleSprites,pickUpSprites,plantlist):
         super().__init__(group)
         self.type = "tree"
         self.image = testSprites["Wall"]
@@ -16,7 +16,7 @@ class Tree(pg.sprite.Sprite):
         self.maxLives = 3
         self.lives = 3
 
-        self.timeManager = timeManager
+        self.plantList = plantlist
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15,0)
@@ -31,7 +31,7 @@ class Tree(pg.sprite.Sprite):
         TreeLeaves((x, y - tileSize), [group])
         apple = Apple((x + randomX, (y - tileSize) + randomY), visibleSprites,itemData["Apple"], (x, self.dropZoneY), self.pickUpSprites,self)
         self.fruit = apple
-        self.timeManager.plantList.append(self)
+        self.plantList.append(self)
 
         self.producedWood = False
 
@@ -51,7 +51,6 @@ class Tree(pg.sprite.Sprite):
         self.fruit = newApple
         self.lives = self.maxLives
         self.producedWood = False
-
 
 
     def chopped(self):

@@ -28,7 +28,7 @@ class Game:
             pg.display.update()
             self.clock.tick(FPS)
 
-            debug(self.clock.get_fps())
+            #debug(self.clock.get_fps())
 
 
 game = Game()
