@@ -219,9 +219,9 @@ class Player(Entity):
     def resetLives(self):
         self.lives = self.maxLives
 
-    def checkifSleepy(self,dayTime):
+    def checkifSleepy(self,dayPeriod):
         if self.mood != "Happy" :
-            if dayTime is False or self.laidToBed:
+            if dayPeriod == -1 or self.laidToBed:
                 self.mood = "Sleepy"
             else:
                 self.mood = "Idle"

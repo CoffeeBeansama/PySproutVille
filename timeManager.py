@@ -1,5 +1,6 @@
 import pygame as pg
 from settings import *
+from timer import Timer
 
 
 class TimeManager:
@@ -20,33 +21,45 @@ class TimeManager:
         self.transitionTickTime = None
 
         self.day = 1
-        self.dayNightCyclePeriod = 300000
-        self.fullDayDuration = 36000
+        self.dayNightCyclePeriod = 600000
+        self.darknessAnimationDuration = 2000
 
-        self.dayTime = True
-        self.nightTime = False
+        self.currentPeriod = -1
+        self.dayTimer = Timer(self.dayNightCyclePeriod)
 
-        self.startTickTime = pg.time.get_ticks()
+        self.currentDayState = {
+            1: self.Day,
+            -1: self.Night
+        }
 
         self.dayTransitioned = False
-
         self.updateEntities = updateEntities
-
         self.player = player
 
+
+    def Day(self):
+        if self.darknessOpacity >= 0:
+            self.darknessOpacity -= 0.07
+            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
+        else:
+            self.newDay()
+
+    def Night(self):
+        self.dayTransitioned = False
+        if self.darknessOpacity <= 255:
+            self.darknessOpacity += 0.07
+            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
+
+
     def newDay(self):
-
-        self.dayTime = True
-        self.nightTime = False
-
-        self.day += 1
-        self.updateEntities()
-
-        self.nightDarknessSprite.set_alpha(0)
-        self.startTickTime = pg.time.get_ticks()
+        if not self.dayTransitioned:
+            self.day += 1
+            self.updateEntities()
+            self.dayTransitioned = True
+            self.nightDarknessSprite.set_alpha(0)
+            self.player.resetLives()
 
     def daySleepTransitionAnimation(self):
-
         if self.player.laidToBed:
             if not self.dayTransitioned:
                 self.darknessFadeAnimation()
@@ -60,50 +73,31 @@ class TimeManager:
         else:
             self.transitionTickTime = pg.time.get_ticks()
             self.newDay()
-            self.dayTransitioned = True
-            self.player.resetLives()
 
     def relightAnimation(self):
-        if self.currentTime - self.transitionTickTime > 2000:
+        if self.currentTime - self.transitionTickTime > self.darknessAnimationDuration:
             if self.transitionSpriteAlpha >= 0:
                 self.transitionSpriteAlpha -= 2.125
                 self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
-
             else:
                 self.dayTransitioned = False
                 self.player.laidToBed = False
 
-    def evening(self):
-        self.nightTime = True
-        self.dayTime = False
-        self.startTickTime = pg.time.get_ticks()
-
-    def sunset(self):
-        if self.darknessOpacity <= 255:
-            self.darknessOpacity += 0.07
-            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
-        else:
-            self.evening()
-
-    def sunrise(self):
-        if self.darknessOpacity >= 0:
-            self.darknessOpacity -= 0.07
-            self.nightDarknessSprite.set_alpha(self.darknessOpacity)
-        else:
-            self.newDay()
 
     def dayNightCycle(self):
+        self.dayTimer.update()
+
         self.currentTime = pg.time.get_ticks()
+
         self.screen.blit(self.nightDarknessSprite,(0,0))
         self.screen.blit(self.sleepTransitionSprite,(0,0))
 
-        if self.dayTime:
-            if self.currentTime - self.startTickTime > self.dayNightCyclePeriod:
-                self.sunset()
+        if not self.dayTimer.activated:
+            self.currentPeriod *= -1
+            self.getCurrentPeriod = self.currentDayState.get(self.currentPeriod)
+            self.dayTimer.activate()
 
-        if self.nightTime:
-            if self.currentTime - self.startTickTime > self.dayNightCyclePeriod:
-                self.sunrise()
+        self.getCurrentPeriod()
 
-        self.player.checkifSleepy(self.dayTime)
+        self.player.checkifSleepy(self.currentPeriod)
         self.daySleepTransitionAnimation()
