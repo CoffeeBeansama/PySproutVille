@@ -4,7 +4,6 @@ from timer import Timer
 
 
 class TimeManager:
-
     def __init__(self,player,updateEntities):
 
         self.currentTime = 0
@@ -45,7 +44,6 @@ class TimeManager:
         else:
             self.newDay()
 
-
     def Night(self):
         if self.darknessOpacity <= 255:
             self.darknessOpacity += 0.07
@@ -55,13 +53,13 @@ class TimeManager:
         self.currentPeriod = 1
         self.getCurrentPeriod = self.currentDayState.get(self.currentPeriod)
         self.dayTransitioned = False
-        self.entitiesUpdated = False
         self.player.laidToBed = False
 
     def newDay(self):
         if not self.entitiesUpdated:
+            print("this")
             self.day += 1
-            self.updateEntities()
+            self.updateEntities() if self.day > 2 else None
             self.player.resetLives()
             self.entitiesUpdated = True
 
@@ -77,6 +75,7 @@ class TimeManager:
             self.transitionSpriteAlpha += 2.125
             self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
         else:
+            self.entitiesUpdated = False
             self.newDay()
             self.dayTransitioned = True
             self.transitionTickTime = pg.time.get_ticks()

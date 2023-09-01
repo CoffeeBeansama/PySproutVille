@@ -182,6 +182,7 @@ class Chicken(FarmAnimals):
                     else:
                         self.hitbox.bottom = sprite.hitbox.top
 
+
     def produce(self):
         Egg(self.rect.topleft,self.group,self.pickAbleSprites)
 
@@ -196,6 +197,19 @@ class Chicken(FarmAnimals):
 
         self.getCurrentState()
         self.movement(self.walkSpeed)
+
+class Milk(PickAbleItems):
+    def __init__(self,pos,group,pickAbleSprites,data=itemData["Milk"]):
+        super().__init__(pos,group,data)
+        self.type = "item"
+
+        self.imagePath = spritePath + "Milk.png"
+        self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize))
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0,0)
+
+        self.pickAbleSprites = pickAbleSprites
+        self.add(self.pickAbleSprites)
 
 class Cow(FarmAnimals):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
@@ -244,7 +258,7 @@ class Cow(FarmAnimals):
                         self.hitbox.bottom = sprite.hitbox.top
 
     def produce(self):
-        print("Milk produced")
+        Milk(self.rect.topleft,self.group,self.pickAbleSprites)
 
     def update(self):
         self.timer.update()

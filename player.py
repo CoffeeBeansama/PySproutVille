@@ -28,7 +28,7 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
 
-        self.coins = 10
+        self.coins = 100
 
         self.mood = "Idle"
 

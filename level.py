@@ -10,8 +10,10 @@ from equipment import Equipment
 from timeManager import TimeManager
 from objects import *
 from tree import *
-from ui import Ui
+from ui import *
 from npc import *
+from merchantStore import MerchantStore
+from  dialogueManager import DialogueSystem
 
 
 class CameraGroup(pg.sprite.Group):
@@ -69,6 +71,7 @@ class Level:
         self.screen = pg.display.get_surface()
 
         self.gamePaused = False
+        self.displayMerchantStore = False
         self.currentEquipment = None
 
         self.visibleSprites = CameraGroup()
@@ -80,10 +83,11 @@ class Level:
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
 
+        self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
 
-        self.PlantedSoilTileList = []
 
+        self.PlantedSoilTileList = []
         self.plantTile = None
         self.plantList = []
 
@@ -93,15 +97,22 @@ class Level:
 
         self.createMap()
 
+        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None)
+
+        self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance)
+        self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore)
+
         self.getPlayerData([self.timeManager,
                               self.bedTile])
 
-        self.ui = Ui(self.player,self.pauseGame,self.unpauseGame)
+        self.ui = Ui(self.player,self.displayMerchantStore)
         self.dynamicUi = self.ui.dynamicUi
-        self.merchant.dialogueSystem,dynamicUi = self.ui.dialogueSystem,self.dynamicUi
-        self.player.dialogueSystem = self.ui.dialogueSystem
-        self.animalsList.append(self.chicken)
-        self.animalsList.append(self.cow)
+        self.merchant.dialogueSystem,dynamicUi = self.dialogueSystem,self.dynamicUi
+        self.dialogueSystem.dynamicUi = self.dynamicUi
+        self.player.dialogueSystem = self.dialogueSystem
+
+        self.chickenSpawnPoint = (990, 866)
+        self.cowSpawnPoint = (1000, 866)
 
     def createMap(self):
 
@@ -136,20 +147,8 @@ class Level:
 
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
-        self.chicken = Chicken("Chicken",(990, 866),[self.visibleSprites],self.collisionSprites,self.pickAbleItemSprites)
-        self.cow = Cow("Cow", (1000, 866), [self.visibleSprites], self.collisionSprites,self.pickAbleItemSprites)
 
-        self.player = Player(
-            testSprites["Player"],
-            [self.visibleSprites,
-             self.playerSprite],
-            self.collisionSprites,
-            self.createEquipmentTile,
-            self.interactableSprites,
-            self.pickAbleItemSprites,
-            self.timeManager,
-            None
-            )
+
 
     def DecreasePlayerLives(self):
         self.player.lives -= 1
@@ -178,7 +177,6 @@ class Level:
     def updateEntities(self):
         for plants in self.plantList:
             plants.NextPhase()
-
         for animals in self.animalsList:
             animals.produce()
 
@@ -226,20 +224,36 @@ class Level:
             for coins in self.coinList:
                 coins.update(self.coinList)
 
+    def openMerchantStore(self):
+        self.displayMerchantStore = True
+        self.merchantStore.displayMerchandise = True
+        self.pauseGame()
+
+    def closeMerchantStore(self):
+        self.unpauseGame()
+        self.displayMerchantStore = False
+
+    def createChickenInstance(self):
+        newChicken = Chicken("Chicken",self.chickenSpawnPoint, [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+        self.animalsList.append(newChicken)
+
+    def createCowInstance(self):
+        newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+        self.animalsList.append(newCow)
 
     def update(self):
-
         self.visibleSprites.custom_draw(self.player)
+        self.dialogueSystem.display()
+        self.merchantStore.display()
         self.equipmentTileCollisionLogic()
-
         self.playerPickUpItems()
         self.updateCoinList()
-        self.ui.display()
+
+        self.ui.display() if not self.displayMerchantStore else None
 
         if not self.gamePaused:
             for animals in self.animalsList:
                 animals.update()
-
             self.timeManager.dayNightCycle()
             self.player.update()
 

@@ -58,7 +58,6 @@ class PickAbleItems(pg.sprite.Sprite):
         self.collided = False
 
     def pickUpItem(self, plantlist,player,coinSpriteGroup,coinList):
-
         self.image = self.data["CollisionSprite"].convert_alpha()
         self.currentTime = pg.time.get_ticks()
 

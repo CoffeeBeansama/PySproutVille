@@ -100,7 +100,6 @@ class Inventory:
 
     def AddItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):
-
             if itemSlots.data is None and self.currentItems[slotIndex] is None:
                 itemSlots.data = item.data
                 self.currentItems[slotIndex] = item.data
@@ -111,8 +110,6 @@ class Inventory:
     def PurchaseItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):
             if itemSlots.data is None and self.currentItems[slotIndex] is None:
-                print("item purchased")
-                self.player.coins -= item.itemCost
                 newData = itemData[f"{item.data['name']}"]
                 itemSlots.data = newData
                 self.currentItems[slotIndex] = newData

@@ -77,9 +77,16 @@ itemData = {
     },
     "Egg":{
         "name": "Egg",
-        "costs": 20,
+        "costs": 10,
         "CollisionSprite": loadSprite(f"{spritePath}/EggCollision.png",(tileSize,tileSize)),
+    },
+
+    "Milk":{
+        "name": "Milk",
+        "costs": 35,
+        "CollisionSprite": loadSprite(f"{spritePath}MilkCollision.png",(tileSize,tileSize)),
     }
+
 
 
 }
@@ -126,7 +133,7 @@ uiSprites = {
 
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["Wheat","Tomato"]
-sellableItems = ["Wheat","Tomato","Apple","Egg"]
+sellableItems = ["Wheat","Tomato","Apple","Egg","Milk"]
 OverlapTiles = ["Soil", "Plants","npc"]
 
 
