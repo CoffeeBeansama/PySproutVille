@@ -101,6 +101,7 @@ class Level:
         self.merchant.dialogueSystem,dynamicUi = self.ui.dialogueSystem,self.dynamicUi
         self.player.dialogueSystem = self.ui.dialogueSystem
         self.animalsList.append(self.chicken)
+        self.animalsList.append(self.cow)
 
     def createMap(self):
 
@@ -135,7 +136,9 @@ class Level:
 
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
-        self.chicken = Chicken((990, 866),[self.visibleSprites],self.collisionSprites,self.pickAbleItemSprites)
+        self.chicken = Chicken("Chicken",(990, 866),[self.visibleSprites],self.collisionSprites,self.pickAbleItemSprites)
+        self.cow = Cow("Cow", (1000, 866), [self.visibleSprites], self.collisionSprites,self.pickAbleItemSprites)
+
         self.player = Player(
             testSprites["Player"],
             [self.visibleSprites,
