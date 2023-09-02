@@ -14,6 +14,7 @@ from ui import *
 from npc import *
 from merchantStore import MerchantStore
 from  dialogueManager import DialogueSystem
+from saveload import SaveLoadSystem
 
 
 class CameraGroup(pg.sprite.Group):
@@ -90,6 +91,7 @@ class Level:
         self.PlantedSoilTileList = []
         self.plantTile = None
         self.plantList = []
+        self.soilList = []
 
         self.animalsList = []
 
@@ -97,7 +99,22 @@ class Level:
 
         self.createMap()
 
-        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None)
+        self.saveload = SaveLoadSystem(".data", "savedata")
+
+        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.saveGameState,self.loadGameState)
+
+        self.gameState = {
+            "Player": self.player.data,
+
+
+        }
+
+        self.defaultGameState = {
+            "Player": self.player.defaultData,
+
+        }
+
+
 
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore)
@@ -113,6 +130,8 @@ class Level:
 
         self.chickenSpawnPoint = (990, 866)
         self.cowSpawnPoint = (1000, 866)
+
+
 
     def createMap(self):
 
@@ -135,7 +154,7 @@ class Level:
                             Tile(testSprites["Player"], (x, y), [self.collisionSprites])
 
                         if style == "soilTile":
-                            SoilTile((x, y), [self.visibleSprites,self.soilTileSprites])
+                            self.soilList.append(SoilTile((x, y), [self.visibleSprites,self.soilTileSprites]))
 
                         if style == "InteractableObjects":
                             if column == "Bed":
@@ -240,6 +259,17 @@ class Level:
     def createCowInstance(self):
         newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
         self.animalsList.append(newCow)
+
+
+    def saveGameState(self):
+        self.player.savePlayerData(self.gameState)
+        self.saveload.saveGameData(self.gameState,"gameState")
+
+
+    def loadGameState(self):
+        self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
+        self.player.loadPlayerData(self.gameState)
+
 
     def update(self):
         self.visibleSprites.custom_draw(self.player)

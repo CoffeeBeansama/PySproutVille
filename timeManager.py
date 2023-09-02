@@ -20,7 +20,7 @@ class TimeManager:
         self.transitionTickTime = None
 
         self.day = 1
-        self.dayNightCyclePeriod = 120000
+        self.dayNightCyclePeriod = 600000
         self.darknessAnimationDuration = 2000
 
         self.currentPeriod = -1
@@ -57,7 +57,6 @@ class TimeManager:
 
     def newDay(self):
         if not self.entitiesUpdated:
-            print("this")
             self.day += 1
             self.updateEntities() if self.day > 2 else None
             self.player.resetLives()
@@ -90,8 +89,6 @@ class TimeManager:
                 self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
             else:
                 self.reset()
-
-
 
 
     def dayNightCycle(self):

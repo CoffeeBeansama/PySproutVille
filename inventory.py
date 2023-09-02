@@ -97,6 +97,10 @@ class Inventory:
             else:
                 return False
 
+    def loadItems(self,index,items):
+        self.currentItems[index] = itemData[items] if items is not None else None
+        self.slotList[index].sprite = itemData[items]["uiSprite"] if items is not None else self.slotList[index].defaultSprite
+        self.slotList[index].selectedSprite = itemData[items]["uiSpriteSelected"] if items is not None else self.slotList[index].defaultSelectedSprite
 
     def AddItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):

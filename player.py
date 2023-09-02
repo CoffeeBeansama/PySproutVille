@@ -9,12 +9,29 @@ from timer import Timer
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,saveGame,loadGame):
         super().__init__(group)
 
         self.type = "player"
         self.animations_States = None
-        self.startingPos = (948, 866)
+
+        self.inventory = Inventory(self)
+        self.displayInventory = False
+        self.currentItemsHolding = []
+
+        self.data = {
+            "Position" : (948, 866),
+            "Coins": 0,
+            "Items": self.inventory.currentItems
+
+        }
+        self.defaultData = {
+            "Position": (948, 866),
+            "Coins": 0,
+            "Items": self.inventory.defaultInventorySetup
+
+        }
+        self.startingPos = self.data["Position"]
 
         self.maxLives = 3
         self.lives = 3
@@ -28,7 +45,7 @@ class Player(Entity):
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(0, 0)
 
-        self.coins = 100
+        self.coins = self.data["Coins"]
 
         self.mood = "Idle"
 
@@ -37,8 +54,7 @@ class Player(Entity):
         self.createEquipmentTile = useEquipmentTile
         self.dialogueSystem = dialogueSystem
 
-        self.inventory = Inventory(self)
-        self.displayInventory = False
+
 
         self.facingDirection = "Down"
         self.state = "Down_idle"
@@ -56,10 +72,13 @@ class Player(Entity):
         self.laidToBed = False
 
         self.timer = Timer(200)
+        self.saveGame = saveGame
+        self.loadGame = loadGame
+
+
 
     def importSprites(self):
         player_path = "Sprites/Player/"
-
         self.animations_States = {
             'Up': [], 'Down': [], 'Left': [], 'Right': [],
             "Up_idle": [], "Down_idle": [], "Left_idle": [], "Right_idle": [],
@@ -215,6 +234,14 @@ class Player(Entity):
                 self.renderInventory()
                 self.timer.activate()
 
+            if keys[pg.K_1]:
+                self.saveGame()
+                self.timer.activate()
+
+            if keys[pg.K_2]:
+                self.loadGame()
+                self.timer.activate()
+
 
     def resetLives(self):
         self.lives = self.maxLives
@@ -230,6 +257,24 @@ class Player(Entity):
         if self.mood == "Happy":
             if self.currentTime - self.moodTickTime > 300:
                 self.mood = "Idle"
+
+    def savePlayerData(self,savedData):
+        self.currentItemsHolding.clear()
+        self.data["Position"] = self.hitbox.center
+        self.data["Coins"] = self.coins
+        for items in self.inventory.currentItems:
+            self.currentItemsHolding.append(items["name"] if items is not None else None)
+            self.data["Items"] = self.currentItemsHolding
+        savedData["Player"] = self.data
+
+
+
+    def loadPlayerData(self,data):
+        self.coins = data["Player"]["Coins"]
+        self.hitbox.center = data["Player"]["Position"]
+        for index,items in enumerate(data["Player"]["Items"]):
+            self.inventory.loadItems(index,items)
+
 
     def update(self):
         self.currentTime = pg.time.get_ticks()
