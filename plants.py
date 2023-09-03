@@ -40,7 +40,7 @@ class SoilTile(pg.sprite.Sprite):
 
 
 class PlantTile(PickAbleItems):
-    def __init__(self, pos, group, data,soil,pickupitemSprites,timeManager):
+    def __init__(self, pos, group, data,pickupitemSprites,timeManager):
         super().__init__(pos,group,data)
 
         self.type = "Plants"
@@ -54,7 +54,7 @@ class PlantTile(PickAbleItems):
         self.hitbox = self.rect.inflate(-20, -20)
 
         self.timeManager = timeManager
-        self.soil = soil
+        self.watered = False
 
         self.currentPhase = 1
 
@@ -65,18 +65,26 @@ class PlantTile(PickAbleItems):
             4: self.data["CropSprite"].convert_alpha(),
         }
 
-    def NextPhase(self):
-        soil = self.soil
-        if soil.tilted is True and soil.watered is True and soil.currentPlant is not None:
-            soil.update()
+    def waterPlant(self):
+        self.watered = True
 
+    def LoadPhase(self,phase,watered):
+        self.currentPhase = phase
+        self.watered = watered
+        if self.currentPhase >= len(self.phases):
+            self.add(self.pickupitems)
+        getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
+        self.image = getCurrentSprite
+
+    def NextPhase(self):
+        if self.watered:
             self.currentPhase += 1
             if self.currentPhase >= len(self.phases):
                 self.add(self.pickupitems)
-                self.soil.currentPlant = None
 
             getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
             self.image = getCurrentSprite
+            self.watered = False
 
 
 

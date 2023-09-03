@@ -234,13 +234,6 @@ class Player(Entity):
                 self.renderInventory()
                 self.timer.activate()
 
-            if keys[pg.K_1]:
-                self.saveGame()
-                self.timer.activate()
-
-            if keys[pg.K_2]:
-                self.loadGame()
-                self.timer.activate()
 
 
     def resetLives(self):
@@ -272,8 +265,11 @@ class Player(Entity):
     def loadPlayerData(self,data):
         self.coins = data["Player"]["Coins"]
         self.hitbox.center = data["Player"]["Position"]
-        for index,items in enumerate(data["Player"]["Items"]):
-            self.inventory.loadItems(index,items)
+
+        try:
+            for index,items in enumerate(data["Player"]["Items"]):
+                self.inventory.loadItems(index,items)
+        except: print("no items found")
 
 
     def update(self):

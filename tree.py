@@ -31,12 +31,11 @@ class Tree(pg.sprite.Sprite):
         TreeLeaves((x, y - tileSize), [group])
         apple = Apple((x + randomX, (y - tileSize) + randomY), visibleSprites,itemData["Apple"], (x, self.dropZoneY), self.pickUpSprites,self)
         self.fruit = apple
-        self.plantList.append(self)
+
+        #self.plantList.append(self.fruit)
 
         self.producedWood = False
 
-    def NextPhase(self):
-        self.fruit.growth() if self.fruit is not None else self.reset()
 
     def reset(self):
         x = self.pos[0]
@@ -81,44 +80,37 @@ class Apple(PickAbleItems):
         self.tree = tree
 
         self.pickUpSprites = pickUpSprites
-        self.PhaseOne()
 
+        self.image = self.data["PhaseOneSprite"].convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-10,-10)
 
         self.currentPhase = 1
 
         self.phases = {
-            1: self.PhaseOne,
-            2: self.PhaseTwo,
-            3: self.PhaseThree,
+            1: self.data["PhaseOneSprite"].convert_alpha(),
+            2: self.data["PhaseTwoSprite"].convert_alpha(),
+            3: self.data["PhaseThreeSprite"].convert_alpha(),
 
         }
-        
-    def growth(self):
+
+    def NextPhase(self):
         self.currentPhase += 1
-        if self.currentPhase <= len(self.phases):
-            getCurrentPhase = self.phases.get(self.currentPhase, self.PhaseOne)
-            getCurrentPhase()
-        else:
-            return
+        if self.currentPhase >= len(self.phases):
+            self.rect.centery = self.finalPos[1]
+            self.hitbox.centery = self.finalPos[1]
+            self.add(self.pickUpSprites)
+            self.tree.fruit = None
 
-    def PhaseOne(self):
-        self.image = self.data["PhaseOneSprite"].convert_alpha()
 
-    def PhaseTwo(self):
-        self.image = self.data["PhaseTwoSprite"].convert_alpha()
+        getCurrentPhase = self.phases.get(self.currentPhase)
+        self.image = getCurrentPhase
 
-    def PhaseThree(self):
-        self.ProduceCrop()
 
-    def ProduceCrop(self):
-        self.image = self.data["PhaseThreeSprite"].convert_alpha()
-        self.rect.centery = self.finalPos[1]
-        self.hitbox.centery = self.finalPos[1]
+    def LoadPhase(self):
+       pass
 
-        self.add(self.pickUpSprites)
-        self.tree.fruit = None
+
 
 
 class Wood(PickAbleItems):
