@@ -217,10 +217,8 @@ class Cow(FarmAnimals):
 
         self.hitbox = self.rect.inflate(0, 3)
         self.stateDuration = 8000
-
         self.walkingAnimationTime = 1 / 12
-        self.idleAnimationTime = 1 / 120
-
+        self.idleAnimationTime = 1 / 12
         self.timer = Timer(self.stateDuration)
 
     def IdleState(self):

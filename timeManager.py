@@ -59,6 +59,7 @@ class TimeManager:
         if not self.entitiesUpdated:
             self.day += 1
             self.updateEntities() if self.day > 2 else None
+
             self.player.resetLives()
             self.entitiesUpdated = True
 

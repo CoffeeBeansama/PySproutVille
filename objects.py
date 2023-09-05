@@ -63,6 +63,7 @@ class PickAbleItems(pg.sprite.Sprite):
 
         plantlist.remove(self) if self in plantlist else None
 
+
         if not self.collided:
             self.collided = True
             self.tickStart = pg.time.get_ticks()
@@ -94,6 +95,8 @@ class Chest(pg.sprite.Sprite):
 
         self.interactableSprites = interactableSprites
         self.add(self.interactableSprites)
+
+        self.interacted = False
 
     def interact(self):
         keys = pg.key.get_pressed()

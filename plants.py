@@ -10,8 +10,6 @@ class SoilTile(pg.sprite.Sprite):
 
         self.type = "Soil"
         self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert()
-        self.tiledSprite = plantTileSprites["Soil"]["tiledSprite"].convert()
-        self.wateredSprite = plantTileSprites["Soil"]["WateredSprite"].convert_alpha()
         self.image = self.untiledSprite
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -21,26 +19,44 @@ class SoilTile(pg.sprite.Sprite):
         self.tilted = False
         self.watered = False
 
+        self.currentState = "Untilted"
+        self.state = {
+            "Untilted" : plantTileSprites["Soil"]["untiledSprite"],
+            "Tilted": plantTileSprites["Soil"]["tiledSprite"],
+            "Watered": plantTileSprites["Soil"]["WateredSprite"]
+        }
+
     def tiltSoil(self):
-        if self.tilted is False:
-            self.image = self.tiledSprite
-            self.tilted = True
-        return
+        if not self.watered:
+            self.currentState = "Tilted"
+            getCurrentSprite = self.state.get(self.currentState)
+            self.image = getCurrentSprite.convert_alpha()
+            return
 
     def waterSoil(self):
-        if self.tilted is True and self.watered is False:
-            self.image = self.wateredSprite
+        if self.currentState == "Tilted":
             self.watered = True
+            self.currentState = "Watered"
+            getCurrentSprite = self.state.get(self.currentState)
+            self.image = getCurrentSprite.convert_alpha()
+            return
+
+    def loadState(self,watered,state):
+        self.watered = watered
+        self.currentState = state
+        getCurrentSprite = self.state.get(self.currentState)
+        self.image = getCurrentSprite.convert_alpha()
         return
 
     def update(self):
-        if self.tilted is True and self.watered is True and self.currentPlant is not None:
-            self.watered = False
-            self.image = self.tiledSprite
+        self.currentState = "Tilted"
+        getCurrentSprite = self.state.get(self.currentState)
+        self.image = getCurrentSprite.convert_alpha()
+        return
 
 
 class PlantTile(PickAbleItems):
-    def __init__(self, pos, group, data,pickupitemSprites,timeManager):
+    def __init__(self, pos, group, data,pickupitemSprites,timeManager,soilTile):
         super().__init__(pos,group,data)
 
         self.type = "Plants"
@@ -65,26 +81,33 @@ class PlantTile(PickAbleItems):
             4: self.data["CropSprite"].convert_alpha(),
         }
 
-    def waterPlant(self):
-        self.watered = True
+        self.soilTiles = soilTile
+        self.currentSoil = None
+        self.getSoil()
 
-    def LoadPhase(self,phase,watered):
+    def getSoil(self):
+        for soils in self.soilTiles:
+            if soils.hitbox.colliderect(self.hitbox):
+                self.currentSoil = soils
+        return
+
+    def LoadPhase(self,phase,soilWatered,soilState):
         self.currentPhase = phase
-        self.watered = watered
         if self.currentPhase >= len(self.phases):
             self.add(self.pickupitems)
         getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
         self.image = getCurrentSprite
+        self.currentSoil.loadState(soilWatered,soilState)
 
     def NextPhase(self):
-        if self.watered:
+        if self.currentSoil.watered:
             self.currentPhase += 1
             if self.currentPhase >= len(self.phases):
                 self.add(self.pickupitems)
-
             getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
             self.image = getCurrentSprite
-            self.watered = False
+            self.currentSoil.update()
+            self.currentSoil.watered = False
 
 
 

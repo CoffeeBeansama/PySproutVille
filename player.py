@@ -235,7 +235,6 @@ class Player(Entity):
                 self.timer.activate()
 
 
-
     def resetLives(self):
         self.lives = self.maxLives
 
