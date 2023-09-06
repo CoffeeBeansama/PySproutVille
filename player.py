@@ -27,7 +27,7 @@ class Player(Entity):
         }
         self.defaultData = {
             "Position": (948, 866),
-            "Coins": 0,
+            "Coins": 500,
             "Items": self.inventory.defaultInventorySetup
 
         }

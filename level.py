@@ -92,9 +92,10 @@ class Level:
         self.plantTile = None
         self.plantList = []
         self.appleList = []
+        self.animalsList = []
         self.soilList = []
 
-        self.animalsList = []
+
 
         self.coinList = []
 
@@ -110,6 +111,7 @@ class Level:
             "Apples": {},
             "Soil": {},
             "PickableItems": {},
+            "Animals": {}
 
         }
 
@@ -119,6 +121,7 @@ class Level:
             "Apples": {},
             "Soil": {},
             "PickableItems": {},
+            "Animals": {}
 
         }
 
@@ -211,6 +214,8 @@ class Level:
             apples.growth()
 
 
+
+
     def playerPickUpItems(self):
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
             if items.hitbox.colliderect(self.player.hitbox):
@@ -286,6 +291,22 @@ class Level:
                 savedApple["Position"] = plants.rect.topleft
                 savedApple["CurrentPhase"] = plants.currentPhase
 
+    def saveAnimalData(self):
+        for index,animals in enumerate(self.animalsList):
+            savedAnimal = self.gameState["Animals"][f"{animals.type}{index}"] = {}
+            savedAnimal["Name"] = animals.type
+            savedAnimal["Position"] = animals.rect.topleft
+
+    def loadAnimalData(self):
+        for index,animals in enumerate(self.gameState["Animals"].values()):
+            if animals["Name"] == "Chicken":
+                newChicken = Chicken(animals["Name"], animals["Position"], [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+                self.animalsList.append(newChicken)
+            if animals["Name"] == "Cow":
+                newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+                self.animalsList.append(newCow)
+
+
 
     def loadPlantData(self):
         for plantIndex, plants in enumerate(self.gameState["Plants"].values()):
@@ -314,25 +335,28 @@ class Level:
 
 
     def saveGameState(self):
-        self.player.savePlayerData(self.gameState)
-        self.gameState["Plants"].clear()
-        self.gameState["Apples"].clear()
-        self.gameState["PickableItems"].clear()
 
+        for item in self.gameState:
+            if item != "Player":
+                self.gameState[item].clear()
+
+        self.player.savePlayerData(self.gameState)
         self.savePickableSprites()
         self.savePlantData()
-        self.plantList.clear()
+        self.saveAnimalData()
 
 
         self.saveload.saveGameData(self.gameState,"gameState")
 
 
 
+
     def loadGameState(self):
         self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
+
         self.loadPlantData()
         self.loadPickableSprites()
-
+        self.loadAnimalData()
         self.player.loadPlayerData(self.gameState)
 
 

@@ -83,6 +83,7 @@ class Apple(PickAbleItems):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-10, -10)
 
+
         self.currentPhase = 1
 
         self.phases = {
@@ -93,8 +94,10 @@ class Apple(PickAbleItems):
         }
 
     def growth(self):
+
+
         self.currentPhase += 1
-        print(self.currentPhase)
+
         getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseThreeSprite"])
         self.image = getCurrentPhase.convert_alpha()
 
@@ -104,7 +107,7 @@ class Apple(PickAbleItems):
             self.add(self.pickUpSprites)
             self.tree.fruit = None
             self.tree.reset()
-        
+
 
 
 class Wood(PickAbleItems):

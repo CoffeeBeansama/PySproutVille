@@ -48,7 +48,7 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(group)
 
-        self.type = "npc"
+
 
         self.group = group
         self.collisionSprites = collisionSprites
@@ -144,7 +144,7 @@ class Egg(PickAbleItems):
 class Chicken(FarmAnimals):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(name,pos,group,collisionSprites,pickAbleSprites)
-
+        self.type = "Chicken"
         self.stateDuration = 8000
         self.timer = Timer(self.stateDuration)
 
@@ -201,8 +201,8 @@ class Chicken(FarmAnimals):
 class Milk(PickAbleItems):
     def __init__(self,pos,group,pickAbleSprites,data=itemData["Milk"]):
         super().__init__(pos,group,data)
-        self.type = "item"
 
+        self.type = "item"
         self.imagePath = spritePath + "Milk.png"
         self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize))
         self.rect = self.image.get_rect(topleft=pos)
@@ -215,6 +215,7 @@ class Cow(FarmAnimals):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(name,pos,group,collisionSprites,pickAbleSprites)
 
+        self.type = "Cow"
         self.hitbox = self.rect.inflate(0, 3)
         self.stateDuration = 8000
         self.walkingAnimationTime = 1 / 12
