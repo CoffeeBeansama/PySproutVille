@@ -59,6 +59,8 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(10, 0)
 
+        self.rect.center = self.hitbox.center
+
         self.direction = pg.math.Vector2()
         self.currentState = -1
 
@@ -107,7 +109,7 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.image = animation[int(self.frameIndex)].convert_alpha()
         self.image = pg.transform.flip(self.image, True, False) if self.direction.x < 0 else pg.transform.flip(
             self.image, False, False)
-        self.rect = self.image.get_rect(topleft=self.hitbox.topleft)
+        self.rect = self.image.get_rect(topleft=self.hitbox.center)
 
 
     @abstractmethod

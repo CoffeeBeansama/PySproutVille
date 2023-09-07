@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from objects import PickAbleItems
 
 class SoilTile(pg.sprite.Sprite):
-    def __init__(self, pos, group):
+    def __init__(self, pos, group,planted,indexId):
         super().__init__(group)
 
         self.type = "Soil"
@@ -14,10 +14,12 @@ class SoilTile(pg.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
+        self.indexId = indexId
         self.currentPlant = None
         self.currentPhase = None
         self.tilted = False
         self.watered = False
+        self.planted = planted
 
         self.currentState = "Untilted"
         self.state = {
@@ -25,6 +27,7 @@ class SoilTile(pg.sprite.Sprite):
             "Tilted": plantTileSprites["Soil"]["tiledSprite"],
             "Watered": plantTileSprites["Soil"]["WateredSprite"]
         }
+
 
     def tiltSoil(self):
         if not self.watered:
@@ -41,10 +44,8 @@ class SoilTile(pg.sprite.Sprite):
             self.image = getCurrentSprite.convert_alpha()
             return
 
-    def loadState(self,watered,state):
-        self.watered = watered
-        self.currentState = state
-        getCurrentSprite = self.state.get(self.currentState)
+    def loadState(self):
+        getCurrentSprite = self.state.get(self.currentState,plantTileSprites["Soil"]["untiledSprite"].convert_alpha())
         self.image = getCurrentSprite.convert_alpha()
         return
 
@@ -91,19 +92,22 @@ class PlantTile(PickAbleItems):
                 self.currentSoil = soils
         return
 
-    def LoadPhase(self,phase,soilWatered,soilState):
+
+    def LoadPhase(self,phase):
         self.currentPhase = phase
         if self.currentPhase >= len(self.phases):
             self.add(self.pickupitems)
+            self.currentSoil.planted = False
         getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
         self.image = getCurrentSprite
-        self.currentSoil.loadState(soilWatered,soilState)
+
 
     def NextPhase(self):
         if self.currentSoil.watered:
             self.currentPhase += 1
             if self.currentPhase >= len(self.phases):
                 self.add(self.pickupitems)
+                self.currentSoil.planted = False
             getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
             self.image = getCurrentSprite
             self.currentSoil.update()

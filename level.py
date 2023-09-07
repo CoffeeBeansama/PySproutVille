@@ -95,11 +95,14 @@ class Level:
         self.animalsList = []
         self.soilList = []
 
+        self.soilIndex = 0
+
 
 
         self.coinList = []
 
         self.createMap()
+
 
         self.saveload = SaveLoadSystem(".data", "savedata")
 
@@ -166,7 +169,8 @@ class Level:
                             Tile(testSprites["Player"], (x, y), [self.collisionSprites])
 
                         if style == "soilTile":
-                            self.soilList.append(SoilTile((x, y), [self.visibleSprites,self.soilTileSprites]))
+                            self.soilList.append(SoilTile((x, y), [self.visibleSprites,self.soilTileSprites],False,self.soilIndex))
+                            self.soilIndex += 1
 
                         if style == "InteractableObjects":
                             if column == "Bed":
@@ -214,8 +218,6 @@ class Level:
             apples.growth()
 
 
-
-
     def playerPickUpItems(self):
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
             if items.hitbox.colliderect(self.player.hitbox):
@@ -237,7 +239,6 @@ class Level:
                 elif itemName in seedItems:
                     self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
 
-
             if woodTileCollided:
                 if itemName == "Axe":
                     woodTileCollided[0].chopped()
@@ -247,11 +248,13 @@ class Level:
             self.currentEquipment.kill()
 
     def seedPlantTile(self, soilTile,data):
+        if soilTile.planted: return
         if soilTile.currentState == "Tilted" or soilTile.currentState == "Watered":
             plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,self.pickAbleItemSprites,self.timeManager,self.soilTileSprites)
             soilTile.currentPlant = plantTile
             self.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
+            soilTile.planted = True
 
 
     def updateCoinList(self):
@@ -282,14 +285,26 @@ class Level:
                 savedPlant = self.gameState["Plants"][f"{plants.type}{index}"] = {}
                 savedPlant["Name"] = plants.data["name"]
                 savedPlant["Position"] = plants.rect.topleft
-                savedPlant["Watered"] = plants.currentSoil.watered
                 savedPlant["CurrentPhase"] = plants.currentPhase
-                savedPlant["SoilState"] = plants.currentSoil.currentState
+
             if plants.type == "Apple":
                 savedApple = self.gameState["Apples"][f"{plants.type}{index}"] = {}
                 savedApple["Name"] = plants.data["name"]
                 savedApple["Position"] = plants.rect.topleft
                 savedApple["CurrentPhase"] = plants.currentPhase
+
+    def saveSoilData(self):
+        for index,soil in enumerate(self.soilList):
+            savedSoil = self.gameState["Soil"][f"{soil.type}{index}"] = {}
+            savedSoil["Position"] = soil.rect.topleft
+            savedSoil["CurrentState"] = soil.currentState
+            savedSoil["Watered"] = soil.watered
+            savedSoil["Tilted"] = soil.tilted
+            savedSoil["IndexId"] = soil.indexId
+            savedSoil["Planted"] = soil.planted
+
+
+
 
     def saveAnimalData(self):
         for index,animals in enumerate(self.animalsList):
@@ -306,13 +321,23 @@ class Level:
                 newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
                 self.animalsList.append(newCow)
 
+    def loadSoilData(self):
+        for index,soil in enumerate(self.gameState["Soil"].values()):
+            currentSoil = self.soilList[soil["IndexId"]]
+            currentSoil.rect.topleft = soil["Position"]
+            currentSoil.currentState = soil["CurrentState"]
+            currentSoil.tilted = soil["Tilted"]
+            currentSoil.watered = soil["Watered"]
+            currentSoil.indexId = soil["IndexId"]
+            currentSoil.planted = soil["Planted"]
+            currentSoil.loadState()
 
 
     def loadPlantData(self):
         for plantIndex, plants in enumerate(self.gameState["Plants"].values()):
             if plants["Name"] in seedItems:
                 plant = PlantTile(plants["Position"], [self.visibleSprites], itemData[plants["Name"]],self.pickAbleItemSprites, self.timeManager, self.soilTileSprites)
-                plant.LoadPhase(plants["CurrentPhase"], plants["Watered"], plants["SoilState"])
+                plant.LoadPhase(plants["CurrentPhase"])
                 self.plantList.append(plant)
 
 
@@ -335,13 +360,13 @@ class Level:
 
 
     def saveGameState(self):
-
         for item in self.gameState:
             if item != "Player":
                 self.gameState[item].clear()
 
         self.player.savePlayerData(self.gameState)
         self.savePickableSprites()
+        self.saveSoilData()
         self.savePlantData()
         self.saveAnimalData()
 
@@ -355,6 +380,7 @@ class Level:
         self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
 
         self.loadPlantData()
+        self.loadSoilData()
         self.loadPickableSprites()
         self.loadAnimalData()
         self.player.loadPlayerData(self.gameState)
