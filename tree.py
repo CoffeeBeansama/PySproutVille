@@ -2,10 +2,10 @@ import pygame as pg
 from random import randint
 from settings import *
 from objects import PickAbleItems
-
+from timer import Timer
 
 class Tree(pg.sprite.Sprite):
-    def __init__(self, pos, group, visibleSprites, pickUpSprites, appleList):
+    def __init__(self, pos, group, visibleSprites, pickUpSprites, appleList,appleIndex):
         super().__init__(group)
 
         self.type = "tree"
@@ -19,6 +19,7 @@ class Tree(pg.sprite.Sprite):
         self.lives = 3
 
         self.appleList = appleList
+        self.appleIndex = appleIndex
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15, 0)
@@ -35,18 +36,24 @@ class Tree(pg.sprite.Sprite):
 
 
     def reset(self):
+
+        self.fruit = None
+
         x = self.pos[0]
         y = self.pos[1]
 
-        if self.fruit is None:
-            applePos = y + tileSize + 5
-            newApple = Apple((x , (y - tileSize)), self.visibleSprites, itemData["Apple"],
-                             (x, applePos), self.pickUpSprites, self)
 
-            self.lives = self.maxLives
-            self.producedWood = False
-            self.appleList.append(newApple)
-            self.fruit = newApple
+        applePos = y + tileSize + 5
+        newApple = AppleFruit((x , (y - tileSize)), self.visibleSprites, itemData["Apple"],
+                                 (x, applePos), self.pickUpSprites, self,self.appleIndex,self.appleList)
+
+
+        self.lives = self.maxLives
+        self.producedWood = False
+        self.fruit = newApple
+
+
+        self.appleList.append(self.fruit)
 
 
     def chopped(self):
@@ -54,8 +61,8 @@ class Tree(pg.sprite.Sprite):
         self.lives -= 1
         if self.lives <= 0 and not self.producedWood:
             Wood((x, self.dropZoneY), self.visibleSprites, itemData["Wood"], self.pickUpSprites, self)
-
             self.producedWood = True
+
 
 
 class TreeLeaves(pg.sprite.Sprite):
@@ -68,16 +75,21 @@ class TreeLeaves(pg.sprite.Sprite):
         self.hitbox = self.rect.inflate(-15, -5)
 
 
-class Apple(PickAbleItems):
-    def __init__(self, pos, group, data, finalPos, pickUpSprites, tree):
-        super().__init__(pos, group, data)
+
+class AppleFruit(pg.sprite.Sprite):
+    def __init__(self, pos, group, data, finalPos, pickUpSprites, tree,appleIndex,appleList):
+        super().__init__(group)
 
         self.type = "Apple"
 
         self.finalPos = finalPos
         self.tree = tree
+        self.data = data
 
         self.pickUpSprites = pickUpSprites
+        self.IndexId = appleIndex
+        self.appleList = appleList
+
 
         self.image = self.data["PhaseOneSprite"].convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
@@ -89,24 +101,39 @@ class Apple(PickAbleItems):
         self.phases = {
             1: self.data["PhaseOneSprite"],
             2: self.data["PhaseTwoSprite"],
-            3: self.data["PhaseThreeSprite"],
-
+            3: self.data["PhaseThreeSprite"]
         }
 
+        self.group = group
+
+
     def growth(self):
-
-
         self.currentPhase += 1
-
-        getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseThreeSprite"])
+        getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseOneSprite"].convert_alpha())
         self.image = getCurrentPhase.convert_alpha()
-
         if self.currentPhase >= len(self.phases):
-            self.rect.centery = self.finalPos[1]
-            self.hitbox.centery = self.finalPos[1]
-            self.add(self.pickUpSprites)
-            self.tree.fruit = None
+            AppleItem(self.finalPos,[self.group],itemData["Apple"],self.pickUpSprites)
             self.tree.reset()
+            self.kill()
+
+
+    def loadState(self):
+        getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseOneSprite"].convert_alpha())
+        self.image = getCurrentPhase.convert_alpha()
+        return
+
+class AppleItem(PickAbleItems):
+    def __init__(self, pos, group, data, pickUpSprites):
+        super().__init__(pos, group, data)
+
+        self.type = "Apple"
+
+        self.image = itemData["Apple"]["PhaseThreeSprite"].convert_alpha()
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(-10, -10)
+
+        self.pickUpSprites = pickUpSprites
+        self.add(self.pickUpSprites)
 
 
 

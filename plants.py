@@ -44,6 +44,7 @@ class SoilTile(pg.sprite.Sprite):
             self.image = getCurrentSprite.convert_alpha()
             return
 
+
     def loadState(self):
         getCurrentSprite = self.state.get(self.currentState,plantTileSprites["Soil"]["untiledSprite"].convert_alpha())
         self.image = getCurrentSprite.convert_alpha()
@@ -85,6 +86,7 @@ class PlantTile(PickAbleItems):
         self.soilTiles = soilTile
         self.currentSoil = None
         self.getSoil()
+
 
     def getSoil(self):
         for soils in self.soilTiles:

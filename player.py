@@ -31,6 +31,7 @@ class Player(Entity):
             "Items": self.inventory.defaultInventorySetup
 
         }
+
         self.startingPos = self.data["Position"]
 
         self.maxLives = 3
@@ -92,23 +93,22 @@ class Player(Entity):
             self.animations_States[animation] = import_folder(full_path)
 
     def animate(self):
+        if not self.laidToBed:
+            animation = self.animations_States[self.state]
+            self.frame_index += self.eqpActionAnimationTime if self.usingItem else self.walkingAnimationTime
 
-        animation = self.animations_States[self.state]
-        self.frame_index += self.eqpActionAnimationTime if self.usingItem else self.walkingAnimationTime
+            notMoving = self.direction.x == 0 and self.direction.y == 0
 
-        notMoving = self.direction.x == 0 and self.direction.y == 0
+            if self.frame_index >= len(animation):
+                self.frame_index = 0 if not self.usingItem else len(animation) - 1
 
-        if self.frame_index >= len(animation):
-            self.frame_index = 0 if not self.usingItem else len(animation) - 1
+                usingEquipment = not "idle" in self.state and notMoving
+                if usingEquipment:
+                    self.createEquipmentTile()
+                    self.usingItem = False
 
-            usingEquipment = not "idle" in self.state and notMoving
-            if usingEquipment:
-                self.createEquipmentTile()
-                self.usingItem = False
-
-        self.image = animation[int(self.frame_index)].convert_alpha()
-
-        self.rect = self.image.get_rect(center=self.hitbox.center)
+            self.image = animation[int(self.frame_index)].convert_alpha()
+            self.rect = self.image.get_rect(center=self.hitbox.center)
 
 
     @staticmethod
@@ -250,27 +250,6 @@ class Player(Entity):
             if self.currentTime - self.moodTickTime > 300:
                 self.mood = "Idle"
 
-    def savePlayerData(self,savedData):
-        self.currentItemsHolding.clear()
-        self.data["Position"] = self.hitbox.center
-        self.data["Coins"] = self.coins
-        for items in self.inventory.currentItems:
-            self.currentItemsHolding.append(items["name"] if items is not None else None)
-            self.data["Items"] = self.currentItemsHolding
-        savedData["Player"] = self.data
-
-
-
-    def loadPlayerData(self,data):
-        self.coins = data["Player"]["Coins"]
-        self.hitbox.center = data["Player"]["Position"]
-
-        try:
-            for index,items in enumerate(data["Player"]["Items"]):
-                self.inventory.loadItems(index,items)
-        except: print("no items found")
-
-
     def update(self):
         self.currentTime = pg.time.get_ticks()
 
@@ -282,7 +261,6 @@ class Player(Entity):
 
         else:
             self.updateMood()
-
             self.movement(playerSpeed)
             self.animate()
             self.interact()
