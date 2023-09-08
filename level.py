@@ -217,11 +217,12 @@ class Level:
         for animals in self.animalsList:
             animals.produce()
 
-        for apples in reversed(self.appleList):
+        for apples in self.appleList[::-1]:
             if apples.alive():
                 apples.growth()
             else:
                 self.appleList.remove(apples)
+
 
     def playerPickUpItems(self):
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
