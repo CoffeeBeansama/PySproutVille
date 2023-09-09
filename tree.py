@@ -22,7 +22,9 @@ class Tree(pg.sprite.Sprite):
         self.appleIndex = appleIndex
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-15, 0)
+
+        self.colliderRect = self.image.get_rect(topleft=(pos[0],pos[1] - 10))
+        self.hitbox = self.colliderRect.inflate(-15, 8)
 
         y = pos[1]
 

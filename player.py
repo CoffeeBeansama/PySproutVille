@@ -117,7 +117,6 @@ class Player(Entity):
 
     def updateInventory(self,item):
         self.inventory.update(item)
-
     def renderInventory(self):
         if self.displayInventory:
             self.displayInventory = False

@@ -209,7 +209,8 @@ class Level:
             soil.update()
 
     def createEquipmentTile(self):
-        self.currentEquipment = Equipment([self.equipmentSprites], self.player)
+        self.currentEquipment = Equipment([self.equipmentSprites,self.visibleSprites], self.player)
+        return
 
     def updateEntities(self):
         for plants in self.plantList:
@@ -250,8 +251,9 @@ class Level:
                     woodTileCollided[0].chopped()
 
         if self.currentEquipment is not None:
-            pass
             self.currentEquipment.kill()
+            return
+
 
     def seedPlantTile(self, soilTile,data):
         if soilTile.planted: return

@@ -12,17 +12,17 @@ class Equipment(pg.sprite.Sprite):
 
         playerItemEquipped = player.inventory.currentItems[player.inventory.itemIndex]["name"]
         playerDirection = player.facingDirection
-        self.image = pg.Surface((12, 12))
+        self.image = pg.Surface((6, 6))
 
         if playerItemEquipped in equipmentItems:
             if playerDirection == "Up":
-                self.rect = self.image.get_rect(midbottom=player.rect.midtop + pg.math.Vector2(0, tileSize))
+                self.rect = self.image.get_rect(midbottom=player.rect.midtop + pg.math.Vector2(0, 16))
             elif playerDirection == "Down":
-                self.rect = self.image.get_rect(midtop=player.rect.midbottom - pg.math.Vector2(0, tileSize))
+                self.rect = self.image.get_rect(midtop=player.rect.midbottom - pg.math.Vector2(0, 12))
             elif playerDirection == "Left":
-                self.rect = self.image.get_rect(midright=player.rect.midleft + pg.math.Vector2(tileSize, 0))
+                self.rect = self.image.get_rect(midright=player.rect.midleft + pg.math.Vector2(18, 5))
             elif playerDirection == "Right":
-                self.rect = self.image.get_rect(midleft=player.rect.midright - pg.math.Vector2(tileSize, 0))
+                self.rect = self.image.get_rect(midleft=player.rect.midright - pg.math.Vector2(18, -5))
 
         elif playerItemEquipped in seedItems:
             self.rect = self.image.get_rect(center=player.rect.center)
