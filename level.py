@@ -155,7 +155,7 @@ class Level:
 
         mapLayouts = {
             "boundary": import_csv_layout("Map/wall.csv"),
-            "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv"),
+            "soilTile": import_csv_layout("Map/plantableGrounds_Plantable Ground.csv"),
             "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv'),
             "Tree Trunks": import_csv_layout('Map/Tree trunks.csv'),
             "Animal Collider": import_csv_layout('Map/AnimalCollision.csv'),

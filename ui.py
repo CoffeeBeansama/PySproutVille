@@ -58,7 +58,7 @@ class DynamicUI:
 
 
     def importPlayerMoodSprites(self):
-        faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/face/"
+        faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Face/"
 
         self.animationStates = {
             "Idle": [],
