@@ -218,7 +218,7 @@ class Level:
             soil.update()
 
     def createEquipmentTile(self):
-        self.currentEquipment = Equipment([self.equipmentSprites,self.visibleSprites], self.player)
+        self.currentEquipment = Equipment([self.equipmentSprites], self.player)
         return
 
     def updateEntities(self):

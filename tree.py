@@ -1,5 +1,5 @@
 import pygame as pg
-from random import randint
+from random import random
 from settings import *
 from objects import PickAbleItems
 from timer import Timer
@@ -110,7 +110,11 @@ class AppleFruit(pg.sprite.Sprite):
 
 
     def growth(self):
-        self.currentPhase += 1
+
+        prob = random()
+        if prob < 0.20:
+            self.currentPhase += 1
+
         getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseOneSprite"].convert_alpha())
         self.image = getCurrentPhase.convert_alpha()
         if self.currentPhase >= len(self.phases):
