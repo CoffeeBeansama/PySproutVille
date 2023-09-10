@@ -3,7 +3,7 @@ import pygame as pg
 from support import loadSprite
 from settings import *
 from objects import *
-from timer import Timer
+from timer import Timer,AnimalTimer
 from support import import_folder
 import random
 from abc import ABC,abstractmethod
@@ -48,8 +48,6 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(group)
 
-
-
         self.group = group
         self.collisionSprites = collisionSprites
         self.pickAbleSprites = pickAbleSprites
@@ -62,7 +60,7 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.rect.center = self.hitbox.center
 
         self.direction = pg.math.Vector2()
-        self.currentState = -1
+        self.currentState = 1
 
         self.states = {
             -1: self.IdleState,
@@ -147,15 +145,15 @@ class Chicken(FarmAnimals):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(name,pos,group,collisionSprites,pickAbleSprites)
         self.type = "Chicken"
-        self.stateDuration = 8000
-        self.timer = Timer(self.stateDuration)
-
+        self.animalTimer = AnimalTimer([random.randint(3000,8000),random.randint(500,1000)])
 
     def IdleState(self):
         self.chooseDirection = False
         self.currentAnimationState = "Idle"
+        self.walkSpeed = 0
 
     def RoamState(self):
+        self.walkSpeed = 1
         if not self.chooseDirection:
             self.chosenDirection = random.choice(self.availableDirections)
             self.currentAnimationState = "Walk"
@@ -170,6 +168,7 @@ class Chicken(FarmAnimals):
         self.hitbox.y += self.direction.y * speed
         self.checkWallCollision("Vertical")
         self.rect.center = self.hitbox.center
+
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
@@ -190,13 +189,15 @@ class Chicken(FarmAnimals):
         Egg(self.rect.topleft,self.group,self.pickAbleSprites)
 
     def update(self):
-        self.timer.update()
+
+        self.animalTimer.update()
         self.animate()
 
-        if not self.timer.activated:
+        if not self.animalTimer.activated:
             self.currentState *= -1
             self.getCurrentState = self.states.get(self.currentState)
-            self.timer.activate()
+            self.animalTimer.activate()
+
 
         self.getCurrentState()
         self.movement(self.walkSpeed)
@@ -219,17 +220,19 @@ class Cow(FarmAnimals):
         super().__init__(name,pos,group,collisionSprites,pickAbleSprites)
 
         self.type = "Cow"
+        self.animalTimer = AnimalTimer([random.randint(3000, 8000), random.randint(500, 1000)])
         self.hitbox = self.rect.inflate(0, 3)
-        self.stateDuration = 8000
         self.walkingAnimationTime = 1 / 12
         self.idleAnimationTime = 1 / 12
-        self.timer = Timer(self.stateDuration)
+
 
     def IdleState(self):
+        self.walkSpeed = 0
         self.chooseDirection = False
         self.currentAnimationState = "Idle"
 
     def RoamState(self):
+        self.walkSpeed = 1
         if not self.chooseDirection:
             self.chosenDirection = random.choice(self.availableDirections)
             self.currentAnimationState = "Walk"
@@ -263,13 +266,14 @@ class Cow(FarmAnimals):
         Milk(self.rect.topleft,self.group,self.pickAbleSprites)
 
     def update(self):
-        self.timer.update()
+        self.animalTimer.update()
         self.animate()
 
-        if not self.timer.activated:
+        if not self.animalTimer.activated:
             self.currentState *= -1
             self.getCurrentState = self.states.get(self.currentState)
-            self.timer.activate()
+            self.animalTimer.activate()
+
 
         self.getCurrentState()
         self.movement(self.walkSpeed)
