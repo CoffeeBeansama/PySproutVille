@@ -78,6 +78,16 @@ class PickAbleItems(pg.sprite.Sprite):
             self.kill()
 
 
+class Fence(pg.sprite.Sprite):
+    def __init__(self,image,pos,group):
+        super().__init__(group)
+        self.type = "object"
+        self.image = image
+
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(-12,-5)
+
+
 class Chest(pg.sprite.Sprite):
     def __init__(self, pos, group,player,interactableSprites):
         super().__init__(group)

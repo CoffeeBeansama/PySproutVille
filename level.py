@@ -83,6 +83,7 @@ class Level:
         self.pickAbleItemSprites = pg.sprite.Group()
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
+        self.animalCollider = pg.sprite.Group()
 
         self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
@@ -145,8 +146,8 @@ class Level:
         self.dialogueSystem.dynamicUi = self.dynamicUi
         self.player.dialogueSystem = self.dialogueSystem
 
-        self.chickenSpawnPoint = (990, 866)
-        self.cowSpawnPoint = (1000, 866)
+        self.chickenSpawnPoint = (1206, 938)
+        self.cowSpawnPoint = (1130, 1378)
 
 
 
@@ -157,6 +158,8 @@ class Level:
             "soilTile": import_csv_layout("map/plantableGrounds_Plantable Ground.csv"),
             "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv'),
             "Tree Trunks": import_csv_layout('Map/Tree trunks.csv'),
+            "Animal Collider": import_csv_layout('Map/AnimalCollision.csv'),
+            "Fence": import_csv_layout('Map/Fences.csv'),
 
         }
         for style, layout in mapLayouts.items():
@@ -182,6 +185,12 @@ class Level:
                         if style == "Tree Trunks":
                             self.treeList.append(Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex))
                             self.appleIndex += 1
+
+                        if style == "Animal Collider":
+                            Fence(testSprites["Player"], (x, y), [self.animalCollider])
+
+                        if style == "Fence":
+                            Fence(testSprites["Player"], (x, y), [self.collisionSprites])
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
 
@@ -280,11 +289,11 @@ class Level:
         self.displayMerchantStore = False
 
     def createChickenInstance(self):
-        newChicken = Chicken("Chicken",self.chickenSpawnPoint, [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+        newChicken = Chicken("Chicken",self.chickenSpawnPoint, [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
         self.animalsList.append(newChicken)
 
     def createCowInstance(self):
-        newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+        newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
         self.animalsList.append(newCow)
 
     def savePlayerData(self):
@@ -353,10 +362,10 @@ class Level:
     def loadAnimalData(self):
         for index,animals in enumerate(self.gameState["Animals"].values()):
             if animals["Name"] == "Chicken":
-                newChicken = Chicken(animals["Name"], animals["Position"], [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+                newChicken = Chicken(animals["Name"], animals["Position"], [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
                 self.animalsList.append(newChicken)
             if animals["Name"] == "Cow":
-                newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites], self.collisionSprites, self.pickAbleItemSprites)
+                newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
                 self.animalsList.append(newCow)
 
     def loadSoilData(self):

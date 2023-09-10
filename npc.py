@@ -150,6 +150,7 @@ class Chicken(FarmAnimals):
         self.stateDuration = 8000
         self.timer = Timer(self.stateDuration)
 
+
     def IdleState(self):
         self.chooseDirection = False
         self.currentAnimationState = "Idle"
