@@ -103,8 +103,6 @@ class DialogueSystem:
         if self.speaker == "Merchant":
             self.displayMerchantStore()
 
-
-
         self.speaker = None
         self.dialogueActive = False
 
@@ -115,7 +113,6 @@ class DialogueSystem:
                 if self.lineFinished:
                     self.nextDialogue()
                 else:
-
                     self.skippedDialogue = True
 
             self.buttonPressedTime = pg.time.get_ticks()
@@ -232,7 +229,7 @@ class DialogueSystem:
             else:
                 self.endDialogue()
 
-        for text in self.renderedText.values():
-            self.screen.blit(text["LetterSprite"], (text["XPos"], text["YPos"]))
+            for text in self.renderedText.values():
+                self.screen.blit(text["LetterSprite"], (text["XPos"], text["YPos"]))
 
 

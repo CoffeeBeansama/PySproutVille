@@ -34,7 +34,7 @@ class CoinOverHead(pg.sprite.Sprite):
 
         self.timer = Timer(200,self.killself)
 
-        self.image = loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize))
+        self.image = loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
 
     def killself(self):
@@ -82,7 +82,7 @@ class Fence(pg.sprite.Sprite):
     def __init__(self,image,pos,group):
         super().__init__(group)
         self.type = "object"
-        self.image = image
+        self.image = image.convert_alpha()
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-12,-5)
@@ -95,7 +95,7 @@ class Chest(pg.sprite.Sprite):
 
         self.player = player
         self.spriteIndex = 1
-        self.image = chestSprites[self.spriteIndex]
+        self.image = chestSprites[self.spriteIndex].convert_alpha()
         self.animationTime = 1 / 20
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -122,10 +122,10 @@ class Chest(pg.sprite.Sprite):
         self.CloseAnimation()
 
     def OpenAnimation(self):
-        self.image = chestSprites[5]
+        self.image = chestSprites[5].convert_alpha()
 
     def CloseAnimation(self):
-        self.image = chestSprites[1]
+        self.image = chestSprites[1].convert_alpha()
 
 
 class Bed(InteractableObjects):

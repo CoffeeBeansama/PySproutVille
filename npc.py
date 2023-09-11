@@ -133,7 +133,7 @@ class Egg(PickAbleItems):
         self.type = "item"
 
         self.imagePath = spritePath + "Egg.png"
-        self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize))
+        self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0,0)
 
@@ -189,7 +189,6 @@ class Chicken(FarmAnimals):
         Egg(self.rect.topleft,self.group,self.pickAbleSprites)
 
     def update(self):
-
         self.animalTimer.update()
         self.animate()
 
@@ -208,7 +207,7 @@ class Milk(PickAbleItems):
 
         self.type = "item"
         self.imagePath = spritePath + "Milk.png"
-        self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize))
+        self.image = pg.transform.scale(pg.image.load(self.imagePath),(tileSize,tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0,0)
 

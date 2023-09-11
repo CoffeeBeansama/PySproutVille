@@ -9,7 +9,7 @@ class Tree(pg.sprite.Sprite):
         super().__init__(group)
 
         self.type = "tree"
-        self.image = testSprites["Wall"]
+        self.image = testSprites["Wall"].convert_alpha()
 
         self.pickUpSprites = pickUpSprites
         self.visibleSprites = visibleSprites
@@ -49,12 +49,9 @@ class Tree(pg.sprite.Sprite):
         newApple = AppleFruit((x , (y - tileSize)), self.visibleSprites, itemData["Apple"],
                                  (x, applePos), self.pickUpSprites, self,self.appleIndex,self.appleList)
 
-
         self.lives = self.maxLives
         self.producedWood = False
         self.fruit = newApple
-
-
         self.appleList.append(self.fruit)
 
 

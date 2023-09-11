@@ -17,7 +17,6 @@ class InventorySlot:
         self.sprite = self.data["uiSprite"] if item is not None else self.defaultSprite
         self.selectedSprite = self.data["uiSpriteSelected"] if item is not None else self.defaultSelectedSprite
 
-
 class Inventory:
     def __init__(self,player):
 
@@ -30,12 +29,12 @@ class Inventory:
         self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
         self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
 
-        self.selector = pg.transform.scale(pg.image.load(self.selectorSprite),slotScale)
-        self.selector2 = pg.transform.scale(pg.image.load(self.selectorSprite2),slotScale)
+        self.selector = pg.transform.scale(pg.image.load(self.selectorSprite),slotScale).convert_alpha()
+        self.selector2 = pg.transform.scale(pg.image.load(self.selectorSprite2),slotScale).convert_alpha()
 
         self.swappingItems = False
 
-        self.background = pg.image.load(uiSprites['InventoryHolder'])
+        self.background = pg.image.load(uiSprites['InventoryHolder']).convert_alpha()
 
         self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
         self.currentItems = self.defaultInventorySetup
@@ -129,9 +128,7 @@ class Inventory:
         for index,item in enumerate(self.currentItems):
             inventoryWidth = 600  # less the borders
             increment = inventoryWidth // self.inventoryCapacity
-
             left = (index * increment) + (increment - self.width) + 37
-
             newSlots = InventorySlot((left, self.slotPosY), item, index)
 
             self.slotList.append(newSlots)

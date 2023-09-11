@@ -26,13 +26,12 @@ class Game:
                     sys.exit()
 
             self.screen.fill("black")
-
             self.level.update()
             pg.display.update()
             self.clock.tick(FPS)
 
             #debug(self.clock.get_fps())
-
+            #day and night cycle is the bottleneck!!
 
 game = Game()
 game.run()

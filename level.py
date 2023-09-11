@@ -88,7 +88,6 @@ class Level:
         self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
 
-
         self.PlantedSoilTileList = []
         self.plantTile = None
         self.plantList = []

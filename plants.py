@@ -9,7 +9,7 @@ class SoilTile(pg.sprite.Sprite):
         super().__init__(group)
 
         self.type = "Soil"
-        self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert()
+        self.untiledSprite = plantTileSprites["Soil"]["untiledSprite"].convert_alpha()
         self.image = self.untiledSprite
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -66,8 +66,7 @@ class PlantTile(PickAbleItems):
         self.pickupitems = pickupitemSprites
 
         self.data = data
-        self.image = self.data["PhaseOneSprite"]
-
+        self.image = self.data["PhaseOneSprite"].convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-20, -20)
 
