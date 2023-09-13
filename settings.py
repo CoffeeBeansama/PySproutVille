@@ -128,7 +128,7 @@ uiSprites = {
              "HalfHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Half.png",(40,38)),
              "EmptyHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Empty.png",(40,38)),
              "DialogueBox": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/DialogueBox.png",(750,150)),
-             "ChestBackground" :loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/ChestBackground.png",(750,450))
+             "ChestBackground" :loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/ChestBackground.png",(625,350))
 
              }
 

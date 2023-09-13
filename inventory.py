@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 from items import *
+from timer import Timer
 
 
 class InventorySlot:
@@ -18,7 +19,7 @@ class InventorySlot:
         self.selectedSprite = self.data["uiSpriteSelected"] if item is not None else self.defaultSelectedSprite
 
 class PlayerInventory:
-    def __init__(self):
+    def __init__(self,chestInventory):
 
         self.inventoryPos = (73, 495)
         self.slotPosY = 514
@@ -43,10 +44,12 @@ class PlayerInventory:
 
         self.sellableItems = []
         self.width = self.inventoryPos[0] // self.inventoryCapacity
-
+        self.chestInventory = chestInventory
         self.slotList = []
         self.createSlots()
         self.inventoryActive = False
+        self.displayPlayerInventory = False
+        self.timer = Timer(200)
 
     def selectFromRight(self):
         if not self.swappingItems:
@@ -57,7 +60,7 @@ class PlayerInventory:
             self.itemSwapIndex += 1
             if self.itemSwapIndex >= self.inventoryCapacity:
                 self.itemSwapIndex = 0
-
+        print(self.itemIndex)
     def selectFromLeft(self):
         if not self.swappingItems:
             self.itemIndex -= 1
@@ -67,6 +70,29 @@ class PlayerInventory:
             self.itemSwapIndex -= 1
             if self.itemSwapIndex == -1:
                 self.itemSwapIndex = self.inventoryCapacity -1
+
+
+    def selectFromTop(self):
+        if not self.swappingItems:
+            self.itemIndex -= 9
+            if self.itemIndex < -36:
+                self.itemIndex = 0
+        else:
+            self.itemSwapIndex -= 9
+            if self.itemSwapIndex < -36:
+                self.itemSwapIndex = self.itemSwapIndex  * 10
+        print(self.itemIndex)
+
+    def selectFromBottom(self):
+        if not self.swappingItems:
+            self.itemIndex += 9
+            if self.itemIndex > 8:
+                self.itemIndex = 0
+        else:
+            self.itemSwapIndex += 9
+            if self.itemSwapIndex > 9:
+                self.itemSwapIndex = -(self.itemSwapIndex  * 10)
+        print(self.itemIndex)
 
     def swapItems(self):
         self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
@@ -127,7 +153,6 @@ class PlayerInventory:
             increment = inventoryWidth // self.inventoryCapacity
             left = (index * increment) + (increment - self.width) + 37
             newSlots = InventorySlot((left, self.slotPosY), item, index)
-
             self.slotList.append(newSlots)
 
     def update(self,item):
@@ -140,13 +165,51 @@ class PlayerInventory:
             else:
                 pass
 
+    def getInputs(self):
+        keys = pg.key.get_pressed()
+        if not self.timer.activated:
+            if keys[pg.K_SPACE]:
+                if self.inventoryActive:
+                    self.renderSelector()
+                    self.timer.activate()
+            if self.displayPlayerInventory:
+                if keys[pg.K_q]:
+                    self.selectFromLeft()
+                    self.timer.activate()
+                if keys[pg.K_e]:
+                    self.selectFromRight()
+                    self.timer.activate()
+                if self.chestInventory.chestOpened:
+                    if keys[pg.K_w]:
+                        self.selectFromTop()
+                        self.timer.activate()
+                    if keys[pg.K_s]:
+                        self.selectFromBottom()
+                        self.timer.activate()
+            if keys[pg.K_TAB]:
+                self.renderPlayerInventory()
+                self.timer.activate()
+
+    def renderPlayerInventory(self):
+        if self.displayPlayerInventory:
+            self.displayPlayerInventory = False
+            self.inventoryActive = False
+        else:
+            self.displayPlayerInventory = True
+            self.inventoryActive = True
+
     def display(self):
+        self.getInputs()
+        self.timer.update()
+
+
         if not self.inventoryActive: return
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):
             self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
-        self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
+        if self.itemIndex >= 0:
+            self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 
         if self.swappingItems:
             self.screen.blit(self.selector2, self.slotList[self.itemSwapIndex].pos)

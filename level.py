@@ -89,7 +89,6 @@ class Level:
 
         self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
-        self.chestInventory = ChestInventory(self.closeChestInventory)
 
         self.PlantedSoilTileList = []
         self.plantTile = None
@@ -110,8 +109,10 @@ class Level:
 
 
         self.saveload = SaveLoadSystem(".data", "savedata")
-        self.playerInventory = PlayerInventory()
+        self.playerInventory = PlayerInventory(None)
         self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.saveGameState,self.loadGameState,self.playerInventory)
+        self.chestInventory = ChestInventory(self.playerInventory,self.closeChestInventory)
+        self.playerInventory.chestInventory = self.chestInventory
 
 
         self.gameState = {
@@ -136,7 +137,6 @@ class Level:
 
         self.loadGameState()
 
-
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore)
 
@@ -151,8 +151,6 @@ class Level:
 
         self.chickenSpawnPoint = (1206, 938)
         self.cowSpawnPoint = (1130, 1378)
-
-        self.displayPlayerInventory = False
 
 
 
@@ -432,37 +430,6 @@ class Level:
         self.loadAnimalData()
         self.loadPlayerData()
 
-    def getInputs(self):
-        keys = pg.key.get_pressed()
-        if not self.timer.activated:
-            if keys[pg.K_SPACE]:
-                if self.playerInventory.inventoryActive:
-                    self.playerInventory.renderSelector()
-                    self.timer.activate()
-            if self.displayPlayerInventory:
-                if keys[pg.K_q]:
-                    self.playerInventory.selectFromLeft()
-                    self.timer.activate()
-                if keys[pg.K_e]:
-                    self.playerInventory.selectFromRight()
-                    self.timer.activate()
-            if keys[pg.K_TAB]:
-                self.renderPlayerInventory()
-                self.timer.activate()
-
-
-    def renderPlayerInventory(self):
-        if self.displayPlayerInventory and not self.chestInventory.chestOpened:
-            self.displayPlayerInventory = False
-            self.playerInventory.inventoryActive = False
-        else:
-            self.displayPlayerInventory = True
-            self.playerInventory.inventoryActive = True
-
-    def makeTrue(self,var):
-        for variables in var:
-            return variables == False
-
     def update(self):
 
         self.timer.update()
@@ -473,7 +440,6 @@ class Level:
         self.equipmentTileCollisionLogic()
         self.playerPickUpItems()
         self.updateCoinList()
-        self.getInputs()
         self.playerInventory.display()
 
         for trees in self.treeList:
