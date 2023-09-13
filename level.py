@@ -13,8 +13,10 @@ from tree import *
 from ui import *
 from npc import *
 from merchantStore import MerchantStore
-from  dialogueManager import DialogueSystem
+from dialogueManager import DialogueSystem
 from saveload import SaveLoadSystem
+from chestInventory import ChestInventory
+from inventory import PlayerInventory
 
 
 class CameraGroup(pg.sprite.Group):
@@ -87,6 +89,7 @@ class Level:
 
         self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
+        self.chestInventory = ChestInventory(self.closeChestInventory)
 
         self.PlantedSoilTileList = []
         self.plantTile = None
@@ -107,8 +110,9 @@ class Level:
 
 
         self.saveload = SaveLoadSystem(".data", "savedata")
+        self.playerInventory = PlayerInventory()
+        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.saveGameState,self.loadGameState,self.playerInventory)
 
-        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.saveGameState,self.loadGameState)
 
         self.gameState = {
             "Player": self.player.data,
@@ -148,6 +152,8 @@ class Level:
         self.chickenSpawnPoint = (1206, 938)
         self.cowSpawnPoint = (1130, 1378)
 
+        self.displayPlayerInventory = False
+
 
 
     def createMap(self):
@@ -180,7 +186,7 @@ class Level:
                             if column == "Bed":
                                 self.bedTile = Bed([self.interactableSprites], None)
                             if column == "Chest":
-                                self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites)
+                                self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
                         if style == "Tree Trunks":
                             self.treeList.append(Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex))
                             self.appleIndex += 1
@@ -278,6 +284,17 @@ class Level:
             for coins in self.coinList:
                 coins.update(self.coinList)
 
+    def openChestInventory(self):
+        self.chestInventory.displayInventory()
+        self.displayPlayerInventory = True
+        self.playerInventory.inventoryActive = True
+        self.pauseGame()
+
+    def closeChestInventory(self):
+        self.displayPlayerInventory = False
+        self.playerInventory.inventoryActive = False
+        self.unpauseGame()
+
     def openMerchantStore(self):
         self.displayMerchantStore = True
         self.merchantStore.displayMerchandise = True
@@ -321,8 +338,6 @@ class Level:
                 savedApple["Position"] = apples.rect.topleft
                 savedApple["CurrentPhase"] = apples.currentPhase
 
-
-
     def saveSoilData(self):
         for index,soil in enumerate(self.soilTileSprites):
             savedSoil = self.gameState["Soil"][f"{soil.type}{index}"] = {}
@@ -345,8 +360,6 @@ class Level:
                 savedApple = self.gameState["PickableItems"][f"{items.type}{index}"] = {}
                 savedApple["Name"] = items.data["name"]
                 savedApple["Position"] = items.rect.topleft
-
-
 
     def loadPlayerData(self):
         player = self.player
@@ -411,18 +424,44 @@ class Level:
 
         self.saveload.saveGameData(self.gameState,"gameState")
 
-
-
-
     def loadGameState(self):
         self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
-
         self.loadPlantData()
         self.loadSoilData()
         self.loadPickableSprites()
         self.loadAnimalData()
         self.loadPlayerData()
 
+    def getInputs(self):
+        keys = pg.key.get_pressed()
+        if not self.timer.activated:
+            if keys[pg.K_SPACE]:
+                if self.playerInventory.inventoryActive:
+                    self.playerInventory.renderSelector()
+                    self.timer.activate()
+            if self.displayPlayerInventory:
+                if keys[pg.K_q]:
+                    self.playerInventory.selectFromLeft()
+                    self.timer.activate()
+                if keys[pg.K_e]:
+                    self.playerInventory.selectFromRight()
+                    self.timer.activate()
+            if keys[pg.K_TAB]:
+                self.renderPlayerInventory()
+                self.timer.activate()
+
+
+    def renderPlayerInventory(self):
+        if self.displayPlayerInventory and not self.chestInventory.chestOpened:
+            self.displayPlayerInventory = False
+            self.playerInventory.inventoryActive = False
+        else:
+            self.displayPlayerInventory = True
+            self.playerInventory.inventoryActive = True
+
+    def makeTrue(self,var):
+        for variables in var:
+            return variables == False
 
     def update(self):
 
@@ -430,16 +469,19 @@ class Level:
         self.visibleSprites.custom_draw(self.player)
         self.dialogueSystem.display()
         self.merchantStore.display()
+        self.chestInventory.display()
         self.equipmentTileCollisionLogic()
         self.playerPickUpItems()
         self.updateCoinList()
+        self.getInputs()
+        self.playerInventory.display()
 
         for trees in self.treeList:
             trees.update()
 
-        self.ui.display() if not self.displayMerchantStore else None
         if not self.gamePaused:
             for animals in self.animalsList:
                 animals.update()
+            self.ui.display()
             self.timeManager.dayNightCycle()
             self.player.update()

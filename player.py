@@ -2,20 +2,20 @@ import pygame as pg
 from settings import *
 from entity import Entity
 from support import import_folder
-from inventory import Inventory
+
 from objects import CoinOverHead
 from enum import Enum
 from timer import Timer
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,saveGame,loadGame):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,saveGame,loadGame,inventory):
         super().__init__(group)
 
         self.type = "player"
         self.animations_States = None
 
-        self.inventory = Inventory(self)
+        self.inventory = inventory
         self.displayInventory = False
         self.currentItemsHolding = []
 
@@ -76,8 +76,6 @@ class Player(Entity):
         self.saveGame = saveGame
         self.loadGame = loadGame
 
-
-
     def importSprites(self):
         player_path = "Sprites/Player/"
         self.animations_States = {
@@ -117,11 +115,6 @@ class Player(Entity):
 
     def updateInventory(self,item):
         self.inventory.update(item)
-    def renderInventory(self):
-        if self.displayInventory:
-            self.displayInventory = False
-        else:
-            self.displayInventory = True
 
     def horizontalDirection(self, value, state):
         self.direction.x = value
@@ -150,6 +143,7 @@ class Player(Entity):
                     object.interact()
                 else:
                     object.disengage()
+
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
@@ -199,10 +193,10 @@ class Player(Entity):
                     self.createEquipmentTile()
                     self.usingItem = False
 
+
     def getInputs(self):
         keys = pg.key.get_pressed()
-
-        allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive and not self.displayInventory
+        allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive and not self.inventory.inventoryActive
         if allowedToMove:
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
@@ -216,22 +210,11 @@ class Player(Entity):
                 self.idleState()
 
         if not self.timer.activated:
-            if self.displayInventory:
-                if keys[pg.K_q]:
-                    self.inventory.selectFromLeft()
-                    self.timer.activate()
-                if keys[pg.K_e]:
-                    self.inventory.selectFromRight()
-                    self.timer.activate()
             if keys[pg.K_SPACE]:
-                if self.displayInventory:
-                    self.inventory.renderSelector()
-                else:
+                if not self.inventory.inventoryActive:
                     self.useItemEquipped()
                 self.timer.activate()
-            if keys[pg.K_TAB]:
-                self.renderInventory()
-                self.timer.activate()
+
 
 
     def resetLives(self):
@@ -251,18 +234,12 @@ class Player(Entity):
 
     def update(self):
         self.currentTime = pg.time.get_ticks()
-
         self.timer.update()
         self.getInputs()
-
-        if self.displayInventory:
-            self.inventory.display()
-
-        else:
-            self.updateMood()
-            self.movement(playerSpeed)
-            self.animate()
-            self.interact()
+        self.updateMood()
+        self.movement(playerSpeed)
+        self.animate()
+        self.interact()
 
 
 

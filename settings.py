@@ -118,7 +118,7 @@ testSprites = {
 
 
 uiSprites = {
-             "InventoryHolder":"Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",
+             "InventoryHolder":loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Inventory.png",(625,90)),
              "EmptySlot": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/EmptySlot.png",slotScale),
              "EmptySlotSelected": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/EmptySlotSelected.png",slotScale),
              "FaceContainer":loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/FaceContainer.png",(100,100)),
@@ -128,6 +128,7 @@ uiSprites = {
              "HalfHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Half.png",(40,38)),
              "EmptyHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Empty.png",(40,38)),
              "DialogueBox": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/DialogueBox.png",(750,150)),
+             "ChestBackground" :loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/ChestBackground.png",(750,450))
 
              }
 

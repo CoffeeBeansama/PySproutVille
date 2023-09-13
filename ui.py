@@ -8,7 +8,6 @@ from timer import Timer
 
 
 class Ui:
-
     def __init__(self,player,displayMerchantStore):
         self.screen = pg.display.get_surface()
         self.player = player

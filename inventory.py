@@ -17,14 +17,12 @@ class InventorySlot:
         self.sprite = self.data["uiSprite"] if item is not None else self.defaultSprite
         self.selectedSprite = self.data["uiSpriteSelected"] if item is not None else self.defaultSelectedSprite
 
-class Inventory:
-    def __init__(self,player):
+class PlayerInventory:
+    def __init__(self):
 
-        self.inventoryPos = (80, 500)
+        self.inventoryPos = (73, 495)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
-
-        self.player = player
 
         self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
         self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
@@ -34,7 +32,7 @@ class Inventory:
 
         self.swappingItems = False
 
-        self.background = pg.image.load(uiSprites['InventoryHolder']).convert_alpha()
+        self.background = uiSprites['InventoryHolder']
 
         self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
         self.currentItems = self.defaultInventorySetup
@@ -48,6 +46,7 @@ class Inventory:
 
         self.slotList = []
         self.createSlots()
+        self.inventoryActive = False
 
     def selectFromRight(self):
         if not self.swappingItems:
@@ -70,8 +69,6 @@ class Inventory:
                 self.itemSwapIndex = self.inventoryCapacity -1
 
     def swapItems(self):
-
-        # Item Swap Logic
         self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
         self.slotList[self.itemSwapIndex].data, self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data, self.slotList[self.itemSwapIndex].data
         self.slotList[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
@@ -144,7 +141,7 @@ class Inventory:
                 pass
 
     def display(self):
-
+        if not self.inventoryActive: return
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):

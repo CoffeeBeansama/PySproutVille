@@ -102,9 +102,8 @@ class TimeManager:
         if not self.dayTimer.activated:
             self.currentPeriod *= -1
             self.getCurrentPeriod = self.currentDayState.get(self.currentPeriod)
+            self.getCurrentPeriod()
             self.dayTimer.activate()
-
-        self.getCurrentPeriod()
 
         self.player.checkifSleepy(self.currentPeriod)
         self.daySleepTransitionAnimation()

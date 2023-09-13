@@ -19,7 +19,6 @@ class Timer:
 
     def update(self):
         currentTime = pg.time.get_ticks()
-
         if currentTime - self.startTime > self.duration:
             if self.function and self.startTime != 0:
                 self.function()

@@ -89,9 +89,9 @@ class Fence(pg.sprite.Sprite):
 
 
 class Chest(pg.sprite.Sprite):
-    def __init__(self, pos, group,player,interactableSprites):
+    def __init__(self, pos, group,player,interactableSprites,openChestInventory):
         super().__init__(group)
-        self.type = "object"
+        self.type = "Chest"
 
         self.player = player
         self.spriteIndex = 1
@@ -104,21 +104,25 @@ class Chest(pg.sprite.Sprite):
         self.interactHitbox = self.interactRect.inflate(-40, -40)
 
         self.interactableSprites = interactableSprites
+        self.openChestInventory = openChestInventory
         self.add(self.interactableSprites)
 
         self.interacted = False
+
 
     def interact(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:
             if not self.interacted:
                 self.OpenAnimation()
+                self.openChestInventory()
                 self.interacted = True
             else:
                 return
 
     def disengage(self):
         self.interacted = False
+
         self.CloseAnimation()
 
     def OpenAnimation(self):
@@ -133,7 +137,7 @@ class Bed(InteractableObjects):
         super().__init__(group)
 
         self.player = player
-        self.type = "object"
+        self.type = "Bed"
         self.rect = image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
@@ -147,6 +151,7 @@ class Bed(InteractableObjects):
             if not self.interacted:
                 self.player.laidToBed = True
                 self.interacted = True
+
 
     def disengage(self):
         self.interacted = False
