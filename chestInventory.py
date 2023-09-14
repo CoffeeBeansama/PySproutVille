@@ -63,16 +63,19 @@ class ChestInventory:
     def display(self):
         if not self.chestOpened: return
 
-
         self.screen.blit(self.backGroundImage, self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):
             self.screen.blit(slots.sprite.convert_alpha() if self.playerInventory.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
 
-        self.itemIndex = self.playerInventory.itemIndex + len(self.currentItemHolding)
-        self.itemSwapIndex = self.playerInventory.itemIndex + len(self.currentItemHolding)
+        self.itemIndex = self.playerInventory.itemIndex
+        self.itemSwapIndex = self.playerInventory.itemSwapIndex
 
+        if self.itemIndex < 0:
+            self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 
+        if self.playerInventory.swappingItems and self.itemSwapIndex < 0:
+            self.screen.blit(self.selector2, self.slotList[self.itemSwapIndex].pos)
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:

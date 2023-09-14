@@ -91,34 +91,41 @@ class PlayerInventory:
                 self.itemIndex = -36
         else:
             self.itemSwapIndex += 9
-            if self.itemSwapIndex > 0:
+            if self.itemSwapIndex >= 9:
                 self.itemSwapIndex = -36
-
-
-
+    
     def swapItems(self):
+        chestItem = self.chestInventory.currentItemHolding
+        chestSlot = self.chestInventory.slotList
         if self.itemSwapIndex >= 0:
-            self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
-            self.slotList[self.itemSwapIndex].data, self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data, self.slotList[self.itemSwapIndex].data
-            self.slotList[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
-            self.slotList[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,self.slotList[self.itemSwapIndex].selectedSprite
-
-            self.itemIndex = self.itemSwapIndex
-        else:
-            if self.itemIndex >= 0:
-                self.chestInventory.currentItemHolding[self.chestInventory.slotList[self.itemSwapIndex].index] = self.currentItems[self.itemIndex]
-                self.chestInventory.slotList[self.itemSwapIndex].sprite = self.chestInventory.currentItemHolding[self.chestInventory.slotList[self.itemSwapIndex].index]["uiSprite"].convert_alpha()
-                self.chestInventory.slotList[self.itemSwapIndex].selectedSprite = self.chestInventory.currentItemHolding[self.chestInventory.slotList[self.itemSwapIndex].index]["uiSpriteSelected"].convert_alpha()
-                self.itemIndex = 0
-                self.itemSwapIndex = 0
+            if self.itemIndex < 0:
+                # chest to inventory
+                self.currentItems[self.itemSwapIndex],chestItem[chestSlot[self.itemIndex].index] = chestItem[chestSlot[self.itemIndex].index],self.currentItems[self.itemSwapIndex]
+                self.slotList[self.itemSwapIndex].sprite,chestSlot[self.itemIndex].sprite = chestSlot[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
+                self.slotList[self.itemSwapIndex].selectedSprite,chestSlot[self.itemIndex].selectedSprite = chestSlot[self.itemIndex].selectedSprite,self.slotList[self.itemSwapIndex].selectedSprite
+                self.itemIndex = self.itemSwapIndex
             else:
-                self.chestInventory.currentItemHolding[self.itemSwapIndex] = self.chestInventory.currentItemHolding[self.itemIndex]
-                self.chestInventory.slotList[self.itemSwapIndex].data, self.chestInventory.slotList[self.itemIndex].data = self.chestInventory.slotList[self.itemIndex].data,self.chestInventory.slotList[self.itemSwapIndex].data
-                self.chestInventory.slotList[self.itemSwapIndex].sprite, self.chestInventory.slotList[self.itemIndex].sprite = self.chestInventory.slotList[self.itemIndex].sprite,self.chestInventory.slotList[self.itemSwapIndex].sprite
-                self.chestInventory.slotList[self.itemSwapIndex].selectedSprite, self.chestInventory.slotList[self.itemIndex].selectedSprite = self.chestInventory.slotList[self.itemIndex].selectedSprite, self.chestInventory.slotList[self.itemSwapIndex].selectedSprite
+                # inventory to inventory
+                self.currentItems[self.itemSwapIndex],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],self.currentItems[self.itemSwapIndex]
+                self.slotList[self.itemSwapIndex].data, self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data, self.slotList[self.itemSwapIndex].data
+                self.slotList[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
+                self.slotList[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,self.slotList[self.itemSwapIndex].selectedSprite
+                self.itemIndex = self.itemSwapIndex
+        else:
+            if self.itemIndex < 0:
+                # chest to chest
+                chestItem[self.itemSwapIndex] = chestItem[self.itemIndex]
+                chestSlot[self.itemSwapIndex].data, chestSlot[self.itemIndex].data = chestSlot[self.itemIndex].data,chestSlot[self.itemSwapIndex].data
+                chestSlot[self.itemSwapIndex].sprite, chestSlot[self.itemIndex].sprite = chestSlot[self.itemIndex].sprite, chestSlot[self.itemSwapIndex].sprite
+                chestSlot[self.itemSwapIndex].selectedSprite, chestSlot[self.itemIndex].selectedSprite = chestSlot[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
+                self.itemIndex = self.itemSwapIndex
+            else:
+                # inventory to chests
+                chestItem[chestSlot[self.itemSwapIndex].index],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],chestItem[chestSlot[self.itemSwapIndex].index]
+                chestSlot[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = chestItem[chestSlot[self.itemSwapIndex].index]["uiSprite"].convert_alpha() if self.currentItems[self.itemIndex] is None else chestSlot[self.itemSwapIndex].defaultSprite.convert_alpha(),chestSlot[self.itemSwapIndex].sprite.convert_alpha()
+                chestSlot[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = chestItem[chestSlot[self.itemSwapIndex].index]["uiSpriteSelected"].convert_alpha() if self.currentItems[self.itemIndex] is None else chestSlot[self.itemSwapIndex].defaultSprite.convert_alpha(),chestSlot[self.itemSwapIndex].selectedSprite.convert_alpha()
+                self.itemIndex = self.itemSwapIndex
 
-                self.itemIndex = 0
-                self.itemSwapIndex = 0
 
     def renderSelector(self):
         if self.swappingItems:
@@ -220,14 +227,12 @@ class PlayerInventory:
         self.getInputs()
         self.timer.update()
 
-
-
-
         if not self.inventoryActive: return
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):
             self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
+
         if self.itemIndex >= 0:
             self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 
