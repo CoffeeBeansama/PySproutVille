@@ -1,5 +1,5 @@
 import pygame as pg
-from settings import uiSprites
+from settings import *
 from inventory import InventorySlot
 from timer import Timer
 
@@ -14,6 +14,12 @@ class ChestInventory:
         self.chestOpened = False
         self.inventoryClosed = inventoryClosed
 
+        self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
+        self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
+
+        self.selector = pg.transform.scale(pg.image.load(self.selectorSprite), slotScale).convert_alpha()
+        self.selector2 = pg.transform.scale(pg.image.load(self.selectorSprite2), slotScale).convert_alpha()
+
         self.rowCapacity = 4
 
         self.maxSlotPerRow = 9
@@ -25,7 +31,9 @@ class ChestInventory:
                                       None, None, None, None, None, None, None, None, None,
                                       ]
 
+        self.currentItemHolding = self.defaultInventorySetup
         self.itemIndex = self.playerInventory.itemIndex + len(self.defaultInventorySetup)
+        self.itemSwapIndex = self.playerInventory.itemSwapIndex + len(self.defaultInventorySetup)
         self.rowSlot = -self.itemIndex
         self.slotList = []
         self.createSlots()
@@ -38,10 +46,10 @@ class ChestInventory:
                 left = (j * increment) + (increment - self.width) + 47
                 newSlots = InventorySlot((left, self.slotPosY), self.defaultInventorySetup[j], self.rowSlot)
                 self.slotList.append(newSlots)
+
                 self.rowSlot +=1
 
             self.slotPosY += 70
-
     def displayInventory(self):
         self.chestOpened = True
         self.playerInventory.renderPlayerInventory()
@@ -54,11 +62,16 @@ class ChestInventory:
 
     def display(self):
         if not self.chestOpened: return
+
+
         self.screen.blit(self.backGroundImage, self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):
             self.screen.blit(slots.sprite.convert_alpha() if self.playerInventory.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
-        #self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
+
+        self.itemIndex = self.playerInventory.itemIndex + len(self.currentItemHolding)
+        self.itemSwapIndex = self.playerInventory.itemIndex + len(self.currentItemHolding)
+
 
 
         keys = pg.key.get_pressed()
