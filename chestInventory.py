@@ -8,6 +8,7 @@ class ChestInventory:
         self.screen = pg.display.get_surface()
         self.playerInventory = playerInventory
         self.inventoryPos = (73, 130)
+
         self.backGroundImage = uiSprites["ChestBackground"].convert_alpha()
 
         self.slotPosY = 170
@@ -52,17 +53,20 @@ class ChestInventory:
             self.slotPosY += 70
     def displayInventory(self):
         self.chestOpened = True
-        self.playerInventory.renderPlayerInventory()
-
+        self.playerInventory.openInventory()
 
 
     def closeInventory(self):
         self.chestOpened = False
         self.inventoryClosed()
 
+    def loadItems(self,index,item):
+        self.currentItemHolding[index] = itemData[item] if item is not None else None
+        self.slotList[index].sprite = itemData[item]["uiSprite"] if item is not None else self.slotList[index].defaultSprite
+        self.slotList[index].selectedSprite = itemData[item]["uiSpriteSelected"] if item is not None else self.slotList[index].defaultSelectedSprite
+
     def display(self):
         if not self.chestOpened: return
-
         self.screen.blit(self.backGroundImage, self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):

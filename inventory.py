@@ -3,7 +3,6 @@ from settings import *
 from items import *
 from timer import Timer
 
-
 class InventorySlot:
     def __init__(self,pos,item,index):
 
@@ -12,8 +11,8 @@ class InventorySlot:
         self.index = index
         self.data = item
 
-        self.defaultSprite = uiSprites["EmptySlot"]
-        self.defaultSelectedSprite = uiSprites["EmptySlotSelected"]
+        self.defaultSprite = uiSprites["EmptySlot"].convert_alpha()
+        self.defaultSelectedSprite = uiSprites["EmptySlotSelected"].convert_alpha()
 
         self.sprite = self.data["uiSprite"].convert_alpha() if item is not None else self.defaultSprite.convert_alpha()
         self.selectedSprite = self.data["uiSpriteSelected"].convert_alpha() if item is not None else self.defaultSelectedSprite.convert_alpha()
@@ -71,8 +70,6 @@ class PlayerInventory:
             if self.itemSwapIndex == -1:
                 self.itemSwapIndex = self.inventoryCapacity -1
 
-
-
     def selectFromTop(self):
         if not self.swappingItems:
             self.itemIndex -= 9
@@ -93,7 +90,7 @@ class PlayerInventory:
             self.itemSwapIndex += 9
             if self.itemSwapIndex >= 9:
                 self.itemSwapIndex = -36
-    
+
     def swapItems(self):
         chestItem = self.chestInventory.currentItemHolding
         chestSlot = self.chestInventory.slotList
@@ -114,7 +111,7 @@ class PlayerInventory:
         else:
             if self.itemIndex < 0:
                 # chest to chest
-                chestItem[self.itemSwapIndex] = chestItem[self.itemIndex]
+                chestItem[chestSlot[self.itemSwapIndex].index],chestItem[chestSlot[self.itemIndex].index] = chestItem[chestSlot[self.itemIndex].index],chestItem[chestSlot[self.itemSwapIndex].index]
                 chestSlot[self.itemSwapIndex].data, chestSlot[self.itemIndex].data = chestSlot[self.itemIndex].data,chestSlot[self.itemSwapIndex].data
                 chestSlot[self.itemSwapIndex].sprite, chestSlot[self.itemIndex].sprite = chestSlot[self.itemIndex].sprite, chestSlot[self.itemSwapIndex].sprite
                 chestSlot[self.itemSwapIndex].selectedSprite, chestSlot[self.itemIndex].selectedSprite = chestSlot[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
@@ -122,9 +119,11 @@ class PlayerInventory:
             else:
                 # inventory to chests
                 chestItem[chestSlot[self.itemSwapIndex].index],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],chestItem[chestSlot[self.itemSwapIndex].index]
-                chestSlot[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = chestItem[chestSlot[self.itemSwapIndex].index]["uiSprite"].convert_alpha() if self.currentItems[self.itemIndex] is None else chestSlot[self.itemSwapIndex].defaultSprite.convert_alpha(),chestSlot[self.itemSwapIndex].sprite.convert_alpha()
-                chestSlot[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = chestItem[chestSlot[self.itemSwapIndex].index]["uiSpriteSelected"].convert_alpha() if self.currentItems[self.itemIndex] is None else chestSlot[self.itemSwapIndex].defaultSprite.convert_alpha(),chestSlot[self.itemSwapIndex].selectedSprite.convert_alpha()
+                chestSlot[self.itemSwapIndex].data,self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data,chestSlot[self.itemSwapIndex].data
+                chestSlot[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,chestSlot[self.itemSwapIndex].sprite
+                chestSlot[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
                 self.itemIndex = self.itemSwapIndex
+
 
 
     def renderSelector(self):
@@ -211,17 +210,26 @@ class PlayerInventory:
                     if keys[pg.K_s]:
                         self.selectFromBottom()
                         self.timer.activate()
-            if keys[pg.K_TAB]:
-                self.renderPlayerInventory()
+            if keys[pg.K_TAB] and not self.chestInventory.chestOpened:
+                if self.displayPlayerInventory:
+                    self.closeInventory()
+                else:
+                    self.openInventory()
                 self.timer.activate()
 
-    def renderPlayerInventory(self):
-        if self.displayPlayerInventory:
-            self.displayPlayerInventory = False
-            self.inventoryActive = False
-        else:
-            self.displayPlayerInventory = True
-            self.inventoryActive = True
+
+    def openInventory(self):
+        self.itemIndex = 0
+        self.itemSwapIndex = 0
+        self.displayPlayerInventory = True
+        self.inventoryActive = True
+
+    def closeInventory(self):
+        self.displayPlayerInventory = False
+        self.inventoryActive = False
+
+
+
 
     def display(self):
         self.getInputs()

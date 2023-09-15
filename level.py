@@ -121,7 +121,8 @@ class Level:
             "Apples": {},
             "Soil": {},
             "PickableItems": {},
-            "Animals": {}
+            "Animals": {},
+            "ItemChest": {},
 
         }
 
@@ -131,7 +132,8 @@ class Level:
             "Apples": {},
             "Soil": {},
             "PickableItems": {},
-            "Animals": {}
+            "Animals": {},
+            "ItemChest": {}
 
         }
 
@@ -320,6 +322,13 @@ class Level:
             player.data["Items"] = player.currentItemsHolding
         self.gameState["Player"] = player.data
 
+
+    def saveItemChestData(self):
+        itemChest = self.chestInventory
+        for index,items in enumerate(itemChest.currentItemHolding):
+            self.gameState["ItemChest"][index] = items["name"] if items is not None else None
+
+
     def savePlantData(self):
         for index,plants in enumerate(self.plantList):
             if plants.type == "Plants":
@@ -369,6 +378,12 @@ class Level:
         except:
             print("no items found")
 
+
+    def loadItemChestData(self):
+        for index,items in enumerate(self.gameState["ItemChest"].values()):
+            self.chestInventory.loadItems(index,items)
+
+
     def loadAnimalData(self):
         for index,animals in enumerate(self.gameState["Animals"].values()):
             if animals["Name"] == "Chicken":
@@ -409,7 +424,6 @@ class Level:
             if item["Name"] == "Apple":
                 self.pickAbleItemSprites.add(AppleItem(item["Position"], self.visibleSprites,itemData["Apple"],self.pickAbleItemSprites))
 
-
     def saveGameState(self):
         for items in self.gameState.values():
                 items.clear()
@@ -419,6 +433,7 @@ class Level:
         self.saveSoilData()
         self.savePlantData()
         self.saveAnimalData()
+        self.saveItemChestData()
 
         self.saveload.saveGameData(self.gameState,"gameState")
 
@@ -428,7 +443,9 @@ class Level:
         self.loadSoilData()
         self.loadPickableSprites()
         self.loadAnimalData()
+        self.loadItemChestData()
         self.loadPlayerData()
+
 
     def update(self):
 
