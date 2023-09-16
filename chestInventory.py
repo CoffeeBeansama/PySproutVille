@@ -75,7 +75,9 @@ class ChestInventory:
         self.itemIndex = self.playerInventory.itemIndex
         self.itemSwapIndex = self.playerInventory.itemSwapIndex
 
+
         if self.itemIndex < 0:
+            print(self.itemIndex)
             self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 
         if self.playerInventory.swappingItems and self.itemSwapIndex < 0:

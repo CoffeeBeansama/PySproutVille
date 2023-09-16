@@ -122,6 +122,7 @@ class DynamicUI:
             self.resetPlayerHeart()
             self.animateFace()
             self.screen.blit(self.faceSprite, self.faceSpritePos)
+            
 class StaticUI:
     def __init__(self,dynamicUi):
         self.screen = pg.display.get_surface()

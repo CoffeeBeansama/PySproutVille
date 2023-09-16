@@ -2,6 +2,7 @@ import pygame as pg
 from settings import *
 from items import *
 from timer import Timer
+from pygame import mixer
 
 class InventorySlot:
     def __init__(self,pos,item,index):
@@ -37,6 +38,18 @@ class PlayerInventory:
         self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
         self.currentItems = self.defaultInventorySetup
 
+        self.selectionSfx = mixer.Sound("SFX/Menu/Selection.wav")
+        self.selectionSfx.set_volume(0.3)
+
+        self.itemSwapSfx = mixer.Sound("SFX/Menu/ItemSwap.mp3")
+        self.itemSwapSfx.set_volume(0.1)
+
+        self.openInventorySfx = mixer.Sound("SFX/Menu/OpenInventory.mp3")
+        self.openInventorySfx.set_volume(0.2)
+
+        self.closeInventorySfx = mixer.Sound("SFX/Menu/CloseInventory.mp3")
+        self.closeInventorySfx.set_volume(0.2)
+
         self.itemIndex = 0
         self.itemSwapIndex = 0
         self.inventoryCapacity = 9
@@ -59,16 +72,22 @@ class PlayerInventory:
             self.itemSwapIndex += 1
             if self.itemSwapIndex >= self.inventoryCapacity:
                 self.itemSwapIndex = 0
+        self.playSound("Selection")
 
     def selectFromLeft(self):
         if not self.swappingItems:
             self.itemIndex -= 1
+            if self.chestInventory.chestOpened:
+                if self.itemIndex <= -37:
+                    self.itemIndex = -36
+
             if self.itemIndex == -1:
-                self.itemIndex = self.inventoryCapacity -1
+                self.itemIndex = 0
         else:
             self.itemSwapIndex -= 1
             if self.itemSwapIndex == -1:
-                self.itemSwapIndex = self.inventoryCapacity -1
+                self.itemSwapIndex = 0
+        self.playSound("Selection")
 
     def selectFromTop(self):
         if not self.swappingItems:
@@ -79,7 +98,7 @@ class PlayerInventory:
             self.itemSwapIndex -= 9
             if self.itemSwapIndex < -36:
                 self.itemSwapIndex = 0
-
+        self.playSound("Selection")
 
     def selectFromBottom(self):
         if not self.swappingItems:
@@ -90,6 +109,7 @@ class PlayerInventory:
             self.itemSwapIndex += 9
             if self.itemSwapIndex >= 9:
                 self.itemSwapIndex = -36
+        self.playSound("Selection")
 
     def swapItems(self):
         chestItem = self.chestInventory.currentItemHolding
@@ -124,6 +144,17 @@ class PlayerInventory:
                 chestSlot[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
                 self.itemIndex = self.itemSwapIndex
 
+        self.playSound("ItemSwap")
+
+    def playSound(self,Sound):
+        if Sound == "Selection":
+            pg.mixer.Sound.play(self.selectionSfx)
+        if Sound == "ItemSwap":
+            pg.mixer.Sound.play(self.itemSwapSfx)
+        if Sound == "OpenInventory":
+            pg.mixer.Sound.play(self.openInventorySfx)
+        if Sound == "CloseInventory":
+            pg.mixer.Sound.play(self.closeInventorySfx)
 
 
     def renderSelector(self):
@@ -213,8 +244,10 @@ class PlayerInventory:
             if keys[pg.K_TAB] and not self.chestInventory.chestOpened:
                 if self.displayPlayerInventory:
                     self.closeInventory()
+                    self.playSound("CloseInventory")
                 else:
                     self.openInventory()
+                    self.playSound("OpenInventory")
                 self.timer.activate()
 
 

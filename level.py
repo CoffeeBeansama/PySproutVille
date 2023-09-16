@@ -153,7 +153,7 @@ class Level:
 
         self.chickenSpawnPoint = (1206, 938)
         self.cowSpawnPoint = (1130, 1378)
-
+        self.playBGM()
 
 
     def createMap(self):
@@ -268,6 +268,10 @@ class Level:
             self.currentEquipment.kill()
             return
 
+    def playBGM(self):
+        mixer.music.load("SFX/BGM/bgm.ogg")
+        mixer.music.play(-1)
+        mixer.music.set_volume(0.2)
 
     def seedPlantTile(self, soilTile,data):
         if soilTile.planted: return
