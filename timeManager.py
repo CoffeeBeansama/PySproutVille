@@ -37,6 +37,8 @@ class TimeManager:
         self.player = player
 
 
+
+
     def Day(self):
         if self.darknessOpacity >= 0:
             self.darknessOpacity -= 0.07

@@ -17,6 +17,7 @@ from dialogueManager import DialogueSystem
 from saveload import SaveLoadSystem
 from chestInventory import ChestInventory
 from inventory import PlayerInventory
+from sound import *
 
 
 class CameraGroup(pg.sprite.Group):
@@ -153,7 +154,9 @@ class Level:
 
         self.chickenSpawnPoint = (1206, 938)
         self.cowSpawnPoint = (1130, 1378)
-        self.playBGM()
+
+        playBGM("level")
+
 
 
     def createMap(self):
@@ -255,6 +258,7 @@ class Level:
 
                 if itemName == "Hoe":
                     soilTileCollided[0].tiltSoil()
+                    playSound("Hoe")
                 elif itemName == "WateringCan":
                     soilTileCollided[0].waterSoil()
                 elif itemName in seedItems:
@@ -268,10 +272,7 @@ class Level:
             self.currentEquipment.kill()
             return
 
-    def playBGM(self):
-        mixer.music.load("SFX/BGM/bgm.ogg")
-        mixer.music.play(-1)
-        mixer.music.set_volume(0.2)
+
 
     def seedPlantTile(self, soilTile,data):
         if soilTile.planted: return
@@ -380,7 +381,7 @@ class Level:
             for index, items in enumerate(self.gameState["Player"]["Items"]):
                 player.inventory.loadItems(index, items)
         except:
-            print("no items found")
+            pass
 
 
     def loadItemChestData(self):
@@ -452,7 +453,6 @@ class Level:
 
 
     def update(self):
-
         self.timer.update()
         self.visibleSprites.custom_draw(self.player)
         self.dialogueSystem.display()

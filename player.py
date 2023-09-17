@@ -6,6 +6,7 @@ from pygame import mixer
 from objects import CoinOverHead
 from enum import Enum
 from timer import Timer
+from sound import *
 
 
 class Player(Entity):
@@ -76,8 +77,8 @@ class Player(Entity):
         self.saveGame = saveGame
         self.loadGame = loadGame
 
-        self.coinSfx = mixer.Sound("SFX/Gold.wav")
-        self.coinSfx.set_volume(0.3)
+
+
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -164,7 +165,7 @@ class Player(Entity):
 
 
     def increaseCoin(self,cost):
-        pg.mixer.Sound.play(self.coinSfx)
+        playSound("Coin")
         self.mood = "Happy"
         self.coins += cost
         self.moodTickTime = pg.time.get_ticks()

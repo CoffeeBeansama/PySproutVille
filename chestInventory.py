@@ -47,10 +47,9 @@ class ChestInventory:
                 left = (j * increment) + (increment - self.width) + 47
                 newSlots = InventorySlot((left, self.slotPosY), self.defaultInventorySetup[j], self.rowSlot)
                 self.slotList.append(newSlots)
-
                 self.rowSlot +=1
-
             self.slotPosY += 70
+
     def displayInventory(self):
         self.chestOpened = True
         self.playerInventory.openInventory()
@@ -77,7 +76,6 @@ class ChestInventory:
 
 
         if self.itemIndex < 0:
-            print(self.itemIndex)
             self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
 
         if self.playerInventory.swappingItems and self.itemSwapIndex < 0:
