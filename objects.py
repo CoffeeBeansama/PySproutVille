@@ -4,6 +4,7 @@ from abc import abstractmethod
 from settings import *
 from timeManager import TimeManager
 from timer import Timer
+from sound import playSound
 
 
 class InteractableObjects(pg.sprite.Sprite):
@@ -115,6 +116,7 @@ class Chest(pg.sprite.Sprite):
         if keys[pg.K_x]:
             if not self.interacted:
                 self.OpenAnimation()
+
                 self.openChestInventory()
                 self.interacted = True
             else:
@@ -122,7 +124,6 @@ class Chest(pg.sprite.Sprite):
 
     def disengage(self):
         self.interacted = False
-
         self.CloseAnimation()
 
     def OpenAnimation(self):

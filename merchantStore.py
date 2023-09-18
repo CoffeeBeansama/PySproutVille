@@ -1,6 +1,7 @@
 from support import *
 from settings import *
 from timer import Timer
+from sound import playSound
 
 class MerchantStore:
     def __init__(self,player,action,chickenBought,cowBought):
@@ -83,8 +84,10 @@ class MerchantStore:
             if self.renderedItems[self.itemIndex].itemName == "Cow":
                 self.cowBought()
             self.player.coins -= self.renderedItems[self.itemIndex].itemCost
+            playSound("Purchase")
         else:
-            print("not enough cash")
+            playSound("No Cash")
+
 
         return
 
@@ -101,18 +104,21 @@ class MerchantStore:
                 if keys[pg.K_w]:
                     self.itemIndex -= 1
                     self.timer.activate()
+                    playSound("Selection")
                 if keys[pg.K_s]:
                     self.itemIndex += 1
                     self.timer.activate()
-
+                    playSound("Selection")
                 if keys[pg.K_ESCAPE]:
                     self.closeMenu()
                     self.displayMerchandise = False
                     self.timer.activate()
+                    playSound("CloseInventory")
 
                 if keys[pg.K_SPACE]:
                     self.purchaseItem()
                     self.timer.activate()
+
 
 
     def display(self):

@@ -2,6 +2,7 @@ import pygame as pg
 from settings import *
 from inventory import InventorySlot
 from timer import Timer
+from sound import playSound
 
 class ChestInventory:
     def __init__(self,playerInventory,inventoryClosed):
@@ -52,6 +53,7 @@ class ChestInventory:
 
     def displayInventory(self):
         self.chestOpened = True
+        playSound("Chest")
         self.playerInventory.openInventory()
 
 

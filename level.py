@@ -267,6 +267,7 @@ class Level:
             if woodTileCollided:
                 if itemName == "Axe":
                     woodTileCollided[0].chopped()
+                    playSound("Axe")
 
         if self.currentEquipment is not None:
             self.currentEquipment.kill()
