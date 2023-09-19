@@ -40,6 +40,7 @@ class ChestInventory:
         self.slotList = {}
         self.createSlots()
 
+
     def createSlots(self):
         for i in range(self.rowCapacity):
             for j in range(self.maxSlotPerRow):
@@ -51,7 +52,6 @@ class ChestInventory:
                 self.rowSlot +=1
             self.slotPosY += 70
 
-
     def displayInventory(self):
         self.chestOpened = True
         playSound("Chest")
@@ -62,9 +62,21 @@ class ChestInventory:
         self.chestOpened = False
         self.inventoryClosed()
 
-    def loadItems(self,index,item):
-        self.slotList[index].sprite = itemData[item]["uiSprite"] if item is not None else self.slotList[index].defaultSprite
-        self.slotList[index].selectedSprite = itemData[item]["uiSpriteSelected"] if item is not None else self.slotList[index].defaultSelectedSprite
+    def loadSlots(self):
+        for index,slots in enumerate(self.slotList.values()):
+            item = self.currentItemHolding[index]
+            if item is not None:
+                slots.sprite = item["uiSprite"]
+                slots.selectedSprite = item["uiSpriteSelected"]
+
+
+    def updateIndex(self):
+        self.itemIndex = self.playerInventory.itemIndex
+        self.itemSwapIndex = self.playerInventory.itemSwapIndex
+
+    def loadCurrentItems(self,index,item):
+        if item is not None:
+            self.currentItemHolding[index] = itemData[item]
 
     def display(self):
         if not self.chestOpened: return
@@ -72,12 +84,6 @@ class ChestInventory:
 
         for keyIndex,slots in enumerate(self.slotList.values()):
             self.screen.blit(slots.sprite.convert_alpha() if self.playerInventory.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
-
-
-
-        self.itemIndex = self.playerInventory.itemIndex
-        self.itemSwapIndex = self.playerInventory.itemSwapIndex
-
 
         if self.itemIndex < 0:
             self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)

@@ -123,7 +123,8 @@ class Level:
             "Soil": {},
             "PickableItems": {},
             "Animals": {},
-            "ItemChest": {},
+            "ItemChestItems": {},
+            "ItemChestSlots": {},
 
         }
 
@@ -134,7 +135,8 @@ class Level:
             "Soil": {},
             "PickableItems": {},
             "Animals": {},
-            "ItemChest": {}
+            "ItemChestItems": {},
+            "ItemChestSlots": {}
 
         }
 
@@ -331,8 +333,12 @@ class Level:
 
     def saveItemChestData(self):
         itemChest = self.chestInventory
+        for index,items in enumerate(itemChest.currentItemHolding):
+            self.gameState["ItemChestItems"][index] = items["name"] if items is not None else None
+
         for index,items in enumerate(itemChest.slotList.values()):
-            self.gameState["ItemChest"][items.index] = items.data["name"] if items.data is not None else None
+            self.gameState["ItemChestSlots"][items.index] = items.data["name"] if items.data is not None else None
+
 
 
     def savePlantData(self):
@@ -386,8 +392,9 @@ class Level:
 
 
     def loadItemChestData(self):
-        for keys,values in enumerate(self.gameState["ItemChest"]):
-            print(f"key: {keys}, value: {values}")
+        for index,item in enumerate(self.gameState["ItemChestItems"].values()):
+            self.chestInventory.loadCurrentItems(index,item)
+        self.chestInventory.loadSlots()
 
 
 

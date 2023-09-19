@@ -53,6 +53,7 @@ class PlayerInventory:
         self.displayPlayerInventory = False
         self.timer = Timer(200)
 
+
     def selectFromRight(self):
         if not self.swappingItems:
             self.itemIndex += 1
@@ -62,7 +63,6 @@ class PlayerInventory:
             self.itemSwapIndex += 1
             if self.itemSwapIndex >= self.inventoryCapacity:
                 self.itemSwapIndex = 0
-        playSound("Selection")
 
     def selectFromLeft(self):
         if not self.swappingItems:
@@ -77,7 +77,6 @@ class PlayerInventory:
             self.itemSwapIndex -= 1
             if self.itemSwapIndex == -1:
                 self.itemSwapIndex = 0
-        playSound("Selection")
 
     def selectFromTop(self):
         if not self.swappingItems:
@@ -88,7 +87,7 @@ class PlayerInventory:
             self.itemSwapIndex -= 9
             if self.itemSwapIndex < -36:
                 self.itemSwapIndex = 0
-        playSound("Selection")
+
 
     def selectFromBottom(self):
         if not self.swappingItems:
@@ -99,7 +98,6 @@ class PlayerInventory:
             self.itemSwapIndex += 9
             if self.itemSwapIndex >= 9:
                 self.itemSwapIndex = -36
-        playSound("Selection")
 
     def swapItems(self):
         chestItem = self.chestInventory.currentItemHolding
@@ -208,19 +206,29 @@ class PlayerInventory:
                 if self.inventoryActive:
                     self.renderSelector()
                     self.timer.activate()
+                    self.chestInventory.updateIndex()
+
             if self.displayPlayerInventory:
                 if keys[pg.K_q]:
                     self.selectFromLeft()
+                    playSound("Selection")
+                    self.chestInventory.updateIndex()
                     self.timer.activate()
                 if keys[pg.K_e]:
                     self.selectFromRight()
+                    playSound("Selection")
+                    self.chestInventory.updateIndex()
                     self.timer.activate()
                 if self.chestInventory.chestOpened:
                     if keys[pg.K_w]:
                         self.selectFromTop()
+                        playSound("Selection")
+                        self.chestInventory.updateIndex()
                         self.timer.activate()
                     if keys[pg.K_s]:
                         self.selectFromBottom()
+                        playSound("Selection")
+                        self.chestInventory.updateIndex()
                         self.timer.activate()
             if keys[pg.K_TAB] and not self.chestInventory.chestOpened:
                 if self.displayPlayerInventory:
