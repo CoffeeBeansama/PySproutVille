@@ -37,7 +37,7 @@ class ChestInventory:
         self.itemIndex = self.playerInventory.itemIndex + len(self.defaultInventorySetup)
         self.itemSwapIndex = self.playerInventory.itemSwapIndex + len(self.defaultInventorySetup)
         self.rowSlot = -self.itemIndex
-        self.slotList = []
+        self.slotList = {}
         self.createSlots()
 
     def createSlots(self):
@@ -47,9 +47,10 @@ class ChestInventory:
                 increment = inventoryWidth // self.maxSlotPerRow
                 left = (j * increment) + (increment - self.width) + 47
                 newSlots = InventorySlot((left, self.slotPosY), self.defaultInventorySetup[j], self.rowSlot)
-                self.slotList.append(newSlots)
+                self.slotList[self.rowSlot] = newSlots
                 self.rowSlot +=1
             self.slotPosY += 70
+
 
     def displayInventory(self):
         self.chestOpened = True
@@ -62,7 +63,6 @@ class ChestInventory:
         self.inventoryClosed()
 
     def loadItems(self,index,item):
-        self.currentItemHolding[index] = itemData[item] if item is not None else None
         self.slotList[index].sprite = itemData[item]["uiSprite"] if item is not None else self.slotList[index].defaultSprite
         self.slotList[index].selectedSprite = itemData[item]["uiSpriteSelected"] if item is not None else self.slotList[index].defaultSelectedSprite
 
@@ -70,8 +70,10 @@ class ChestInventory:
         if not self.chestOpened: return
         self.screen.blit(self.backGroundImage, self.inventoryPos)
 
-        for index,slots in enumerate(self.slotList):
+        for keyIndex,slots in enumerate(self.slotList.values()):
             self.screen.blit(slots.sprite.convert_alpha() if self.playerInventory.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
+
+
 
         self.itemIndex = self.playerInventory.itemIndex
         self.itemSwapIndex = self.playerInventory.itemSwapIndex
