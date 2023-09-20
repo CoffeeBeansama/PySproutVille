@@ -4,7 +4,7 @@ from timer import Timer
 from sound import playSound
 
 class MerchantStore:
-    def __init__(self,player,action,chickenBought,cowBought):
+    def __init__(self,player,action,chickenBought,cowBought,openInventory):
         self.screen = pg.display.get_surface()
 
         self.player = player
@@ -65,6 +65,7 @@ class MerchantStore:
 
         self.chickenBought = chickenBought
         self.cowBought = cowBought
+        self.openInventory = openInventory
 
     def createItems(self):
         for index,items in enumerate(self.itemSetup):
@@ -114,6 +115,7 @@ class MerchantStore:
                     self.displayMerchandise = False
                     self.timer.activate()
                     playSound("CloseInventory")
+                    self.openInventory()
 
                 if keys[pg.K_SPACE]:
                     self.purchaseItem()

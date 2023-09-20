@@ -50,7 +50,7 @@ class PlayerInventory:
         self.slotList = []
         self.createSlots()
         self.inventoryActive = False
-        self.displayPlayerInventory = False
+        self.displayPlayerInventory = True
         self.timer = Timer(200)
 
 
@@ -208,47 +208,40 @@ class PlayerInventory:
                     self.timer.activate()
                     self.chestInventory.updateIndex()
 
-            if self.displayPlayerInventory:
-                if keys[pg.K_q]:
-                    self.selectFromLeft()
-                    playSound("Selection")
-                    self.chestInventory.updateIndex()
-                    self.timer.activate()
-                if keys[pg.K_e]:
-                    self.selectFromRight()
-                    playSound("Selection")
-                    self.chestInventory.updateIndex()
-                    self.timer.activate()
-                if self.chestInventory.chestOpened:
-                    if keys[pg.K_w]:
-                        self.selectFromTop()
-                        playSound("Selection")
-                        self.chestInventory.updateIndex()
-                        self.timer.activate()
-                    if keys[pg.K_s]:
-                        self.selectFromBottom()
-                        playSound("Selection")
-                        self.chestInventory.updateIndex()
-                        self.timer.activate()
-            if keys[pg.K_TAB] and not self.chestInventory.chestOpened:
-                if self.displayPlayerInventory:
-                    self.closeInventory()
-                    playSound("CloseInventory")
-                else:
-                    self.openInventory()
-                    playSound("OpenInventory")
+            if keys[pg.K_q]:
+                self.selectFromLeft()
+                playSound("Selection")
+                self.chestInventory.updateIndex()
                 self.timer.activate()
+            if keys[pg.K_e]:
+                self.selectFromRight()
+                playSound("Selection")
+                self.chestInventory.updateIndex()
+                self.timer.activate()
+            if self.chestInventory.chestOpened:
+                if keys[pg.K_w]:
+                    self.selectFromTop()
+                    playSound("Selection")
+                    self.chestInventory.updateIndex()
+                    self.timer.activate()
+                if keys[pg.K_s]:
+                    self.selectFromBottom()
+                    playSound("Selection")
+                    self.chestInventory.updateIndex()
+                    self.timer.activate()
 
 
     def openInventory(self):
         self.itemIndex = 0
         self.itemSwapIndex = 0
         self.displayPlayerInventory = True
-        self.inventoryActive = True
+
 
     def closeInventory(self):
+        self.itemIndex = 0
+        self.itemSwapIndex = 0
         self.displayPlayerInventory = False
-        self.inventoryActive = False
+
 
 
 
@@ -257,7 +250,7 @@ class PlayerInventory:
         self.getInputs()
         self.timer.update()
 
-        if not self.inventoryActive: return
+        if not self.displayPlayerInventory: return
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):

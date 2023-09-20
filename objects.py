@@ -116,7 +116,6 @@ class Chest(pg.sprite.Sprite):
         if keys[pg.K_x]:
             if not self.interacted:
                 self.OpenAnimation()
-
                 self.openChestInventory()
                 self.interacted = True
             else:

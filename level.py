@@ -142,8 +142,8 @@ class Level:
 
         self.loadGameState()
 
-        self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance)
-        self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore)
+        self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
+        self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
 
         self.getPlayerData([self.timeManager,
                               self.bedTile])

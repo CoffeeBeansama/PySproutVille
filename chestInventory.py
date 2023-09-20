@@ -55,7 +55,6 @@ class ChestInventory:
     def displayInventory(self):
         self.chestOpened = True
         playSound("Chest")
-        self.playerInventory.openInventory()
 
 
     def closeInventory(self):
@@ -93,6 +92,8 @@ class ChestInventory:
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
+     
+            self.updateIndex()
             self.closeInventory()
 
 

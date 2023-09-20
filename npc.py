@@ -32,12 +32,15 @@ class Merchant(InteractableObjects):
         self.add(self.interactableSprites)
 
 
+
+
     def interact(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:
             if not self.interacted:
                 self.dialogueSystem.startDialogue(self.dialogueId)
                 self.interacted = True
+
             else:
                 return
 
