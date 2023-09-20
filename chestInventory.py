@@ -59,6 +59,8 @@ class ChestInventory:
 
     def closeInventory(self):
         self.chestOpened = False
+        self.playerInventory.resetIndexes()
+        self.updateIndex()
         self.inventoryClosed()
 
     def loadSlots(self):
@@ -92,7 +94,6 @@ class ChestInventory:
 
         keys = pg.key.get_pressed()
         if keys[pg.K_ESCAPE]:
-     
             self.updateIndex()
             self.closeInventory()
 

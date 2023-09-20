@@ -64,7 +64,6 @@ class PickAbleItems(pg.sprite.Sprite):
 
         plantlist.remove(self) if self in plantlist else None
 
-
         if not self.collided:
             self.collided = True
             self.tickStart = pg.time.get_ticks()

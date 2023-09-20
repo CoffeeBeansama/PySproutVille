@@ -325,10 +325,13 @@ class Level:
         player.currentItemsHolding.clear()
         player.data["Position"] = player.hitbox.center
         player.data["Coins"] = player.coins
+
         for items in player.inventory.currentItems:
             player.currentItemsHolding.append(items["name"] if items is not None else None)
             player.data["Items"] = player.currentItemsHolding
         self.gameState["Player"] = player.data
+        print(self.gameState["Player"]["Items"])
+
 
 
     def saveItemChestData(self):

@@ -131,9 +131,7 @@ class PlayerInventory:
                 chestSlot[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,chestSlot[self.itemSwapIndex].sprite
                 chestSlot[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
                 self.itemIndex = self.itemSwapIndex
-
         playSound("ItemSwap")
-
 
 
     def renderSelector(self):
@@ -169,7 +167,7 @@ class PlayerInventory:
             
     def PurchaseItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):
-            if itemSlots.data is None and self.currentItems[slotIndex] is None:
+            if self.currentItems[slotIndex] is None:
                 newData = itemData[f"{item.data['name']}"]
                 itemSlots.data = newData
                 self.currentItems[slotIndex] = newData
@@ -207,7 +205,6 @@ class PlayerInventory:
                     self.renderSelector()
                     self.timer.activate()
                     self.chestInventory.updateIndex()
-
             if keys[pg.K_q]:
                 self.selectFromLeft()
                 playSound("Selection")
@@ -232,19 +229,16 @@ class PlayerInventory:
 
 
     def openInventory(self):
-        self.itemIndex = 0
-        self.itemSwapIndex = 0
+        self.resetIndexes()
         self.displayPlayerInventory = True
 
-
     def closeInventory(self):
-        self.itemIndex = 0
-        self.itemSwapIndex = 0
+        self.resetIndexes()
         self.displayPlayerInventory = False
 
-
-
-
+    def resetIndexes(self):
+        self.itemIndex = 0
+        self.itemSwapIndex = 0
 
     def display(self):
         self.getInputs()

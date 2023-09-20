@@ -89,7 +89,6 @@ class MerchantStore:
         else:
             playSound("No Cash")
 
-
         return
 
     def getPlayerInputs(self):
@@ -113,6 +112,7 @@ class MerchantStore:
                 if keys[pg.K_ESCAPE]:
                     self.closeMenu()
                     self.displayMerchandise = False
+                    self.allowedToPurchase = False
                     self.timer.activate()
                     playSound("CloseInventory")
                     self.openInventory()
