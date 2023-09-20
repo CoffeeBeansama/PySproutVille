@@ -132,8 +132,10 @@ uiSprites = {
 
              }
 
+
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["Wheat","Tomato"]
+stackAbleItems = ["Wheat","Tomato","Wood"]
 sellableItems = ["Wheat","Tomato","Apple","Egg","Milk"]
 OverlapTiles = ["Soil", "Plants","npc"]
 

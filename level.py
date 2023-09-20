@@ -123,6 +123,7 @@ class Level:
             "Soil": {},
             "PickableItems": {},
             "Animals": {},
+            "PlayerInventorySlots": {},
             "ItemChestItems": {},
             "ItemChestSlots": {},
 
@@ -135,6 +136,7 @@ class Level:
             "Soil": {},
             "PickableItems": {},
             "Animals": {},
+            "PlayerInventorySlots": {},
             "ItemChestItems": {},
             "ItemChestSlots": {}
 
@@ -255,21 +257,20 @@ class Level:
         for sprites in self.equipmentSprites:
             soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
             woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
-            itemName = inventory.currentItems[inventory.itemIndex]["name"]
-            if soilTileCollided:
-
-                if itemName == "Hoe":
-                    soilTileCollided[0].tiltSoil()
-                    playSound("Hoe")
-                elif itemName == "WateringCan":
-                    soilTileCollided[0].waterSoil()
-                elif itemName in seedItems:
-                    self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
-
-            if woodTileCollided:
-                if itemName == "Axe":
-                    woodTileCollided[0].chopped()
-                    playSound("Axe")
+            if inventory.currentItems[inventory.itemIndex] is not None:
+                itemName = inventory.currentItems[inventory.itemIndex]["name"]
+                if soilTileCollided:
+                    if itemName == "Hoe":
+                        soilTileCollided[0].tiltSoil()
+                        playSound("Hoe")
+                    elif itemName == "WateringCan":
+                        soilTileCollided[0].waterSoil()
+                    elif itemName in seedItems:
+                        self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+                if woodTileCollided:
+                    if itemName == "Axe":
+                        woodTileCollided[0].chopped()
+                        playSound("Axe")
 
         if self.currentEquipment is not None:
             self.currentEquipment.kill()
@@ -329,6 +330,11 @@ class Level:
         for items in player.inventory.currentItems:
             player.currentItemsHolding.append(items["name"] if items is not None else None)
             player.data["Items"] = player.currentItemsHolding
+        for index,slots in enumerate(player.inventory.slotList):
+            self.gameState["PlayerInventorySlots"][index] = slots.stackNum
+
+        print(self.gameState["PlayerInventorySlots"])
+
         self.gameState["Player"] = player.data
         print(self.gameState["Player"]["Items"])
 
@@ -390,6 +396,8 @@ class Level:
         try:
             for index, items in enumerate(self.gameState["Player"]["Items"]):
                 player.inventory.loadItems(index, items)
+            for index,data in enumerate(self.gameState["PlayerInventorySlots"].values()):
+                player.inventory.loadSlotStacks(index,data)
         except:
             pass
 
@@ -398,7 +406,6 @@ class Level:
         for index,item in enumerate(self.gameState["ItemChestItems"].values()):
             self.chestInventory.loadCurrentItems(index,item)
         self.chestInventory.loadSlots()
-
 
 
     def loadAnimalData(self):

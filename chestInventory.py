@@ -40,6 +40,9 @@ class ChestInventory:
         self.slotList = {}
         self.createSlots()
 
+        self.font = pg.font.Font("Font/PeaberryBase.ttf", 16)
+        self.fontColor = (255, 255, 255)
+
 
     def createSlots(self):
         for i in range(self.rowCapacity):
@@ -85,6 +88,9 @@ class ChestInventory:
 
         for keyIndex,slots in enumerate(self.slotList.values()):
             self.screen.blit(slots.sprite.convert_alpha() if self.playerInventory.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
+            if slots.stackNum > 1:
+                stackText = self.font.render(str(slots.stackNum),True,self.fontColor)
+                self.screen.blit(stackText,slots.textRect.topright)
 
         if self.itemIndex < 0:
             self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)

@@ -26,3 +26,4 @@ class Equipment(pg.sprite.Sprite):
 
         elif playerItemEquipped in seedItems:
             self.rect = self.image.get_rect(center=player.rect.center)
+            player.inventory.decreaseItemStack()
