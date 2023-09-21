@@ -114,8 +114,10 @@ class PlayerInventory:
             if self.itemIndex < 0:
                 # chest to inventory
                 self.currentItems[self.itemSwapIndex],chestItem[chestSlot[self.itemIndex].index] = chestItem[chestSlot[self.itemIndex].index],self.currentItems[self.itemSwapIndex]
+                self.slotList[self.itemSwapIndex].data, chestSlot[self.itemIndex].data = chestSlot[self.itemIndex].data,self.slotList[self.itemSwapIndex].data
                 self.slotList[self.itemSwapIndex].sprite,chestSlot[self.itemIndex].sprite = chestSlot[self.itemIndex].sprite,self.slotList[self.itemSwapIndex].sprite
                 self.slotList[self.itemSwapIndex].selectedSprite,chestSlot[self.itemIndex].selectedSprite = chestSlot[self.itemIndex].selectedSprite,self.slotList[self.itemSwapIndex].selectedSprite
+                self.slotList[self.itemSwapIndex].stackNum, chestSlot[self.itemIndex].stackNum = chestSlot[self.itemIndex].stackNum,self.slotList[self.itemSwapIndex].stackNum
                 self.itemIndex = self.itemSwapIndex
             else:
                 # inventory to inventory
@@ -124,10 +126,12 @@ class PlayerInventory:
         else:
             if self.itemIndex < 0:
                 # chest to chest
+
                 chestItem[chestSlot[self.itemSwapIndex].index],chestItem[chestSlot[self.itemIndex].index] = chestItem[chestSlot[self.itemIndex].index],chestItem[chestSlot[self.itemSwapIndex].index]
                 chestSlot[self.itemSwapIndex].data, chestSlot[self.itemIndex].data = chestSlot[self.itemIndex].data,chestSlot[self.itemSwapIndex].data
                 chestSlot[self.itemSwapIndex].sprite, chestSlot[self.itemIndex].sprite = chestSlot[self.itemIndex].sprite, chestSlot[self.itemSwapIndex].sprite
                 chestSlot[self.itemSwapIndex].selectedSprite, chestSlot[self.itemIndex].selectedSprite = chestSlot[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
+                chestSlot[self.itemSwapIndex].stackNum, chestSlot[self.itemIndex].stackNum = chestSlot[self.itemIndex].stackNum,chestSlot[self.itemSwapIndex].stackNum
                 self.itemIndex = self.itemSwapIndex
             else:
                 # inventory to chests
@@ -136,19 +140,18 @@ class PlayerInventory:
                 chestSlot[self.itemSwapIndex].data,self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data,chestSlot[self.itemSwapIndex].data
                 chestSlot[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,chestSlot[self.itemSwapIndex].sprite
                 chestSlot[self.itemSwapIndex].selectedSprite,self.slotList[self.itemIndex].selectedSprite = self.slotList[self.itemIndex].selectedSprite,chestSlot[self.itemSwapIndex].selectedSprite
+                chestSlot[self.itemSwapIndex].stackNum, self.slotList[self.itemIndex].stackNum = self.slotList[self.itemIndex].stackNum,chestSlot[self.itemSwapIndex].stackNum
                 self.itemIndex = self.itemSwapIndex
         playSound("ItemSwap")
+        print(self.currentItems)
 
 
     def swapItemData(self,item1,item2,slot1,slot2):
-        if self.itemIndex > 0:
-            item1[self.itemSwapIndex], item2[self.itemIndex] = item1[self.itemIndex],item2[self.itemSwapIndex]
-            slot1[self.itemSwapIndex].data, slot2[self.itemIndex].data = slot1[self.itemIndex].data,slot2[self.itemSwapIndex].data
-            slot1[self.itemSwapIndex].sprite, slot2[self.itemIndex].sprite = slot1[self.itemIndex].sprite,slot2[self.itemSwapIndex].sprite
-            slot1[self.itemSwapIndex].selectedSprite, slot2[self.itemIndex].selectedSprite = slot1[self.itemIndex].selectedSprite,slot2[self.itemSwapIndex].selectedSprite
-            slot1[self.itemSwapIndex].stackNum, slot2[self.itemIndex].stackNum = slot1[self.itemIndex].stackNum,slot2[self.itemSwapIndex].stackNum
-        else:
-            pass
+        item1[self.itemSwapIndex], item2[self.itemIndex] = item1[self.itemIndex],item2[self.itemSwapIndex]
+        slot1[self.itemSwapIndex].data, slot2[self.itemIndex].data = slot1[self.itemIndex].data,slot2[self.itemSwapIndex].data
+        slot1[self.itemSwapIndex].sprite, slot2[self.itemIndex].sprite = slot1[self.itemIndex].sprite,slot2[self.itemSwapIndex].sprite
+        slot1[self.itemSwapIndex].selectedSprite, slot2[self.itemIndex].selectedSprite = slot1[self.itemIndex].selectedSprite,slot2[self.itemSwapIndex].selectedSprite
+        slot1[self.itemSwapIndex].stackNum, slot2[self.itemIndex].stackNum = slot1[self.itemIndex].stackNum,slot2[self.itemSwapIndex].stackNum
 
         self.itemIndex = self.itemSwapIndex
 
@@ -174,6 +177,7 @@ class PlayerInventory:
         self.currentItems[index] = itemData[items] if items is not None else None
         self.slotList[index].sprite = itemData[items]["uiSprite"] if items is not None else self.slotList[index].defaultSprite
         self.slotList[index].selectedSprite = itemData[items]["uiSpriteSelected"] if items is not None else self.slotList[index].defaultSelectedSprite
+
 
     def loadSlotStacks(self,index,data):
         self.slotList[index].stackNum = data
@@ -201,15 +205,8 @@ class PlayerInventory:
                         if itemSlots.stackNum < itemSlots.maximumStack:
                             itemSlots.stackNum += 1
                             return
-                        else:
-                            if self.currentItems[slotIndex] is None:
-                                self.storeItemData(itemSlots, slotIndex, item)
-                                return
 
-                else:
-                    print(f"item added: {item.data['name']}")
-                    self.storeItemData(itemSlots, slotIndex, item)
-                    return
+
 
 
     def storeItemData(self,slot,slotIndex,item):

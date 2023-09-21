@@ -125,7 +125,7 @@ class Level:
             "Animals": {},
             "PlayerInventorySlots": {},
             "ItemChestItems": {},
-            "ItemChestSlots": {},
+            "ItemChestSlots": { "itemName":{}},
 
         }
 
@@ -138,7 +138,7 @@ class Level:
             "Animals": {},
             "PlayerInventorySlots": {},
             "ItemChestItems": {},
-            "ItemChestSlots": {}
+            "ItemChestSlots": {"itemName":{}}
 
         }
 
@@ -332,11 +332,8 @@ class Level:
             player.data["Items"] = player.currentItemsHolding
         for index,slots in enumerate(player.inventory.slotList):
             self.gameState["PlayerInventorySlots"][index] = slots.stackNum
-
-        print(self.gameState["PlayerInventorySlots"])
-
         self.gameState["Player"] = player.data
-        print(self.gameState["Player"]["Items"])
+
 
 
 
@@ -345,9 +342,10 @@ class Level:
         for index,items in enumerate(itemChest.currentItemHolding):
             self.gameState["ItemChestItems"][index] = items["name"] if items is not None else None
 
-        for index,items in enumerate(itemChest.slotList.values()):
-            self.gameState["ItemChestSlots"][items.index] = items.data["name"] if items.data is not None else None
-
+        for index,slots in enumerate(itemChest.slotList.values()):
+            savedSlots = self.gameState["ItemChestSlots"][slots.index] = {}
+            savedSlots["index"] = slots.index
+            savedSlots["stack"] = slots.stackNum
 
 
     def savePlantData(self):
@@ -405,7 +403,14 @@ class Level:
     def loadItemChestData(self):
         for index,item in enumerate(self.gameState["ItemChestItems"].values()):
             self.chestInventory.loadCurrentItems(index,item)
-        self.chestInventory.loadSlots()
+        self.chestInventory.loadSlotsData()
+        try:
+            for index,data in enumerate(self.gameState["ItemChestSlots"].keys()):
+                self.chestInventory.loadSlotsStack(data,self.gameState["ItemChestSlots"][data]["stack"])
+        except:
+            pass
+
+
 
 
     def loadAnimalData(self):

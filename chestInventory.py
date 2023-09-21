@@ -66,12 +66,15 @@ class ChestInventory:
         self.updateIndex()
         self.inventoryClosed()
 
-    def loadSlots(self):
+    def loadSlotsData(self):
         for index,slots in enumerate(self.slotList.values()):
             item = self.currentItemHolding[index]
             if item is not None:
                 slots.sprite = item["uiSprite"]
                 slots.selectedSprite = item["uiSpriteSelected"]
+
+    def loadSlotsStack(self,index,stack):
+        self.slotList[index].stackNum = stack
 
 
     def updateIndex(self):
