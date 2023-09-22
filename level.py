@@ -410,9 +410,6 @@ class Level:
         except:
             pass
 
-
-
-
     def loadAnimalData(self):
         for index,animals in enumerate(self.gameState["Animals"].values()):
             if animals["Name"] == "Chicken":
