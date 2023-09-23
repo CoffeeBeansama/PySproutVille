@@ -131,7 +131,6 @@ class PlayerInventory:
                 self.swapItemData(chestItem,chestItem,chestSlot,chestSlot)
             else:
                 # inventory to chests
-                self.swapItemData(chestItem, chestItem, chestSlot, chestSlot)
                 chestItem[chestSlot[self.itemSwapIndex].index],self.currentItems[self.itemIndex] = self.currentItems[self.itemIndex],chestItem[chestSlot[self.itemSwapIndex].index]
                 chestSlot[self.itemSwapIndex].data,self.slotList[self.itemIndex].data = self.slotList[self.itemIndex].data,chestSlot[self.itemSwapIndex].data
                 chestSlot[self.itemSwapIndex].sprite,self.slotList[self.itemIndex].sprite = self.slotList[self.itemIndex].sprite,chestSlot[self.itemSwapIndex].sprite
@@ -142,7 +141,6 @@ class PlayerInventory:
 
 
     def swapItemData(self,item1,item2,slot1,slot2):
-
         item1[self.itemSwapIndex],item2[self.itemIndex] = item2[self.itemIndex],item1[self.itemSwapIndex]
         slot1[self.itemSwapIndex].data, slot2[self.itemIndex].data = slot1[self.itemIndex].data,slot2[self.itemSwapIndex].data
         slot1[self.itemSwapIndex].sprite, slot2[self.itemIndex].sprite = slot1[self.itemIndex].sprite,slot2[self.itemSwapIndex].sprite

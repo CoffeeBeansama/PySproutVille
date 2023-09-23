@@ -68,8 +68,91 @@ class TreeLeaves(pg.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
         self.type = "Plants"
-        self.image = testSprites["Wall"]
+        self.image = testSprites["Wall"].convert_alpha()
 
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(-15, -5)
+
+class TreeBase(pg.sprite.Sprite):
+    def __init__(self, pos, group,visibleSprites, pickUpSprites, appleList,appleIndex):
+        super().__init__(group)
+        self.type = "Plants"
+        self.group = group
+        self.pos = pos
+        self.pickUpSprites = pickUpSprites
+        self.visibleSprites = visibleSprites
+
+        self.appleList = appleList
+        self.appleIndex = appleIndex
+
+        self.data = {
+            "Base" : loadSprite(f"{spritePath}Tree/base.png",(tileSize,tileSize)),
+            "Right":{
+                "Position" : (pos[0] + tileSize, pos[1]),
+                "Sprite" : loadSprite(f"{spritePath}Tree/right.png", (tileSize, tileSize)),
+            },
+            "UpperLeft": {
+                "Position": (pos[0],pos[1] - tileSize),
+                "Sprite" : loadSprite(f"{spritePath}Tree/upperLeft.png", (tileSize, tileSize)),
+            },
+            "UpperRight": {
+                "Position": (pos[0] + tileSize,pos[1] - tileSize),
+                "Sprite": loadSprite(f"{spritePath}Tree/upperRight.png", (tileSize, tileSize))
+            }
+        }
+
+        self.dropZoneY = pos[1] + (tileSize + 5)
+
+        self.image = self.data["Base"].convert_alpha()
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(-15, -5)
+
+        self.treeParts = []
+        self.createTreeParts()
+
+        self.maxLives = 3
+        self.lives = 3
+
+        self.reset()
+
+    def createTreeParts(self):
+        for index,data in enumerate(self.data):
+            if data != "Base":
+                part = TreeParts(self.data[data]["Position"],self.data[data]["Sprite"],self.group)
+                self.treeParts.append(part)
+
+    def reset(self):
+
+        self.fruit = []
+
+        x = self.pos[0]
+        y = self.pos[1]
+
+
+        applePos = y + tileSize + 5
+        appleLeft = AppleFruit((x , (y - tileSize)), self.visibleSprites, itemData["Apple"],
+                          (x, applePos), self.pickUpSprites, self,self.appleIndex,self.appleList)
+        appleRight = AppleFruit((x + tileSize, (y - tileSize)), self.visibleSprites, itemData["Apple"],
+                                     (x + tileSize, applePos), self.pickUpSprites, self, self.appleIndex, self.appleList)
+
+        self.fruit.append(appleLeft)
+        self.fruit.append(appleRight)
+
+        self.lives = self.maxLives
+        self.producedWood = False
+
+        for apples in self.fruit:
+            self.appleList.append(apples)
+
+
+
+
+
+class TreeParts(pg.sprite.Sprite):
+    def __init__(self, pos, image,group):
+        super().__init__(group)
+        self.type = "Plants"
+        self.image = image
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15, -5)
 
@@ -109,8 +192,9 @@ class AppleFruit(pg.sprite.Sprite):
     def growth(self):
 
         prob = random()
-        if prob < 0.20:
-            self.currentPhase += 1
+
+
+        self.currentPhase += 1
 
         getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseOneSprite"].convert_alpha())
         self.image = getCurrentPhase.convert_alpha()

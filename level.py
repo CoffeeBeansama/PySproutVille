@@ -172,6 +172,7 @@ class Level:
             "Tree Trunks": import_csv_layout('Map/Tree trunks.csv'),
             "Animal Collider": import_csv_layout('Map/AnimalCollision.csv'),
             "Fence": import_csv_layout('Map/Fences.csv'),
+            "Tree Base": import_csv_layout('Map/Tree Base.csv'),
 
         }
         for style, layout in mapLayouts.items():
@@ -203,6 +204,10 @@ class Level:
 
                         if style == "Fence":
                             Fence(testSprites["Player"], (x, y), [self.collisionSprites])
+
+                        if style == "Tree Base":
+                            self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex))
+                            self.appleIndex += 1
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
 
