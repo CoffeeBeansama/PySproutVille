@@ -169,7 +169,6 @@ class Level:
             "boundary": import_csv_layout("Map/wall.csv"),
             "soilTile": import_csv_layout("Map/plantableGrounds_Plantable Ground.csv"),
             "InteractableObjects": import_csv_layout('Map/InteractableObjects.csv'),
-            "Tree Trunks": import_csv_layout('Map/Tree trunks.csv'),
             "Animal Collider": import_csv_layout('Map/AnimalCollision.csv'),
             "Fence": import_csv_layout('Map/Fences.csv'),
             "Tree Base": import_csv_layout('Map/Tree Base.csv'),
@@ -195,9 +194,6 @@ class Level:
                                 self.bedTile = Bed([self.interactableSprites], None)
                             if column == "Chest":
                                 self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
-                        if style == "Tree Trunks":
-                            self.treeList.append(Tree((x,y),[self.collisionSprites,self.woodTileSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex))
-                            self.appleIndex += 1
 
                         if style == "Animal Collider":
                             Fence(testSprites["Player"], (x, y), [self.animalCollider])
@@ -206,7 +202,7 @@ class Level:
                             Fence(testSprites["Player"], (x, y), [self.collisionSprites])
 
                         if style == "Tree Base":
-                            self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex))
+                            self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex,[self.visibleSprites,self.collisionSprites]))
                             self.appleIndex += 1
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
@@ -235,7 +231,7 @@ class Level:
             soil.update()
 
     def createEquipmentTile(self):
-        self.currentEquipment = Equipment([self.equipmentSprites], self.player)
+        self.currentEquipment = Equipment([self.equipmentSprites,self.visibleSprites], self.player)
         return
 
     def updateEntities(self):
