@@ -30,7 +30,7 @@ class TreeBase(pg.sprite.Sprite):
             },
             "UpperRight": {
                 "Position": (pos[0] + tileSize,pos[1] - tileSize),
-                "Sprite": loadSprite(f"{spritePath}Tree/upperRight.png", (tileSize, tileSize))
+                "Sprite": loadSprite(f"{spritePath}Tree/upperright.png", (tileSize, tileSize))
             }
         }
 
