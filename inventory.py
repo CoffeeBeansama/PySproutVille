@@ -191,16 +191,22 @@ class PlayerInventory:
 
     def PurchaseItem(self,item):
         for slotIndex,itemSlots in enumerate(self.slotList):
-            if item.data["name"] not in stackAbleItems:
-                if self.currentItems[slotIndex] is None:
-                    self.storeItemData(itemSlots, slotIndex, item)
-                    return
+            if self.currentItems[slotIndex] is not None:
+                if self.currentItems[slotIndex]["name"] == item.data["name"]:
+                    if itemSlots.stackNum < itemSlots.maximumStack:
+                        itemSlots.stackNum += 1
+                        return
             else:
-                if self.currentItems[slotIndex] is not None:
-                    if self.currentItems[slotIndex]["name"] == item.data["name"]:
-                        if itemSlots.stackNum < itemSlots.maximumStack:
-                            itemSlots.stackNum += 1
-                            return
+                for i in range(slotIndex,self.inventoryCapacity):
+                    if self.currentItems[i] is not None:
+                        if self.currentItems[i]["name"] == item.data["name"]:
+                            if self.slotList[i].stackNum < self.slotList[i].maximumStack:
+                                self.slotList[i].stackNum += 1
+                                return
+                self.storeItemData(itemSlots, slotIndex, item)
+                return
+
+
 
     def storeItemData(self,slot,slotIndex,item):
         newData = itemData[f"{item.data['name']}"]
