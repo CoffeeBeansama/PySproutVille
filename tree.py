@@ -51,6 +51,8 @@ class TreeBase(pg.sprite.Sprite):
 
         self.reset()
 
+        self.cuttedDown = False
+
     def createTreeParts(self):
         for index,data in enumerate(self.data):
             if data not in ["Base","Stump"]:
@@ -78,8 +80,9 @@ class TreeBase(pg.sprite.Sprite):
         self.lives = self.maxLives
         self.producedWood = False
 
-    def loadData(self):
-        pass
+    def loadState(self,cuttedDown):
+        self.cuttedDown = cuttedDown
+        self.destroy()
 
     def chopped(self):
         x = self.pos[0]
@@ -87,19 +90,22 @@ class TreeBase(pg.sprite.Sprite):
         if self.lives <= 0 and not self.producedWood:
             Wood((x, self.dropZoneY), self.visibleSprites, itemData["Wood"], self.pickUpSprites, self)
             self.producedWood = True
+            self.cuttedDown = True
             self.destroy()
 
 
+
     def destroy(self):
-        for parts in self.treeParts:
-            parts.kill()
+        if self.cuttedDown:
+            for parts in self.treeParts:
+                parts.kill()
 
-        for fruits in self.fruits:
-            self.appleList.remove(fruits)
-            fruits.kill()
+            for fruits in self.fruits:
+                self.appleList.remove(fruits)
+                fruits.kill()
 
-        self.image = self.data["Stump"].convert_alpha()
-        self.rect.x += tileSize/2
+            self.image = self.data["Stump"].convert_alpha()
+            self.rect.x += tileSize/2
 
 
 

@@ -119,6 +119,7 @@ class Level:
         self.gameState = {
             "Player": self.player.data,
             "Plants": {},
+            "Trees": {},
             "Apples": {},
             "Soil": {},
             "PickableItems": {},
@@ -132,6 +133,7 @@ class Level:
         self.defaultGameState = {
             "Player": self.player.defaultData,
             "Plants": {},
+            "Trees": {},
             "Apples": {},
             "Soil": {},
             "PickableItems": {},
@@ -276,7 +278,6 @@ class Level:
                     if itemName == "Axe":
                         woodTileCollided[0].chopped()
                         playSound("Axe")
-                print(itemName)
         if self.currentEquipment is not None:
             self.currentEquipment.kill()
             return
@@ -339,6 +340,11 @@ class Level:
             self.gameState["PlayerInventorySlots"][index] = slots.stackNum
         self.gameState["Player"] = player.data
 
+
+    def saveTreeData(self):
+        for index,trees in enumerate(self.treeList):
+            self.gameState["Trees"][index] = trees.cuttedDown
+        print(self.gameState["Trees"])
 
 
 
@@ -450,6 +456,9 @@ class Level:
                 currentApple.currentPhase = apple["CurrentPhase"]
                 currentApple.loadState()
 
+    def loadTreeData(self):
+        for index,treeData in enumerate(self.gameState["Trees"].values()):
+            self.treeList[index].loadState(treeData)
 
     def loadPickableSprites(self):
         for itemIndex, item in enumerate(self.gameState["PickableItems"].values()):
@@ -461,6 +470,7 @@ class Level:
                 items.clear()
 
         self.savePlayerData()
+        self.saveTreeData()
         self.savePickableSprites()
         self.saveSoilData()
         self.savePlantData()
@@ -472,6 +482,7 @@ class Level:
     def loadGameState(self):
         self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
         self.loadPlantData()
+        self.loadTreeData()
         self.loadSoilData()
         self.loadPickableSprites()
         self.loadAnimalData()

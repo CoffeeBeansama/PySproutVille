@@ -15,7 +15,6 @@ class Equipment(pg.sprite.Sprite):
         self.image = pg.Surface((10, 10))
 
         if playerItemEquipped in equipmentItems:
-
             match playerDirection:
                 case "Up": self.rect = self.image.get_rect(midbottom=player.rect.midtop + pg.math.Vector2(0, 16))
                 case "Down": self.rect = self.image.get_rect(midtop=player.rect.midbottom - pg.math.Vector2(0, 12))
