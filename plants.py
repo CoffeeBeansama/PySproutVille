@@ -51,7 +51,8 @@ class SoilTile(pg.sprite.Sprite):
         return
 
     def update(self):
-        self.currentState = "Tilted"
+        self.currentState = "Tilted" if self.planted else "Untilted"
+        self.watered = False
         getCurrentSprite = self.state.get(self.currentState)
         self.image = getCurrentSprite.convert_alpha()
         return
@@ -111,8 +112,8 @@ class PlantTile(PickAbleItems):
                 self.currentSoil.planted = False
             getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
             self.image = getCurrentSprite
-            self.currentSoil.update()
-            self.currentSoil.watered = False
+
+
 
 
 

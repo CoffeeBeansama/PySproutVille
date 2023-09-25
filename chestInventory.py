@@ -50,10 +50,11 @@ class ChestInventory:
                 inventoryWidth = 600 # less the borders
                 increment = inventoryWidth // self.maxSlotPerRow
                 left = (j * increment) + (increment - self.width) + 47
-                newSlots = InventorySlot((left, self.slotPosY), self.defaultInventorySetup[j], self.rowSlot)
+                newSlots = InventorySlot((left, self.slotPosY), None, self.rowSlot)
                 self.slotList[self.rowSlot] = newSlots
                 self.rowSlot +=1
             self.slotPosY += 70
+
 
     def displayInventory(self):
         self.chestOpened = True

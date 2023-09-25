@@ -239,6 +239,8 @@ class Level:
             plants.NextPhase()
         for animals in self.animalsList:
             animals.produce()
+        for soils in self.soilList:
+            soils.update()
 
         for apples in self.appleList[::-1]:
             if apples.alive():
@@ -260,6 +262,7 @@ class Level:
             woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
             if inventory.currentItems[inventory.itemIndex] is not None:
                 itemName = inventory.currentItems[inventory.itemIndex]["name"]
+
                 if soilTileCollided:
                     if itemName == "Hoe":
                         soilTileCollided[0].tiltSoil()
@@ -267,12 +270,13 @@ class Level:
                     elif itemName == "WateringCan":
                         soilTileCollided[0].waterSoil()
                     elif itemName in seedItems:
+
                         self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
                 if woodTileCollided:
                     if itemName == "Axe":
                         woodTileCollided[0].chopped()
                         playSound("Axe")
-
+                print(itemName)
         if self.currentEquipment is not None:
             self.currentEquipment.kill()
             return
@@ -399,6 +403,7 @@ class Level:
                 player.inventory.loadSlotStacks(index,data)
         except:
             pass
+
 
 
     def loadItemChestData(self):

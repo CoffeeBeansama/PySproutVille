@@ -41,7 +41,7 @@ class PlayerInventory:
 
         self.background = uiSprites['InventoryHolder']
 
-        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],itemData["Wheat"],itemData["Tomato"],None,None,None,None]
+        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
         self.currentItems = self.defaultInventorySetup
 
 
@@ -209,6 +209,7 @@ class PlayerInventory:
                                 return
                 self.storeItemData(itemSlots, slotIndex, item)
                 return
+
     def addItemStack(self,currentItems,item,slot):
         if currentItems["name"] == item.data["name"]:
             if slot.stackNum < slot.maximumStack:

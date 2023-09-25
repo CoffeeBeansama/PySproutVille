@@ -1,5 +1,5 @@
 import pygame as pg
-from random import random
+from random import random,randint
 from settings import *
 from objects import PickAbleItems
 from timer import Timer
@@ -20,6 +20,8 @@ class TreeBase(pg.sprite.Sprite):
 
         self.data = {
             "Base" : loadSprite(f"{spritePath}Tree/base.png",(tileSize,tileSize)),
+            "Stump" : loadSprite(f"{spritePath}Tree/stump.png",(tileSize,tileSize)),
+
             "Right":{
                 "Position" : (pos[0] + tileSize, pos[1]),
                 "Sprite" : loadSprite(f"{spritePath}Tree/right.png", (tileSize, tileSize)),
@@ -51,7 +53,7 @@ class TreeBase(pg.sprite.Sprite):
 
     def createTreeParts(self):
         for index,data in enumerate(self.data):
-            if data != "Base":
+            if data not in ["Base","Stump"]:
                 part = TreeParts(self.data[data]["Position"],self.data[data]["Sprite"],self.partsSpriteGroup)
                 self.treeParts.append(part)
 
@@ -61,11 +63,13 @@ class TreeBase(pg.sprite.Sprite):
         x = self.pos[0]
         y = self.pos[1]
 
+        randomX = randint(-2, 2)
+        randomY = randint(-4, 4)
 
         applePos = y + tileSize + 5
-        self.appleLeft = AppleFruit((x , (y - tileSize)), self.visibleSprites, itemData["Apple"],
+        self.appleLeft = AppleFruit((x +randomX , ((y+randomY) - tileSize)), self.visibleSprites, itemData["Apple"],
                           (x, applePos), self.pickUpSprites, self,self.appleIndex,self.appleList)
-        self.appleRight = AppleFruit((x + tileSize, (y - tileSize)), self.visibleSprites, itemData["Apple"],
+        self.appleRight = AppleFruit(((x +randomX) + tileSize, ((y+randomY) - tileSize)), self.visibleSprites, itemData["Apple"],
                                      (x + tileSize, applePos), self.pickUpSprites, self, self.appleIndex, self.appleList)
 
         self.fruits.extend([self.appleLeft,self.appleRight])
@@ -73,6 +77,9 @@ class TreeBase(pg.sprite.Sprite):
 
         self.lives = self.maxLives
         self.producedWood = False
+
+    def loadData(self):
+        pass
 
     def chopped(self):
         x = self.pos[0]
@@ -91,7 +98,8 @@ class TreeBase(pg.sprite.Sprite):
             self.appleList.remove(fruits)
             fruits.kill()
 
-        self.kill()
+        self.image = self.data["Stump"].convert_alpha()
+        self.rect.x += tileSize/2
 
 
 
