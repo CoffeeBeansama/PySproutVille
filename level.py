@@ -72,7 +72,7 @@ class Level:
 
         self.main = main
         self.player = None
-        self.screen = pg.display.get_surface()
+        self.screen = self.main.screen
 
         self.gamePaused = False
         self.displayMerchantStore = False
@@ -87,6 +87,8 @@ class Level:
         self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
         self.animalCollider = pg.sprite.Group()
+        self.roofSprites = pg.sprite.Group()
+        self.outsideHouseSprites = pg.sprite.Group()
 
         self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
@@ -97,6 +99,7 @@ class Level:
         self.appleList = []
         self.animalsList = []
         self.soilList = []
+
 
         self.treeList = []
 
@@ -149,8 +152,8 @@ class Level:
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
 
-        self.getPlayerData([self.timeManager,
-                              self.bedTile])
+        self.getPlayerData([self.timeManager,self.bedTile
+                            ])
 
         self.ui = Ui(self.player,self.displayMerchantStore)
         self.dynamicUi = self.ui.dynamicUi
@@ -163,6 +166,12 @@ class Level:
 
         playBGM("level")
 
+        self.font = pg.font.Font("Font/PeaberryBase.ttf", 60)
+        self.fontColor = (255, 255, 255)
+        self.titleText = self.font.render("Sprout Ville",True,self.fontColor)
+        self.startLevel = False
+
+        self.timer = Timer(300)
 
 
     def createMap(self):
@@ -174,6 +183,8 @@ class Level:
             "Animal Collider": import_csv_layout('Map/AnimalCollision.csv'),
             "Fence": import_csv_layout('Map/Fences.csv'),
             "Tree Base": import_csv_layout('Map/Tree Base.csv'),
+            "Roof": import_csv_layout('Map/roof.csv'),
+            "HouseCollider": import_csv_layout('Map/HouseCollider.csv'),
 
         }
         for style, layout in mapLayouts.items():
@@ -191,11 +202,16 @@ class Level:
                             self.soilList.append(SoilTile((x, y), [self.visibleSprites,self.soilTileSprites],False,self.soilIndex))
                             self.soilIndex += 1
 
+                        if style == "HouseCollider":
+                            if column == "Outside":
+                                Tile(testSprites["Player"], (x, y), [self.outsideHouseSprites])
+
                         if style == "InteractableObjects":
-                            if column == "Bed":
+
+                            if column == "20": # bed
                                 self.bedTile = Bed([self.interactableSprites], None)
-                            if column == "Chest":
-                                self.chestObject = Chest((x, y - tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
+                            if column == "16": # chest
+                                self.chestObject = Chest((x, y),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
 
                         if style == "Animal Collider":
                             Fence(testSprites["Player"], (x, y), [self.animalCollider])
@@ -206,6 +222,9 @@ class Level:
                         if style == "Tree Base":
                             self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex,[self.visibleSprites,self.collisionSprites]))
                             self.appleIndex += 1
+
+                        if style == "Roof":
+                            RoofTile(loadSprite(f"{roofSpritePath}{column}.png",(tileSize,tileSize)).convert_alpha(), (x,y), [self.visibleSprites, self.roofSprites], self.playerSprite, self.roofSprites)
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
 
@@ -255,7 +274,6 @@ class Level:
         for itemIndex, items in enumerate(self.pickAbleItemSprites):
             if items.hitbox.colliderect(self.player.hitbox):
                 items.pickUpItem(self.plantList,self.player,self.visibleSprites,self.coinList)
-
 
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
@@ -327,6 +345,11 @@ class Level:
         newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
         self.animalsList.append(newCow)
 
+
+
+
+
+
     def savePlayerData(self):
         player = self.player
         player.currentItemsHolding.clear()
@@ -344,8 +367,6 @@ class Level:
     def saveTreeData(self):
         for index,trees in enumerate(self.treeList):
             self.gameState["Trees"][index] = trees.cuttedDown
-        print(self.gameState["Trees"])
-
 
 
     def saveItemChestData(self):
@@ -477,7 +498,10 @@ class Level:
         self.saveAnimalData()
         self.saveItemChestData()
 
+
         self.saveload.saveGameData(self.gameState,"gameState")
+
+
 
     def loadGameState(self):
         self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
@@ -489,24 +513,47 @@ class Level:
         self.loadItemChestData()
         self.loadPlayerData()
 
+    def titleScreen(self):
+        pos = pg.mouse.get_pos()
+        mouse_presses = pg.mouse.get_pressed()
+
+        self.screen.blit(uiSprites["MenuBackground"].convert_alpha(),(0,0))
+        self.screen.blit(uiSprites["MenuImageOverLay"].convert_alpha(),(100,100))
+        playButton = self.screen.blit(uiSprites["PlayButton"].convert_alpha(),(300,320))
+        self.screen.blit(self.titleText.convert_alpha(),(200,200))
+
+        playButtonPressed = playButton.collidepoint(pos)
+
+        if playButtonPressed:
+            if mouse_presses[0]:
+                self.startLevel = True
+
 
     def update(self):
         self.timer.update()
-        self.visibleSprites.custom_draw(self.player)
-        self.dialogueSystem.display()
-        self.merchantStore.display()
-        self.chestInventory.display()
-        self.equipmentTileCollisionLogic()
-        self.playerPickUpItems()
-        self.updateCoinList()
-        self.playerInventory.display()
+        if self.startLevel:
+                self.timer.update()
+                self.visibleSprites.custom_draw(self.player)
+                self.dialogueSystem.display()
+                self.merchantStore.display()
+                self.chestInventory.display()
+                self.equipmentTileCollisionLogic()
+                self.playerPickUpItems()
+                self.updateCoinList()
+                self.playerInventory.display()
 
-        for trees in self.treeList:
-            trees.update()
 
-        if not self.gamePaused:
-            for animals in self.animalsList:
-                animals.update()
-            self.ui.display()
-            self.timeManager.dayNightCycle()
-            self.player.update()
+                for trees in self.treeList:
+                    trees.update()
+
+                for roofTiles in self.roofSprites:
+                    roofTiles.update()
+
+                if not self.gamePaused:
+                    for animals in self.animalsList:
+                        animals.update()
+                    self.ui.display()
+                    self.timeManager.dayNightCycle()
+                    self.player.update()
+        else:
+            self.titleScreen()

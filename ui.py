@@ -14,8 +14,10 @@ class Ui:
 
         self.dynamicUi = DynamicUI(self.player)
         self.staticUi = StaticUI(self.dynamicUi)
+        self.displayUi = True
 
     def display(self):
+        if not self.displayUi: return
         self.staticUi.display()
         self.dynamicUi.display()
 

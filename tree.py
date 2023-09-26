@@ -93,19 +93,17 @@ class TreeBase(pg.sprite.Sprite):
             self.cuttedDown = True
             self.destroy()
 
-
-
     def destroy(self):
-        if self.cuttedDown:
-            for parts in self.treeParts:
-                parts.kill()
+        if not self.cuttedDown : return
+        for parts in self.treeParts:
+            parts.kill()
 
-            for fruits in self.fruits:
-                self.appleList.remove(fruits)
-                fruits.kill()
+        for fruits in self.fruits:
+            self.appleList.remove(fruits)
+            fruits.kill()
 
-            self.image = self.data["Stump"].convert_alpha()
-            self.rect.x += tileSize/2
+        self.image = self.data["Stump"].convert_alpha()
+        self.rect.x += tileSize/2
 
 
 

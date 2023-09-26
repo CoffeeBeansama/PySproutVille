@@ -28,7 +28,7 @@ class Player(Entity):
         }
         self.defaultData = {
             "Position": (948, 866),
-            "Coins": 500,
+            "Coins": 5,
             "Items": self.inventory.defaultInventorySetup
 
         }
@@ -45,7 +45,7 @@ class Player(Entity):
         self.image = testSprites["Player"]
         self.screen = pg.display.get_surface()
         self.rect = self.image.get_rect(topleft=self.startingPos)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hitbox = self.rect.inflate(-5, 0)
 
         self.coins = self.data["Coins"]
 
@@ -55,7 +55,6 @@ class Player(Entity):
         self.pickAbleItems = pickableItems
         self.createEquipmentTile = useEquipmentTile
         self.dialogueSystem = dialogueSystem
-
 
 
         self.facingDirection = "Down"
@@ -164,6 +163,7 @@ class Player(Entity):
                         self.hitbox.bottom = sprite.hitbox.top
 
 
+
     def increaseCoin(self,cost):
         playSound("Coin")
         self.mood = "Happy"
@@ -239,6 +239,7 @@ class Player(Entity):
 
     def update(self):
         self.currentTime = pg.time.get_ticks()
+
         self.timer.update()
         self.getInputs()
         self.updateMood()

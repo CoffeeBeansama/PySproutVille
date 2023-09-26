@@ -9,6 +9,7 @@ FPS = 60
 spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Objects/"
 uiPath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/"
 testSpritePath = "Sprites/test/"
+roofSpritePath = "Sprites/Roof/"
 
 playerSpeed = 2
 slotScale = (55, 55)
@@ -91,6 +92,8 @@ itemData = {
 
 }
 
+
+
 chestSprites = {
     1: loadSprite(f"{spritePath}Chests/1.png",(tileSize,tileSize)),
     2: loadSprite(f"{spritePath}Chests/2.png",(tileSize,tileSize)),
@@ -128,8 +131,10 @@ uiSprites = {
              "HalfHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Half.png",(40,38)),
              "EmptyHeart": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Heart/Empty.png",(40,38)),
              "DialogueBox": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/Dialouge UI/DialogueBox.png",(750,150)),
-             "ChestBackground" :loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/ChestBackground.png",(625,350))
-
+             "ChestBackground" :loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/ChestBackground.png",(625,350)),
+             "MenuBackground" :loadSprite("Sprites/menuBg.png",(WIDTH,HEIGHT)),
+             "MenuImageOverLay" :loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/ChestBackground.png",(600,420)),
+             "PlayButton": loadSprite("Sprites/Sprout Lands - Sprites - Basic pack/Ui/PlayButton.png",(180,50))
              }
 
 

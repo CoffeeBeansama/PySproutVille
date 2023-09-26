@@ -17,6 +17,7 @@ class Game:
         self.level = Level(self)
 
 
+
     def run(self):
         while True:
             for event in pg.event.get():
@@ -29,6 +30,7 @@ class Game:
             self.level.update()
             pg.display.update()
             self.clock.tick(FPS)
+
 
             #debug(self.clock.get_fps())
             #day and night cycle is the bottleneck!!
