@@ -10,7 +10,7 @@ class Tile(pg.sprite.Sprite):
         self.image = image
 
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-2,-2)
+        self.hitbox = self.rect.inflate(-2,-3)
 
 class RoofTile(Tile):
     def __init__(self,image,pos,group,playerSprite,roofTileList):

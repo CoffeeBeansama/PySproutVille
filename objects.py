@@ -132,12 +132,38 @@ class Chest(pg.sprite.Sprite):
 
 
 class Bed(InteractableObjects):
-    def __init__(self,group,player,pos=(848,800),image=testSprites["Wall"]):
+    def __init__(self,image,pos,group,player):
         super().__init__(group)
 
         self.player = player
         self.type = "Bed"
-        self.rect = image.get_rect(topleft=pos)
+        self.image = image
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(0, 0)
+
+        self.interactRect = image.get_rect(topleft=(pos[0], pos[1] + tileSize))
+        self.interactHitbox = self.interactRect.inflate(-40, -40)
+
+    def interact(self):
+        keys = pg.key.get_pressed()
+
+        if keys[pg.K_x]:
+            if not self.interacted:
+                self.player.laidToBed = True
+                self.interacted = True
+
+
+    def disengage(self):
+        self.interacted = False
+
+class Door(InteractableObjects):
+    def __init__(self,image,pos,group,player):
+        super().__init__(group)
+
+        self.player = player
+        self.type = "Door"
+        self.image = image
+        self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
         self.interactRect = image.get_rect(topleft=(pos[0], pos[1] + tileSize))

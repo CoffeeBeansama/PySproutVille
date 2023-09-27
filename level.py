@@ -207,10 +207,9 @@ class Level:
                                 Tile(testSprites["Player"], (x, y), [self.outsideHouseSprites])
 
                         if style == "InteractableObjects":
-
-                            if column == "20": # bed
-                                self.bedTile = Bed([self.interactableSprites], None)
-                            if column == "16": # chest
+                            if column == "bed":
+                                self.bedTile = Bed(testSprites["Player"],(x,y),[self.interactableSprites], None)
+                            if column == "chest":
                                 self.chestObject = Chest((x, y),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
 
                         if style == "Animal Collider":
