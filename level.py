@@ -152,8 +152,7 @@ class Level:
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
 
-        self.getPlayerData([self.timeManager,self.bedTile
-                            ])
+        self.getPlayerData([self.timeManager,self.bedTile,self.doorObject])
 
         self.ui = Ui(self.player,self.displayMerchantStore)
         self.dynamicUi = self.ui.dynamicUi
@@ -211,6 +210,8 @@ class Level:
                                 self.bedTile = Bed(testSprites["Player"],(x,y),[self.interactableSprites], None)
                             if column == "chest":
                                 self.chestObject = Chest((x, y),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
+                            if column == "door":
+                                self.doorObject = Door((x, y),[self.visibleSprites,self.interactableSprites],None)
 
                         if style == "Animal Collider":
                             Fence(testSprites["Player"], (x, y), [self.animalCollider])
@@ -539,6 +540,7 @@ class Level:
                 self.equipmentTileCollisionLogic()
                 self.playerPickUpItems()
                 self.updateCoinList()
+                self.doorObject.update()
                 self.playerInventory.display()
 
 

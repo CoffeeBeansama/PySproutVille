@@ -5,6 +5,7 @@ from settings import *
 from timeManager import TimeManager
 from timer import Timer
 from sound import playSound
+from support import import_folder
 
 
 class InteractableObjects(pg.sprite.Sprite):
@@ -157,26 +158,64 @@ class Bed(InteractableObjects):
         self.interacted = False
 
 class Door(InteractableObjects):
-    def __init__(self,image,pos,group,player):
+    def __init__(self,pos,group,player):
         super().__init__(group)
 
         self.player = player
         self.type = "Door"
-        self.image = image
+        self.image = loadSprite(f"Sprites/Door/1.png",(tileSize,tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
-        self.interactRect = image.get_rect(topleft=(pos[0], pos[1] + tileSize))
-        self.interactHitbox = self.interactRect.inflate(-40, -40)
+        self.interactRect = self.image.get_rect(topleft=(pos[0], pos[1]))
+        self.interactHitbox = self.interactRect.inflate(0,20)
+
+        self.animationTime = 1 / 6
+        self.frame_index = 0
+
+        self.sprites = {
+            0: loadSprite("Sprites/Door/1.png", (tileSize, tileSize)),
+            1: loadSprite("Sprites/Door/2.png", (tileSize, tileSize)),
+            2: loadSprite("Sprites/Door/3.png", (tileSize, tileSize)),
+            3: loadSprite("Sprites/Door/4.png", (tileSize, tileSize)),
+        }
+
+        self.state = "Close"
+
 
     def interact(self):
-        keys = pg.key.get_pressed()
-
-        if keys[pg.K_x]:
-            if not self.interacted:
-                self.player.laidToBed = True
-                self.interacted = True
-
+        self.interacted = True
+        self.state = "Open"
 
     def disengage(self):
         self.interacted = False
+        self.state = "Close"
+
+
+    def animate(self):
+        match self.state:
+            case "Open":
+                self.frame_index += self.animationTime
+                if self.frame_index >= len(self.sprites):
+                    self.frame_index = len(self.sprites) -1
+                self.image = self.sprites[int(self.frame_index)].convert_alpha()
+            case "Close":
+                self.frame_index -= self.animationTime
+                if self.frame_index <= 0:
+                    self.frame_index = 0
+                self.image = self.sprites[int(self.frame_index)].convert_alpha()
+
+
+    def update(self):
+        self.animate()
+
+
+
+
+
+
+
+
+
+
+
