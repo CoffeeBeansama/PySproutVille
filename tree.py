@@ -62,6 +62,17 @@ class TreeBase(pg.sprite.Sprite):
     def reset(self):
 
         self.fruits = []
+        if len(self.fruits) > 0:
+            for fruit in self.fruits:
+                fruit.kill()
+
+        self.createApple("Left")
+        self.createApple("Right")
+
+        self.lives = self.maxLives
+        self.producedWood = False
+
+    def createApple(self,side):
         x = self.pos[0]
         y = self.pos[1]
 
@@ -69,16 +80,21 @@ class TreeBase(pg.sprite.Sprite):
         randomY = randint(-4, 4)
 
         applePos = y + tileSize + 5
-        self.appleLeft = AppleFruit((x +randomX , ((y+randomY) - tileSize)), self.visibleSprites, itemData["Apple"],
-                          (x, applePos), self.pickUpSprites, self,self.appleIndex,self.appleList)
-        self.appleRight = AppleFruit(((x +randomX) + tileSize, ((y+randomY) - tileSize)), self.visibleSprites, itemData["Apple"],
-                                     (x + tileSize, applePos), self.pickUpSprites, self, self.appleIndex, self.appleList)
 
-        self.fruits.extend([self.appleLeft,self.appleRight])
-        self.appleList.extend([self.appleLeft,self.appleRight])
+        match side:
+            case "Left":
+                apple = AppleFruit((x + randomX, ((y + randomY) - tileSize)), self.visibleSprites,
+                                            itemData["Apple"],
+                                            (x, applePos), self.pickUpSprites, self, self.appleIndex, self.appleList,
+                                            "Left")
+            case "Right":
+                apple = AppleFruit(((x + randomX) + tileSize, ((y + randomY) - tileSize)), self.visibleSprites,
+                                             itemData["Apple"],
+                                             (x + tileSize, applePos), self.pickUpSprites, self, self.appleIndex,
+                                             self.appleList, "Right")
 
-        self.lives = self.maxLives
-        self.producedWood = False
+        self.fruits.append(apple)
+        self.appleList.append(apple)
 
     def loadState(self,cuttedDown):
         self.cuttedDown = cuttedDown
@@ -118,7 +134,7 @@ class TreeParts(pg.sprite.Sprite):
 
 
 class AppleFruit(pg.sprite.Sprite):
-    def __init__(self, pos, group, data, finalPos, pickUpSprites, tree,appleIndex,appleList):
+    def __init__(self, pos, group, data, finalPos, pickUpSprites, tree,appleIndex,appleList,appleSide):
         super().__init__(group)
 
         self.type = "Apple"
@@ -130,6 +146,7 @@ class AppleFruit(pg.sprite.Sprite):
         self.pickUpSprites = pickUpSprites
         self.IndexId = appleIndex
         self.appleList = appleList
+        self.appleSide = appleSide
 
 
         self.image = self.data["PhaseOneSprite"].convert_alpha()
@@ -159,7 +176,8 @@ class AppleFruit(pg.sprite.Sprite):
         self.image = getCurrentPhase.convert_alpha()
         if self.currentPhase >= len(self.phases):
             AppleItem(self.finalPos,[self.group],itemData["Apple"],self.pickUpSprites)
-            self.tree.reset()
+            self.tree.createApple(self.appleSide)
+            self.appleList.remove(self)
             self.kill()
 
 
@@ -175,7 +193,8 @@ class AppleItem(PickAbleItems):
         self.type = "Apple"
 
         self.image = itemData["Apple"]["PhaseThreeSprite"].convert_alpha()
-        self.rect = self.image.get_rect(topleft=pos)
+        self.pos = pos
+        self.rect = self.image.get_rect(topleft=self.pos)
         self.hitbox = self.rect.inflate(-10, -10)
 
         self.pickUpSprites = pickUpSprites

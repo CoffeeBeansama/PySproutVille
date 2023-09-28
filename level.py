@@ -396,6 +396,9 @@ class Level:
                 savedApple["Position"] = apples.rect.topleft
                 savedApple["CurrentPhase"] = apples.currentPhase
 
+        for apples in self.appleList:
+            print(f"from saving {apples.currentPhase}")
+
     def saveSoilData(self):
         for index,soil in enumerate(self.soilTileSprites):
             savedSoil = self.gameState["Soil"][f"{soil.type}{index}"] = {}
@@ -473,9 +476,12 @@ class Level:
 
 
         for appleIndex,apple in enumerate(self.gameState["Apples"].values()):
-                currentApple = self.appleList[apple["IndexId"]]
-                currentApple.currentPhase = apple["CurrentPhase"]
-                currentApple.loadState()
+                self.appleList[appleIndex].rect.topleft = apple["Position"]
+                self.appleList[appleIndex].currentPhase = apple["CurrentPhase"]
+                self.appleList[appleIndex].loadState()
+
+        for apples in self.appleList:
+            print(f"from loading {apples.currentPhase}")
 
     def loadTreeData(self):
         for index,treeData in enumerate(self.gameState["Trees"].values()):
