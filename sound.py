@@ -12,12 +12,17 @@ sfx = {
     "purchase": mixer.Sound("SFX/purchase.wav"),
     "noCash": mixer.Sound("SFX/noCash.wav"),
     "chest": mixer.Sound("SFX/chest.wav"),
+    "Door Open": mixer.Sound("SFX/Door Open.mp3"),
+    "Door Close": mixer.Sound("SFX/Door Close.mp3"),
+
 }
 
 for sounds in sfx.values():
     sounds.set_volume(0.3)
 
-sfx["chest"].set_volume(0.1)
+sfx["chest"].set_volume(0.05)
+sfx["Door Open"].set_volume(0.1)
+sfx["Door Close"].set_volume(0.1)
 
 inventorySfx = {
     "selection" : mixer.Sound("SFX/Menu/Selection.wav"),
@@ -64,6 +69,10 @@ def playSound(sound):
             player.play(inventorySfx["openInventory"])
         case "CloseInventory":
             player.play(inventorySfx["closeInventory"])
+        case "Door Open":
+            player.play(sfx["Door Open"])
+        case "Door Close":
+            player.play(sfx["Door Close"])
 
 
 

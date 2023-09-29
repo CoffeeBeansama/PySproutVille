@@ -6,6 +6,7 @@ from timeManager import TimeManager
 from timer import Timer
 from sound import playSound
 from support import import_folder
+from sound import playSound
 
 
 class InteractableObjects(pg.sprite.Sprite):
@@ -96,10 +97,23 @@ class Chest(pg.sprite.Sprite):
 
         self.player = player
         self.spriteIndex = 1
-        self.image = chestSprites[self.spriteIndex].convert_alpha()
-        self.animationTime = 1 / 20
+
+        self.spriteSize = (48, 48)
+        self.sprites = {
+            0: loadSprite(f"{spritePath}Chests/1.png", self.spriteSize),
+            1: loadSprite(f"{spritePath}Chests/2.png", self.spriteSize),
+            2: loadSprite(f"{spritePath}Chests/3.png", self.spriteSize),
+            3: loadSprite(f"{spritePath}Chests/4.png", self.spriteSize),
+            4: loadSprite(f"{spritePath}Chests/5.png", self.spriteSize),
+
+        }
+
+        self.frame_index = 0
+        self.image = self.sprites[self.frame_index].convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(0, 0)
+        self.hitbox = self.rect.inflate(-30, -30)
+
+
 
         self.interactRect = self.image.get_rect(topleft=(pos[0], pos[1] + tileSize))
         self.interactHitbox = self.interactRect.inflate(-40, -40)
@@ -108,6 +122,8 @@ class Chest(pg.sprite.Sprite):
         self.openChestInventory = openChestInventory
         self.add(self.interactableSprites)
 
+        self.animationTime = 1 / 6
+        self.state = "close"
         self.interacted = False
 
 
@@ -115,21 +131,42 @@ class Chest(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:
             if not self.interacted:
-                self.OpenAnimation()
                 self.openChestInventory()
                 self.interacted = True
+                self.state = "Open"
             else:
                 return
 
     def disengage(self):
-        self.interacted = False
-        self.CloseAnimation()
+        self.state = "Close"
 
-    def OpenAnimation(self):
-        self.image = chestSprites[5].convert_alpha()
 
-    def CloseAnimation(self):
-        self.image = chestSprites[1].convert_alpha()
+    def animate(self):
+        match self.state:
+            case "Open":
+                self.frame_index += self.animationTime
+                if self.frame_index >= len(self.sprites):
+                    self.frame_index = len(self.sprites) -1
+                self.image = self.sprites[int(self.frame_index)].convert_alpha()
+            case "Close":
+
+
+
+                self.frame_index -= self.animationTime
+                if self.frame_index <= 0:
+                    self.frame_index = 0
+                    if self.interacted:
+                        playSound("Chest")
+                        self.interacted = False
+
+                self.image = self.sprites[int(self.frame_index)].convert_alpha()
+
+
+
+
+
+    def update(self):
+        self.animate()
 
 
 class Bed(InteractableObjects):
@@ -184,12 +221,16 @@ class Door(InteractableObjects):
 
 
     def interact(self):
-        self.interacted = True
         self.state = "Open"
+        if not self.interacted:
+            playSound("Door Open")
+            self.interacted = True
 
     def disengage(self):
-        self.interacted = False
         self.state = "Close"
+        if self.interacted:
+            playSound("Door Close")
+            self.interacted = False
 
 
     def animate(self):

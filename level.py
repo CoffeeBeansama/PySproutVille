@@ -209,7 +209,7 @@ class Level:
                             if column == "bed":
                                 self.bedTile = Bed(testSprites["Player"],(x,y),[self.interactableSprites], None)
                             if column == "chest":
-                                self.chestObject = Chest((x, y),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
+                                self.chestObject = Chest((x - tileSize, y-tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
                             if column == "door":
                                 self.doorObject = Door((x, y),[self.visibleSprites,self.interactableSprites],None)
 
@@ -396,8 +396,6 @@ class Level:
                 savedApple["Position"] = apples.rect.topleft
                 savedApple["CurrentPhase"] = apples.currentPhase
 
-        for apples in self.appleList:
-            print(f"from saving {apples.currentPhase}")
 
     def saveSoilData(self):
         for index,soil in enumerate(self.soilTileSprites):
@@ -480,8 +478,7 @@ class Level:
                 self.appleList[appleIndex].currentPhase = apple["CurrentPhase"]
                 self.appleList[appleIndex].loadState()
 
-        for apples in self.appleList:
-            print(f"from loading {apples.currentPhase}")
+
 
     def loadTreeData(self):
         for index,treeData in enumerate(self.gameState["Trees"].values()):
@@ -537,6 +534,7 @@ class Level:
 
     def update(self):
         self.timer.update()
+
         if self.startLevel:
                 self.timer.update()
                 self.visibleSprites.custom_draw(self.player)
@@ -548,6 +546,7 @@ class Level:
                 self.updateCoinList()
                 self.doorObject.update()
                 self.playerInventory.display()
+                self.chestObject.update()
 
 
                 for trees in self.treeList:
