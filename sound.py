@@ -14,6 +14,9 @@ sfx = {
     "chest": mixer.Sound("SFX/chest.wav"),
     "Door Open": mixer.Sound("SFX/Door Open.mp3"),
     "Door Close": mixer.Sound("SFX/Door Close.mp3"),
+    "Seed": mixer.Sound("SFX/seed.mp3"),
+    "Watering": mixer.Sound("SFX/watering.mp3")
+
 
 }
 
@@ -73,6 +76,10 @@ def playSound(sound):
             player.play(sfx["Door Open"])
         case "Door Close":
             player.play(sfx["Door Close"])
+        case "Seed":
+            player.play(sfx["Seed"])
+        case "WateringCan":
+            player.play(sfx["Watering"])
 
 
 

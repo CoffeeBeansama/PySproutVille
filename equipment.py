@@ -1,5 +1,6 @@
 import pygame as pg
 from settings import *
+from sound import playSound
 
 
 class Equipment(pg.sprite.Sprite):
@@ -11,6 +12,7 @@ class Equipment(pg.sprite.Sprite):
         self.equipment = True
 
         playerItemEquipped = player.inventory.currentItems[player.inventory.itemIndex]["name"]
+        self.playEquipmentSound(playerItemEquipped)
         playerDirection = player.facingDirection
         self.image = pg.Surface((10, 10))
 
@@ -24,3 +26,5 @@ class Equipment(pg.sprite.Sprite):
         elif playerItemEquipped in seedItems:
             self.rect = self.image.get_rect(center=player.rect.center)
             player.inventory.decreaseItemStack()
+    def playEquipmentSound(self,equipmentName):
+        playSound(equipmentName)

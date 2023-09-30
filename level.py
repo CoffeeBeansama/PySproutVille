@@ -286,7 +286,6 @@ class Level:
                 if soilTileCollided:
                     if itemName == "Hoe":
                         soilTileCollided[0].tiltSoil()
-                        playSound("Hoe")
                     elif itemName == "WateringCan":
                         soilTileCollided[0].waterSoil()
                     elif itemName in seedItems:
@@ -310,6 +309,7 @@ class Level:
             self.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
             soilTile.planted = True
+            playSound("Seed")
 
 
     def updateCoinList(self):
