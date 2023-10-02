@@ -10,7 +10,7 @@ from sound import *
 
 
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,saveGame,loadGame,inventory):
+    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,inventory):
         super().__init__(group)
 
         self.type = "player"
@@ -73,8 +73,6 @@ class Player(Entity):
         self.laidToBed = False
 
         self.timer = Timer(200)
-        self.saveGame = saveGame
-        self.loadGame = loadGame
 
 
 

@@ -112,9 +112,9 @@ class Level:
         self.createMap()
 
 
-        self.saveload = SaveLoadSystem(".data", "savedata")
+
         self.playerInventory = PlayerInventory(None)
-        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.saveGameState,self.loadGameState,self.playerInventory)
+        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.playerInventory)
         self.chestInventory = ChestInventory(self.playerInventory,self.closeChestInventory)
         self.playerInventory.chestInventory = self.chestInventory
 
@@ -147,7 +147,7 @@ class Level:
 
         }
 
-        self.loadGameState()
+
 
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
@@ -172,6 +172,10 @@ class Level:
 
         self.timer = Timer(300)
 
+        self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,
+                                       self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider)
+
+        self.saveload.loadGameState()
 
     def createMap(self):
 
@@ -289,7 +293,6 @@ class Level:
                     elif itemName == "WateringCan":
                         soilTileCollided[0].waterSoil()
                     elif itemName in seedItems:
-
                         self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
                 if woodTileCollided:
                     if itemName == "Axe":
@@ -346,176 +349,6 @@ class Level:
         self.animalsList.append(newCow)
 
 
-
-
-
-
-    def savePlayerData(self):
-        player = self.player
-        player.currentItemsHolding.clear()
-        player.data["Position"] = player.hitbox.center
-        player.data["Coins"] = player.coins
-
-        for items in player.inventory.currentItems:
-            player.currentItemsHolding.append(items["name"] if items is not None else None)
-            player.data["Items"] = player.currentItemsHolding
-        for index,slots in enumerate(player.inventory.slotList):
-            self.gameState["PlayerInventorySlots"][index] = slots.stackNum
-        self.gameState["Player"] = player.data
-
-
-    def saveTreeData(self):
-        for index,trees in enumerate(self.treeList):
-            self.gameState["Trees"][index] = trees.cuttedDown
-
-
-    def saveItemChestData(self):
-        itemChest = self.chestInventory
-        for index,items in enumerate(itemChest.currentItemHolding):
-            self.gameState["ItemChestItems"][index] = items["name"] if items is not None else None
-
-        for index,slots in enumerate(itemChest.slotList.values()):
-            savedSlots = self.gameState["ItemChestSlots"][slots.index] = {}
-            savedSlots["index"] = slots.index
-            savedSlots["stack"] = slots.stackNum
-
-
-    def savePlantData(self):
-        for index,plants in enumerate(self.plantList):
-            if plants.type == "Plants":
-                savedPlant = self.gameState["Plants"][f"{plants.type}{index}"] = {}
-                savedPlant["Name"] = plants.data["name"]
-                savedPlant["Position"] = plants.rect.topleft
-                savedPlant["CurrentPhase"] = plants.currentPhase
-
-        for index,apples in enumerate(self.appleList):
-            if apples.type == "Apple":
-                savedApple = self.gameState["Apples"][f"{apples.type}{index}"] = {}
-                savedApple["Name"] = apples.data["name"]
-                savedApple["IndexId"] = apples.IndexId
-                savedApple["Position"] = apples.rect.topleft
-                savedApple["CurrentPhase"] = apples.currentPhase
-
-
-    def saveSoilData(self):
-        for index,soil in enumerate(self.soilTileSprites):
-            savedSoil = self.gameState["Soil"][f"{soil.type}{index}"] = {}
-            savedSoil["Position"] = soil.rect.topleft
-            savedSoil["CurrentState"] = soil.currentState
-            savedSoil["Watered"] = soil.watered
-            savedSoil["Tilted"] = soil.tilted
-            savedSoil["IndexId"] = soil.indexId
-            savedSoil["Planted"] = soil.planted
-
-    def saveAnimalData(self):
-        for index,animals in enumerate(self.animalsList):
-            savedAnimal = self.gameState["Animals"][f"{animals.type}{index}"] = {}
-            savedAnimal["Name"] = animals.type
-            savedAnimal["Position"] = animals.rect.topleft
-
-    def savePickableSprites(self):
-        for index, items in enumerate(self.pickAbleItemSprites):
-            if items.type == "Apple":
-                savedApple = self.gameState["PickableItems"][f"{items.type}{index}"] = {}
-                savedApple["Name"] = items.data["name"]
-                savedApple["Position"] = items.rect.topleft
-
-    def loadPlayerData(self):
-        player = self.player
-        player.coins = self.gameState["Player"]["Coins"]
-        player.hitbox.center = self.gameState["Player"]["Position"]
-        try:
-            for index, items in enumerate(self.gameState["Player"]["Items"]):
-                player.inventory.loadItems(index, items)
-            for index,data in enumerate(self.gameState["PlayerInventorySlots"].values()):
-                player.inventory.loadSlotStacks(index,data)
-        except:
-            pass
-
-
-
-    def loadItemChestData(self):
-        for index,item in enumerate(self.gameState["ItemChestItems"].values()):
-            self.chestInventory.loadCurrentItems(index,item)
-        self.chestInventory.loadSlotsData()
-        try:
-            for index,data in enumerate(self.gameState["ItemChestSlots"].keys()):
-                self.chestInventory.loadSlotsStack(data,self.gameState["ItemChestSlots"][data]["stack"])
-        except:
-            pass
-
-    def loadAnimalData(self):
-        for index,animals in enumerate(self.gameState["Animals"].values()):
-            if animals["Name"] == "Chicken":
-                newChicken = Chicken(animals["Name"], animals["Position"], [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
-                self.animalsList.append(newChicken)
-            if animals["Name"] == "Cow":
-                newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
-                self.animalsList.append(newCow)
-
-    def loadSoilData(self):
-        for index,soil in enumerate(self.gameState["Soil"].values()):
-            currentSoil = self.soilList[soil["IndexId"]]
-            currentSoil.rect.topleft = soil["Position"]
-            currentSoil.currentState = soil["CurrentState"]
-            currentSoil.tilted = soil["Tilted"]
-            currentSoil.watered = soil["Watered"]
-            currentSoil.indexId = soil["IndexId"]
-            currentSoil.planted = soil["Planted"]
-            currentSoil.loadState()
-
-
-    def loadPlantData(self):
-        for plantIndex, plants in enumerate(self.gameState["Plants"].values()):
-            if plants["Name"] in seedItems:
-                plant = PlantTile(plants["Position"], [self.visibleSprites], itemData[plants["Name"]],self.pickAbleItemSprites, self.timeManager, self.soilTileSprites)
-                plant.LoadPhase(plants["CurrentPhase"])
-                self.plantList.append(plant)
-
-
-        for appleIndex,apple in enumerate(self.gameState["Apples"].values()):
-                self.appleList[appleIndex].rect.topleft = apple["Position"]
-                self.appleList[appleIndex].currentPhase = apple["CurrentPhase"]
-                self.appleList[appleIndex].loadState()
-
-
-
-    def loadTreeData(self):
-        for index,treeData in enumerate(self.gameState["Trees"].values()):
-            self.treeList[index].loadState(treeData)
-
-    def loadPickableSprites(self):
-        for itemIndex, item in enumerate(self.gameState["PickableItems"].values()):
-            if item["Name"] == "Apple":
-                self.pickAbleItemSprites.add(AppleItem(item["Position"], self.visibleSprites,itemData["Apple"],self.pickAbleItemSprites))
-
-    def saveGameState(self):
-        for items in self.gameState.values():
-                items.clear()
-
-        self.savePlayerData()
-        self.saveTreeData()
-        self.savePickableSprites()
-        self.saveSoilData()
-        self.savePlantData()
-        self.saveAnimalData()
-        self.saveItemChestData()
-
-
-        self.saveload.saveGameData(self.gameState,"gameState")
-
-
-
-    def loadGameState(self):
-        self.gameState = self.saveload.loadGameData("gameState",self.defaultGameState)
-        self.loadPlantData()
-        self.loadTreeData()
-        self.loadSoilData()
-        self.loadPickableSprites()
-        self.loadAnimalData()
-        self.loadItemChestData()
-        self.loadPlayerData()
-
     def titleScreen(self):
         pos = pg.mouse.get_pos()
         mouse_presses = pg.mouse.get_pressed()
@@ -547,7 +380,6 @@ class Level:
                 self.doorObject.update()
                 self.playerInventory.display()
                 self.chestObject.update()
-
 
                 for trees in self.treeList:
                     trees.update()
