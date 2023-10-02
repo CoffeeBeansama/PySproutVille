@@ -3,8 +3,8 @@ from tile import *
 from player import Player
 from inventory import *
 from debug import debug
-from items import *
-from plants import *
+from plants import PlantTile
+from soil import SoilTile
 from support import import_csv_layout
 from equipment import Equipment
 from timeManager import TimeManager
@@ -109,12 +109,14 @@ class Level:
 
         self.coinList = []
 
+
+        self.invisibleSprite = loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize))
         self.createMap()
 
 
 
         self.playerInventory = PlayerInventory(None)
-        self.player = Player(testSprites["Player"],[self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.playerInventory)
+        self.player = Player([self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.playerInventory)
         self.chestInventory = ChestInventory(self.playerInventory,self.closeChestInventory)
         self.playerInventory.chestInventory = self.chestInventory
 
@@ -199,7 +201,7 @@ class Level:
                         y = rowIndex * tileSize
 
                         if style == "boundary":
-                            Tile(testSprites["Player"], (x, y), [self.collisionSprites])
+                            Tile(self.invisibleSprite, (x, y), [self.collisionSprites])
 
                         if style == "soilTile":
                             self.soilList.append(SoilTile((x, y), [self.visibleSprites,self.soilTileSprites],False,self.soilIndex))
@@ -207,21 +209,21 @@ class Level:
 
                         if style == "HouseCollider":
                             if column == "Outside":
-                                Tile(testSprites["Player"], (x, y), [self.outsideHouseSprites])
+                                Tile(self.invisibleSprite, (x, y), [self.outsideHouseSprites])
 
                         if style == "InteractableObjects":
                             if column == "bed":
-                                self.bedTile = Bed(testSprites["Player"],(x,y),[self.interactableSprites], None)
+                                self.bedTile = Bed(loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize)),(x,y),[self.interactableSprites], None)
                             if column == "chest":
                                 self.chestObject = Chest((x - tileSize, y-tileSize),[self.visibleSprites,self.collisionSprites],self.player,self.interactableSprites,self.openChestInventory)
                             if column == "door":
                                 self.doorObject = Door((x, y),[self.visibleSprites,self.interactableSprites],None)
 
                         if style == "Animal Collider":
-                            Fence(testSprites["Player"], (x, y), [self.animalCollider])
+                            Fence(self.invisibleSprite, (x, y), [self.animalCollider])
 
                         if style == "Fence":
-                            Fence(testSprites["Player"], (x, y), [self.collisionSprites])
+                            Fence(self.invisibleSprite, (x, y), [self.collisionSprites])
 
                         if style == "Tree Base":
                             self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex,[self.visibleSprites,self.collisionSprites]))
@@ -298,6 +300,7 @@ class Level:
                     if itemName == "Axe":
                         woodTileCollided[0].chopped()
                         playSound("Axe")
+
         if self.currentEquipment is not None:
             self.currentEquipment.kill()
             return
@@ -356,8 +359,8 @@ class Level:
         self.screen.blit(uiSprites["MenuBackground"].convert_alpha(),(0,0))
         self.screen.blit(uiSprites["MenuImageOverLay"].convert_alpha(),(100,100))
         playButton = self.screen.blit(uiSprites["PlayButton"].convert_alpha(),(300,320))
-        self.screen.blit(self.titleText.convert_alpha(),(200,200))
 
+        self.screen.blit(self.titleText.convert_alpha(),(200,200))
         playButtonPressed = playButton.collidepoint(pos)
 
         if playButtonPressed:

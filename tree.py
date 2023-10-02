@@ -23,24 +23,24 @@ class TreeBase(pg.sprite.Sprite):
             "Stump" : loadSprite(f"{spritePath}Tree/stump.png",(tileSize,tileSize)),
 
             "Right":{
-                "Position" : (pos[0] + tileSize, pos[1]),
+                "Position" : (self.pos[0] + tileSize, self.pos[1]),
                 "Sprite" : loadSprite(f"{spritePath}Tree/right.png", (tileSize, tileSize)),
             },
             "UpperLeft": {
-                "Position": (pos[0],pos[1] - tileSize),
+                "Position": (self.pos[0],self.pos[1] - tileSize),
                 "Sprite" : loadSprite(f"{spritePath}Tree/upperLeft.png", (tileSize, tileSize)),
             },
             "UpperRight": {
-                "Position": (pos[0] + tileSize,pos[1] - tileSize),
+                "Position": (self.pos[0] + tileSize,self.pos[1] - tileSize),
                 "Sprite": loadSprite(f"{spritePath}Tree/upperright.png", (tileSize, tileSize))
             }
         }
 
-        self.dropZoneY = pos[1] + (tileSize + 5)
+        self.dropZoneY = self.pos[1] + (tileSize + 5)
 
         self.image = self.data["Base"].convert_alpha()
-        self.rect = self.image.get_rect(topleft=pos)
-        self.colliderRect = self.image.get_rect(topleft=(pos[0]+ 5, pos[1]))
+        self.rect = self.image.get_rect(topleft=self.pos)
+        self.colliderRect = self.image.get_rect(topleft=(self.pos[0]+ 5, self.pos[1]))
         self.hitbox = self.colliderRect.inflate(-5, -5)
 
         self.treeParts = []
@@ -132,7 +132,6 @@ class TreeParts(pg.sprite.Sprite):
         self.hitbox = self.rect.inflate(-15, -5)
 
 
-
 class AppleFruit(pg.sprite.Sprite):
     def __init__(self, pos, group, data, finalPos, pickUpSprites, tree,appleIndex,appleList,appleSide):
         super().__init__(group)
@@ -199,7 +198,6 @@ class AppleItem(PickAbleItems):
 
         self.pickUpSprites = pickUpSprites
         self.add(self.pickUpSprites)
-
 
 
 class Wood(PickAbleItems):

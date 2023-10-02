@@ -41,7 +41,7 @@ class SaveLoadSystem:
         }
 
         self.defaultGameState = {
-            "Player": player.defaultData,
+            "Player": self.player.defaultData,
             "Plants": {},
             "Trees": {},
             "Apples": {},

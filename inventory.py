@@ -1,6 +1,5 @@
 import pygame as pg
 from settings import *
-from items import *
 from timer import Timer
 from pygame import mixer
 from sound import *

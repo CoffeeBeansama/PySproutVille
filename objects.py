@@ -8,7 +8,6 @@ from sound import playSound
 from support import import_folder
 from sound import playSound
 
-
 class InteractableObjects(pg.sprite.Sprite):
     def __init__(self,groups):
         super().__init__(groups)
@@ -99,6 +98,7 @@ class Chest(pg.sprite.Sprite):
         self.spriteIndex = 1
 
         self.spriteSize = (48, 48)
+
         self.sprites = {
             0: loadSprite(f"{spritePath}Chests/1.png", self.spriteSize),
             1: loadSprite(f"{spritePath}Chests/2.png", self.spriteSize),
@@ -149,9 +149,6 @@ class Chest(pg.sprite.Sprite):
                     self.frame_index = len(self.sprites) -1
                 self.image = self.sprites[int(self.frame_index)].convert_alpha()
             case "Close":
-
-
-
                 self.frame_index -= self.animationTime
                 if self.frame_index <= 0:
                     self.frame_index = 0
@@ -160,10 +157,6 @@ class Chest(pg.sprite.Sprite):
                         self.interacted = False
 
                 self.image = self.sprites[int(self.frame_index)].convert_alpha()
-
-
-
-
 
     def update(self):
         self.animate()
@@ -239,12 +232,12 @@ class Door(InteractableObjects):
                 self.frame_index += self.animationTime
                 if self.frame_index >= len(self.sprites):
                     self.frame_index = len(self.sprites) -1
-                self.image = self.sprites[int(self.frame_index)].convert_alpha()
             case "Close":
                 self.frame_index -= self.animationTime
                 if self.frame_index <= 0:
                     self.frame_index = 0
-                self.image = self.sprites[int(self.frame_index)].convert_alpha()
+
+        self.image = self.sprites[int(self.frame_index)].convert_alpha()
 
 
     def update(self):

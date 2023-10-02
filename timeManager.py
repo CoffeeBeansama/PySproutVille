@@ -11,11 +11,11 @@ class TimeManager:
         self.screen = pg.display.get_surface()
 
         self.darknessOpacity = 0
-        self.nightDarknessSprite = pg.transform.scale(pg.image.load("Sprites/NightMask.png"),(WIDTH, HEIGHT)).convert_alpha()
+        self.nightDarknessSprite = loadSprite("Sprites/NightMask.png",(WIDTH, HEIGHT)).convert_alpha()
         self.nightDarknessSprite.set_alpha(0)
 
         self.transitionSpriteAlpha = 0
-        self.sleepTransitionSprite = pg.transform.scale(pg.image.load("Sprites/transitionSprite.png"),(WIDTH, HEIGHT)).convert_alpha()
+        self.sleepTransitionSprite = loadSprite("Sprites/transitionSprite.png",(WIDTH, HEIGHT)).convert_alpha()
         self.sleepTransitionSprite.set_alpha(0)
         self.transitionTickTime = None
 
@@ -33,6 +33,7 @@ class TimeManager:
 
         self.dayTransitioned = False
         self.entitiesUpdated = False
+
         self.updateEntities = updateEntities
         self.player = player
 

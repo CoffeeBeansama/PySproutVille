@@ -32,8 +32,6 @@ class Merchant(InteractableObjects):
         self.add(self.interactableSprites)
 
 
-
-
     def interact(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:
@@ -46,6 +44,7 @@ class Merchant(InteractableObjects):
 
     def disengage(self):
         self.interacted = False
+
 
 class FarmAnimals(pg.sprite.Sprite,ABC):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
@@ -112,6 +111,26 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
             self.image, False, False)
         self.rect = self.image.get_rect(topleft=self.hitbox.center)
 
+    def checkWallCollision(self, direction):
+        for sprite in self.collisionSprites:
+            if sprite.hitbox.colliderect(self.hitbox):
+                if direction == "Horizontal":
+                    if self.direction.x < 0:
+                        self.hitbox.left = sprite.hitbox.right
+                    else:
+                        self.hitbox.right = sprite.hitbox.left
+                elif direction == "Vertical":
+                    if self.direction.y < 0:
+                        self.hitbox.top = sprite.hitbox.bottom
+                    else:
+                        self.hitbox.bottom = sprite.hitbox.top
+
+    def movement(self,speed):
+        self.hitbox.x += self.direction.x * speed
+        self.checkWallCollision("Horizontal")
+        self.hitbox.y += self.direction.y * speed
+        self.checkWallCollision("Vertical")
+        self.rect.center = self.hitbox.center
 
     @abstractmethod
     def IdleState(self):
@@ -165,28 +184,6 @@ class Chicken(FarmAnimals):
         newDirection = pg.math.Vector2(self.walkDirection.get(self.chosenDirection))
         self.direction = newDirection
 
-    def movement(self,speed):
-        self.hitbox.x += self.direction.x * speed
-        self.checkWallCollision("Horizontal")
-        self.hitbox.y += self.direction.y * speed
-        self.checkWallCollision("Vertical")
-        self.rect.center = self.hitbox.center
-
-
-    def checkWallCollision(self, direction):
-        for sprite in self.collisionSprites:
-            if sprite.hitbox.colliderect(self.hitbox):
-                if direction == "Horizontal":
-                    if self.direction.x < 0:
-                        self.hitbox.left = sprite.hitbox.right
-                    else:
-                        self.hitbox.right = sprite.hitbox.left
-                elif direction == "Vertical":
-                    if self.direction.y < 0:
-                        self.hitbox.top = sprite.hitbox.bottom
-                    else:
-                        self.hitbox.bottom = sprite.hitbox.top
-
 
     def produce(self):
         Egg(self.rect.topleft,self.group,self.pickAbleSprites)
@@ -199,7 +196,6 @@ class Chicken(FarmAnimals):
             self.currentState *= -1
             self.getCurrentState = self.states.get(self.currentState)
             self.animalTimer.activate()
-
 
         self.getCurrentState()
         self.movement(self.walkSpeed)
@@ -227,7 +223,6 @@ class Cow(FarmAnimals):
         self.walkingAnimationTime = 1 / 12
         self.idleAnimationTime = 1 / 12
 
-
     def IdleState(self):
         self.walkSpeed = 0
         self.chooseDirection = False
@@ -243,26 +238,6 @@ class Cow(FarmAnimals):
         newDirection = pg.math.Vector2(self.walkDirection.get(self.chosenDirection))
         self.direction = newDirection
 
-    def movement(self,speed):
-        self.hitbox.x += self.direction.x * speed
-        self.checkWallCollision("Horizontal")
-        self.hitbox.y += self.direction.y * speed
-        self.checkWallCollision("Vertical")
-        self.rect.center = self.hitbox.center
-
-    def checkWallCollision(self, direction):
-        for sprite in self.collisionSprites:
-            if sprite.hitbox.colliderect(self.hitbox):
-                if direction == "Horizontal":
-                    if self.direction.x < 0:
-                        self.hitbox.left = sprite.hitbox.right
-                    else:
-                        self.hitbox.right = sprite.hitbox.left
-                elif direction == "Vertical":
-                    if self.direction.y < 0:
-                        self.hitbox.top = sprite.hitbox.bottom
-                    else:
-                        self.hitbox.bottom = sprite.hitbox.top
 
     def produce(self):
         Milk(self.rect.topleft,self.group,self.pickAbleSprites)

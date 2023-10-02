@@ -21,8 +21,6 @@ sfx = {
     "OpenInventory": mixer.Sound("SFX/Menu/OpenInventory.mp3"),
     "CloseInventory": mixer.Sound("SFX/Menu/CloseInventory.mp3"),
 
-
-
 }
 
 for sounds in sfx.values():
@@ -36,8 +34,6 @@ inventorySfx = [sfx["Selection"],sfx["ItemSwap"],sfx["OpenInventory"],sfx["Close
 
 for i in inventorySfx:
     i.set_volume(0.3)
-
-
 
 
 def playBGM(bgm):

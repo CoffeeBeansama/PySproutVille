@@ -8,11 +8,10 @@ from enum import Enum
 from timer import Timer
 from sound import *
 
-
 class Player(Entity):
-    def __init__(self, image, group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,inventory):
+    def __init__(self,group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,inventory):
         super().__init__(group)
-
+        self.screen = pg.display.get_surface()
         self.type = "player"
         self.animations_States = None
 
@@ -28,7 +27,7 @@ class Player(Entity):
         }
         self.defaultData = {
             "Position": (948, 866),
-            "Coins": 5,
+            "Coins": 500,
             "Items": self.inventory.defaultInventorySetup
 
         }
@@ -42,20 +41,13 @@ class Player(Entity):
         self.walkingAnimationTime = 1 / 8
         self.eqpActionAnimationTime = 1 / 20
 
-        self.image = testSprites["Player"]
-        self.screen = pg.display.get_surface()
+        self.image = loadSprite("Sprites/Player/Down_idle/00.png",(tileSize,tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=self.startingPos)
         self.hitbox = self.rect.inflate(-5, 0)
 
         self.coins = self.data["Coins"]
 
         self.mood = "Idle"
-
-        self.collisionSprites = collidable_sprites
-        self.pickAbleItems = pickableItems
-        self.createEquipmentTile = useEquipmentTile
-        self.dialogueSystem = dialogueSystem
-
 
         self.facingDirection = "Down"
         self.state = "Down_idle"
@@ -64,17 +56,18 @@ class Player(Entity):
         self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
 
-        self.timeManager = timeManager
-
         self.usingItem = False
-
-        self.interactableObjects = interactableObjects
 
         self.laidToBed = False
 
         self.timer = Timer(200)
 
-
+        self.collisionSprites = collidable_sprites
+        self.pickAbleItems = pickableItems
+        self.createEquipmentTile = useEquipmentTile
+        self.dialogueSystem = dialogueSystem
+        self.timeManager = timeManager
+        self.interactableObjects = interactableObjects
 
 
     def importSprites(self):
@@ -161,7 +154,6 @@ class Player(Entity):
                         self.hitbox.bottom = sprite.hitbox.top
 
 
-
     def increaseCoin(self,cost):
         playSound("Coin")
         self.mood = "Happy"
@@ -201,6 +193,7 @@ class Player(Entity):
         keys = pg.key.get_pressed()
         allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive and not self.inventory.inventoryActive
         if allowedToMove:
+
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
             elif keys[pg.K_s]:
@@ -218,8 +211,6 @@ class Player(Entity):
                     self.useItemEquipped()
                 self.timer.activate()
 
-
-
     def resetLives(self):
         self.lives = self.maxLives
 
@@ -232,6 +223,7 @@ class Player(Entity):
 
     def updateMood(self):
         if self.mood == "Happy":
+            self.frame_index = 0
             if self.currentTime - self.moodTickTime > 300:
                 self.mood = "Idle"
 
