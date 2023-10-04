@@ -27,7 +27,7 @@ class Player(Entity):
         }
         self.defaultData = {
             "Position": (948, 866),
-            "Coins": 500,
+            "Coins": 600,
             "Items": self.inventory.defaultInventorySetup
 
         }
@@ -147,6 +147,7 @@ class Player(Entity):
                         self.hitbox.left = sprite.hitbox.right
                     else:
                         self.hitbox.right = sprite.hitbox.left
+
                 elif direction == "Vertical":
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
@@ -184,6 +185,10 @@ class Player(Entity):
                 if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
                     self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
                 elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
+                    self.state = f"{self.facingDirection}_idle"
+                    self.createEquipmentTile()
+                    self.usingItem = False
+                elif inventory.currentItems[inventory.itemIndex]["name"] in animalFodders:
                     self.state = f"{self.facingDirection}_idle"
                     self.createEquipmentTile()
                     self.usingItem = False

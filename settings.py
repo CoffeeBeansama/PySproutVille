@@ -68,6 +68,12 @@ itemData = {
         "CropSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png",(tileSize,tileSize)),
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Tomato/collision.png",(tileSize,tileSize)),
     },
+    "Berry":{
+        "name": "Berry",
+        "uiSprite": loadSprite(f"{uiPath}Slots/Berry.png", slotScale),
+        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/BerrySelected.png", slotScale),
+
+    },
     "Wood":{
         "name": "Wood",
         "CropSprite":  loadSprite(f"{spritePath}/Plants/Wood/Wood.png",(tileSize,tileSize)),
@@ -119,6 +125,7 @@ uiSprites = {
              }
 
 
+animalFodders = ["Berry"]
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 seedItems = ["Wheat","Tomato"]
 stackAbleItems = ["Wheat","Tomato","Wood"]

@@ -20,6 +20,7 @@ sfx = {
     "ItemSwap": mixer.Sound("SFX/Menu/ItemSwap.mp3"),
     "OpenInventory": mixer.Sound("SFX/Menu/OpenInventory.mp3"),
     "CloseInventory": mixer.Sound("SFX/Menu/CloseInventory.mp3"),
+    "Berry": mixer.Sound("SFX/seed.mp3"),
 
 }
 

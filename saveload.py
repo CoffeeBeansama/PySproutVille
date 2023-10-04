@@ -7,7 +7,7 @@ from npc import *
 
 class SaveLoadSystem:
     def __init__(self,fileExtension,folder,player,treesList,chestInventory,plantList,appleList,soilList,animalsList,pickAbleItemSprites,
-                 visibleSprites,timeManager,soilTileSprites,animalCollider
+                 visibleSprites,timeManager,soilTileSprites,animalCollider,animalSprites
                  ):
 
         self.fileExtension = fileExtension
@@ -25,6 +25,7 @@ class SaveLoadSystem:
         self.timeManager = timeManager
         self.soilTileSprites = soilTileSprites
         self.animalCollider = animalCollider
+        self.animalSprites = animalSprites
 
         self.gameState = {
             "Player": self.player.data,
@@ -110,6 +111,8 @@ class SaveLoadSystem:
             savedAnimal = self.gameState["Animals"][f"{animals.type}{index}"] = {}
             savedAnimal["Name"] = animals.type
             savedAnimal["Position"] = animals.rect.topleft
+            savedAnimal["CurrentLives"] = animals.lives
+            savedAnimal["Eaten"] = animals.eaten
 
     def saveItemChestData(self):
         itemChest = self.chestInventory
@@ -178,12 +181,16 @@ class SaveLoadSystem:
     def loadAnimalData(self):
         for index, animals in enumerate(self.gameState["Animals"].values()):
             if animals["Name"] == "Chicken":
-                newChicken = Chicken(animals["Name"], animals["Position"], [self.visibleSprites], self.animalCollider,
+                newChicken = Chicken(animals["Name"], animals["Position"], [self.visibleSprites,self.animalSprites], self.animalCollider,
                                      self.pickAbleItemSprites)
+                newChicken.eaten = animals["Eaten"]
+                newChicken.lives = animals["CurrentLives"]
                 self.animalsList.append(newChicken)
             if animals["Name"] == "Cow":
-                newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites], self.animalCollider,
+                newCow = Cow(animals["Name"], animals["Position"], [self.visibleSprites,self.animalSprites], self.animalCollider,
                              self.pickAbleItemSprites)
+                newCow.eaten = animals["Eaten"]
+                newCow.lives = animals["CurrentLives"]
                 self.animalsList.append(newCow)
 
     def loadItemChestData(self):

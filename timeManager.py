@@ -92,6 +92,11 @@ class TimeManager:
                 self.reset()
 
 
+    def getCurrentPeriod(self):
+        match self.currentPeriod:
+            case -1: self.Night()
+            case 1: self.Day()
+
     def dayNightCycle(self):
         self.dayTimer.update()
         self.currentTime = pg.time.get_ticks()
@@ -101,7 +106,6 @@ class TimeManager:
 
         if not self.dayTimer.activated:
             self.currentPeriod *= -1
-            self.getCurrentPeriod = self.currentDayState.get(self.currentPeriod)
             self.dayTimer.activate()
 
         self.getCurrentPeriod()

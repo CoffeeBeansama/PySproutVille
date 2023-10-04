@@ -158,12 +158,11 @@ class PlayerInventory:
 
     def selectingEquipmentSlot(self):
         if self.currentItems[self.itemIndex] is not None:
-            if self.currentItems[self.itemIndex]["name"] in equipmentItems:
-                return True
-            elif self.currentItems[self.itemIndex]["name"] in seedItems:
-                return True
-            else:
-                return False
+            usableItems = [equipmentItems,seedItems,animalFodders]
+            for items in usableItems:
+                if self.currentItems[self.itemIndex]["name"] in items:
+                    return True
+            return False
 
 
     def loadItems(self,index,items):

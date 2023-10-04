@@ -10,13 +10,9 @@ class Game:
         pg.init()
 
         self.screen = pg.display.set_mode((WIDTH,HEIGHT))
-
         pg.display.set_caption("SproutVille")
-
         self.clock = pg.time.Clock()
         self.level = Level(self)
-
-
 
     def run(self):
         while True:

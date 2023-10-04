@@ -17,6 +17,7 @@ from dialogueManager import DialogueSystem
 from saveload import SaveLoadSystem
 from chestInventory import ChestInventory
 from inventory import PlayerInventory
+from berries import *
 from sound import *
 
 
@@ -76,7 +77,7 @@ class Level:
 
         self.gamePaused = False
         self.displayMerchantStore = False
-        self.currentEquipment = None
+        self.currentEquipmentInstance = None
 
         self.visibleSprites = CameraGroup()
         self.collisionSprites = pg.sprite.Group()
@@ -89,6 +90,7 @@ class Level:
         self.animalCollider = pg.sprite.Group()
         self.roofSprites = pg.sprite.Group()
         self.outsideHouseSprites = pg.sprite.Group()
+        self.animalSprites = pg.sprite.Group()
 
         self.timer = Timer(200)
         self.timeManager = TimeManager(None,self.updateEntities)
@@ -99,6 +101,7 @@ class Level:
         self.appleList = []
         self.animalsList = []
         self.soilList = []
+        self.berryBushesList = []
 
 
         self.treeList = []
@@ -111,14 +114,15 @@ class Level:
 
 
         self.invisibleSprite = loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize))
-        self.createMap()
-
-
 
         self.playerInventory = PlayerInventory(None)
-        self.player = Player([self.visibleSprites,self.playerSprite],self.collisionSprites,self.createEquipmentTile,self.interactableSprites,self.pickAbleItemSprites,self.timeManager,None,self.playerInventory)
-        self.chestInventory = ChestInventory(self.playerInventory,self.closeChestInventory)
+        self.player = Player([self.visibleSprites, self.playerSprite], self.collisionSprites, self.createEquipmentTile,
+                             self.interactableSprites, self.pickAbleItemSprites, self.timeManager, None,
+                             self.playerInventory)
+        self.chestInventory = ChestInventory(self.playerInventory, self.closeChestInventory)
         self.playerInventory.chestInventory = self.chestInventory
+
+        self.createMap()
 
 
         self.gameState = {
@@ -175,7 +179,7 @@ class Level:
         self.timer = Timer(300)
 
         self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,
-                                       self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider)
+                                       self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites)
 
         self.saveload.loadGameState()
 
@@ -190,6 +194,7 @@ class Level:
             "Tree Base": import_csv_layout('Map/Tree Base.csv'),
             "Roof": import_csv_layout('Map/roof.csv'),
             "HouseCollider": import_csv_layout('Map/HouseCollider.csv'),
+            "BerryBush": import_csv_layout('Map/BerryBushes.csv')
 
         }
         for style, layout in mapLayouts.items():
@@ -225,6 +230,11 @@ class Level:
                         if style == "Fence":
                             Fence(self.invisibleSprite, (x, y), [self.collisionSprites])
 
+                        if style == "BerryBush":
+                            bush = BerryBush((x,y),[self.visibleSprites,self.interactableSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager,self.player.inventory)
+                            self.berryBushesList.append(bush)
+
+
                         if style == "Tree Base":
                             self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex,[self.visibleSprites,self.collisionSprites]))
                             self.appleIndex += 1
@@ -258,12 +268,14 @@ class Level:
             soil.update()
 
     def createEquipmentTile(self):
-        self.currentEquipment = Equipment([self.equipmentSprites], self.player)
+        self.currentEquipmentInstance = Equipment([self.equipmentSprites], self.player)
         return
 
     def updateEntities(self):
         for plants in self.plantList:
             plants.NextPhase()
+        for bushes in self.berryBushesList:
+            bushes.NextPhase()
         for animals in self.animalsList:
             animals.produce()
         for soils in self.soilList:
@@ -286,6 +298,7 @@ class Level:
         for sprites in self.equipmentSprites:
             soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
             woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
+            animalSpriteCollided = pg.sprite.spritecollide(sprites,self.animalSprites, False)
             if inventory.currentItems[inventory.itemIndex] is not None:
                 itemName = inventory.currentItems[inventory.itemIndex]["name"]
 
@@ -296,13 +309,17 @@ class Level:
                         soilTileCollided[0].waterSoil()
                     elif itemName in seedItems:
                         self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+
                 if woodTileCollided:
                     if itemName == "Axe":
                         woodTileCollided[0].chopped()
                         playSound("Axe")
 
-        if self.currentEquipment is not None:
-            self.currentEquipment.kill()
+                if animalSpriteCollided:
+                    animalSpriteCollided[0].feed()
+
+        if self.currentEquipmentInstance is not None:
+            self.currentEquipmentInstance.kill()
             return
 
 
@@ -344,11 +361,11 @@ class Level:
         self.displayMerchantStore = False
 
     def createChickenInstance(self):
-        newChicken = Chicken("Chicken",self.chickenSpawnPoint, [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
+        newChicken = Chicken("Chicken",self.chickenSpawnPoint, [self.visibleSprites,self.animalSprites], self.animalCollider, self.pickAbleItemSprites)
         self.animalsList.append(newChicken)
 
     def createCowInstance(self):
-        newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites], self.animalCollider, self.pickAbleItemSprites)
+        newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites,self.animalSprites], self.animalCollider, self.pickAbleItemSprites)
         self.animalsList.append(newCow)
 
 

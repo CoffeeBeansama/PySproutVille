@@ -64,6 +64,9 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.direction = pg.math.Vector2()
         self.currentState = 1
 
+        self.maximumLives = 3
+        self.lives = self.maximumLives
+
         self.states = {
             -1: self.IdleState,
             1: self.RoamState
@@ -85,6 +88,8 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.walkingAnimationTime = 1 / 12
         self.idleAnimationTime = 1 / 120
         self.frameIndex = 0
+
+        self.eaten = False
 
         self.ImportSprites(name)
 
@@ -110,6 +115,35 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.image = pg.transform.flip(self.image, True, False) if self.direction.x < 0 else pg.transform.flip(
             self.image, False, False)
         self.rect = self.image.get_rect(topleft=self.hitbox.center)
+
+
+    def feed(self):
+        if not self.eaten:
+            self.eaten = True
+
+            if self.lives < self.maximumLives:
+                self.lives += 1
+
+            return
+
+    def Eaten(self):
+        if self.eaten:
+            return True
+        else:
+            return False
+
+    def checkHealth(self):
+        if self.lives < 1:
+            self.kill()
+
+    def getCurrentState(self):
+        match self.currentState:
+            case -1:
+                self.IdleState()
+            case 1:
+                self.RoamState()
+
+
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
@@ -186,7 +220,15 @@ class Chicken(FarmAnimals):
 
 
     def produce(self):
-        Egg(self.rect.topleft,self.group,self.pickAbleSprites)
+        if self.Eaten():
+            Egg(self.rect.topleft,self.group,self.pickAbleSprites)
+            self.eaten = False
+        else:
+            self.lives -= 1
+            self.checkHealth()
+            self.eaten = False
+        return
+
 
     def update(self):
         self.animalTimer.update()
@@ -194,10 +236,10 @@ class Chicken(FarmAnimals):
 
         if not self.animalTimer.activated:
             self.currentState *= -1
-            self.getCurrentState = self.states.get(self.currentState)
             self.animalTimer.activate()
 
         self.getCurrentState()
+
         self.movement(self.walkSpeed)
 
 class Milk(PickAbleItems):
@@ -240,7 +282,14 @@ class Cow(FarmAnimals):
 
 
     def produce(self):
-        Milk(self.rect.topleft,self.group,self.pickAbleSprites)
+        if self.Eaten():
+            Milk(self.rect.topleft,self.group,self.pickAbleSprites)
+            self.eaten = False
+        else:
+            self.lives -= 1
+            self.eaten = False
+        return
+
 
     def update(self):
         self.animalTimer.update()
@@ -248,9 +297,9 @@ class Cow(FarmAnimals):
 
         if not self.animalTimer.activated:
             self.currentState *= -1
-            self.getCurrentState = self.states.get(self.currentState)
             self.animalTimer.activate()
 
-
         self.getCurrentState()
+
+
         self.movement(self.walkSpeed)
