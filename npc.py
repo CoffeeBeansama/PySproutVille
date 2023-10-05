@@ -46,14 +46,26 @@ class Merchant(InteractableObjects):
         self.interacted = False
 
 
+
+class AnimalStateSprite(pg.sprite.Sprite):
+    def __init__(self,image,pos,group):
+        super().__init__(group)
+        self.type = "sprite"
+        self.image = image
+        self.rect = self.image.get_rect(topleft=pos)
+
+
+
 class FarmAnimals(pg.sprite.Sprite,ABC):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
         super().__init__(group)
 
+        self.screen = pg.display.get_surface()
         self.group = group
         self.collisionSprites = collisionSprites
         self.pickAbleSprites = pickAbleSprites
 
+        self.pos = pos
         self.imagePath = f"Sprites/{name}/Idle/0.png"
         self.image = pg.image.load(self.imagePath).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
@@ -64,7 +76,7 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.direction = pg.math.Vector2()
         self.currentState = 1
 
-        self.maximumLives = 3
+        self.maximumLives = 5
         self.lives = self.maximumLives
 
         self.states = {
@@ -90,8 +102,12 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.frameIndex = 0
 
         self.eaten = False
+        self.stateSprite = None
+
 
         self.ImportSprites(name)
+        self.timer = Timer(800,self.disableStateSprite)
+
 
     def ImportSprites(self,name):
         imagePath = f"Sprites/{name}/"
@@ -120,11 +136,14 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
     def feed(self):
         if not self.eaten:
             self.eaten = True
-
             if self.lives < self.maximumLives:
                 self.lives += 1
 
+            spriteFacePos = ((self.rect.centerx - 8, self.rect.centery - 25))
+            self.stateSprite = AnimalStateSprite(animalStateSprites[self.lives],spriteFacePos, self.group[0])
             return
+
+
 
     def Eaten(self):
         if self.eaten:
@@ -135,6 +154,10 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
     def checkHealth(self):
         if self.lives < 1:
             self.kill()
+
+    def disableStateSprite(self):
+        self.stateSprite.kill()
+        self.stateSprite = None
 
     def getCurrentState(self):
         match self.currentState:
@@ -230,17 +253,25 @@ class Chicken(FarmAnimals):
         return
 
 
+
     def update(self):
         self.animalTimer.update()
+        self.timer.update()
         self.animate()
+
+        if self.stateSprite is not None:
+            if not self.timer.activated:
+                self.timer.activate()
+
 
         if not self.animalTimer.activated:
             self.currentState *= -1
+
             self.animalTimer.activate()
 
         self.getCurrentState()
-
         self.movement(self.walkSpeed)
+
 
 class Milk(PickAbleItems):
     def __init__(self,pos,group,pickAbleSprites,data=itemData["Milk"]):
@@ -254,6 +285,7 @@ class Milk(PickAbleItems):
 
         self.pickAbleSprites = pickAbleSprites
         self.add(self.pickAbleSprites)
+
 
 class Cow(FarmAnimals):
     def __init__(self,name,pos,group,collisionSprites,pickAbleSprites):
@@ -280,7 +312,6 @@ class Cow(FarmAnimals):
         newDirection = pg.math.Vector2(self.walkDirection.get(self.chosenDirection))
         self.direction = newDirection
 
-
     def produce(self):
         if self.Eaten():
             Milk(self.rect.topleft,self.group,self.pickAbleSprites)
@@ -292,14 +323,17 @@ class Cow(FarmAnimals):
 
 
     def update(self):
+        self.timer.update()
         self.animalTimer.update()
         self.animate()
+
+        if self.stateSprite is not None:
+            if not self.timer.activated:
+                self.timer.activate()
 
         if not self.animalTimer.activated:
             self.currentState *= -1
             self.animalTimer.activate()
 
         self.getCurrentState()
-
-
         self.movement(self.walkSpeed)

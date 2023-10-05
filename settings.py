@@ -106,7 +106,15 @@ soilSprites = {
 
 }
 
+animalStateSprites = {
+    6 : loadSprite(f"{uiPath}Icons/special icons/00.png",(tileSize,tileSize)),
+    5 : loadSprite(f"{uiPath}Icons/special icons/10.png",(tileSize,tileSize)),
+    4 : loadSprite(f"{uiPath}Icons/special icons/20.png",(tileSize,tileSize)),
+    3 : loadSprite(f"{uiPath}Icons/special icons/30.png",(tileSize,tileSize)),
+    2 : loadSprite(f"{uiPath}Icons/special icons/40.png",(tileSize,tileSize)),
+    1 : loadSprite(f"{uiPath}Icons/special icons/50.png",(tileSize,tileSize)),
 
+}
 uiSprites = {
              "InventoryHolder":loadSprite(f"{uiPath}Inventory.png",(625,90)),
              "EmptySlot": loadSprite(f"{uiPath}EmptySlot.png",slotScale),

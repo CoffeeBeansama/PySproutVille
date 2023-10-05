@@ -235,6 +235,7 @@ class Player(Entity):
     def update(self):
         self.currentTime = pg.time.get_ticks()
 
+
         self.timer.update()
         self.getInputs()
         self.updateMood()
