@@ -82,7 +82,6 @@ class DynamicUI:
         self.faceSprite = pg.transform.scale(animation[int(self.frameIndex)],self.faceSpriteScale).convert_alpha()
 
     def createHearts(self):
-
         self.hearts = {
             1: {
                 "Sprite": self.fullHeartSprite,
@@ -97,7 +96,6 @@ class DynamicUI:
                 "Position": (self.heartPosX + 60, self.heartPosY)
             }
         }
-
         for i in self.hearts.values():
             self.heartList.append(i)
 
@@ -133,7 +131,6 @@ class StaticUI:
         self.faceContainerBackground = uiSprites["FaceContainer"].convert_alpha()
         self.faceContainerBackgroundPos = (10, 10)
         self.faceContainerBackgroundRect = self.faceContainerBackground.get_rect()
-
         self.coinHeartBackGround = uiSprites["HeartCoinContainer"].convert_alpha()
         self.coinHeartBackGroundPos = (120, 10)
 
@@ -146,7 +143,6 @@ class StaticUI:
                 "Sprite": self.coinHeartBackGround,
                 "Position": self.coinHeartBackGroundPos
             },
-
         }
 
     def display(self):

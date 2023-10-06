@@ -17,6 +17,7 @@ from dialogueManager import DialogueSystem
 from saveload import SaveLoadSystem
 from chestInventory import ChestInventory
 from inventory import PlayerInventory
+from roof import RoofTile
 from berries import *
 from sound import *
 
@@ -180,7 +181,6 @@ class Level:
 
         self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,
                                        self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
-
         self.saveload.loadGameState()
 
     def createMap(self):

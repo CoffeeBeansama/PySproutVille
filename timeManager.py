@@ -91,7 +91,6 @@ class TimeManager:
             else:
                 self.reset()
 
-
     def getCurrentPeriod(self):
         match self.currentPeriod:
             case -1: self.Night()

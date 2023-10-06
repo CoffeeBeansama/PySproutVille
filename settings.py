@@ -87,23 +87,17 @@ itemData = {
         "costs": 10,
         "CollisionSprite": loadSprite(f"{spritePath}/EggCollision.png",(tileSize,tileSize)),
     },
-
     "Milk":{
         "name": "Milk",
         "costs": 35,
         "CollisionSprite": loadSprite(f"{spritePath}MilkCollision.png",(tileSize,tileSize)),
     }
-
-
-
 }
 
 soilSprites = {
-
     "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)),
     "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)),
     "WateredSprite": loadSprite(f"{spritePath}WateredTiledDirt.png",(tileSize,tileSize)),
-
 }
 
 animalStateSprites = {
@@ -113,8 +107,8 @@ animalStateSprites = {
     3 : loadSprite(f"{uiPath}Icons/special icons/30.png",(tileSize,tileSize)),
     2 : loadSprite(f"{uiPath}Icons/special icons/40.png",(tileSize,tileSize)),
     1 : loadSprite(f"{uiPath}Icons/special icons/50.png",(tileSize,tileSize)),
-
 }
+
 uiSprites = {
              "InventoryHolder":loadSprite(f"{uiPath}Inventory.png",(625,90)),
              "EmptySlot": loadSprite(f"{uiPath}EmptySlot.png",slotScale),
@@ -131,7 +125,6 @@ uiSprites = {
              "MenuImageOverLay" :loadSprite(f"{uiPath}ChestBackground.png",(600,420)),
              "PlayButton": loadSprite(f"{uiPath}PlayButton.png",(180,50))
              }
-
 
 animalFodders = ["Berry"]
 equipmentItems = ["Hoe", "Axe", "WateringCan"]

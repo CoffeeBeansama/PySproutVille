@@ -31,7 +31,6 @@ class Merchant(InteractableObjects):
         self.interactableSprites = interactableSprites
         self.add(self.interactableSprites)
 
-
     def interact(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:
@@ -46,14 +45,12 @@ class Merchant(InteractableObjects):
         self.interacted = False
 
 
-
 class AnimalStateSprite(pg.sprite.Sprite):
     def __init__(self,image,pos,group):
         super().__init__(group)
         self.type = "sprite"
         self.image = image
         self.rect = self.image.get_rect(topleft=pos)
-
 
 
 class FarmAnimals(pg.sprite.Sprite,ABC):
@@ -104,7 +101,6 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         self.eaten = False
         self.stateSprite = None
 
-
         self.ImportSprites(name)
         self.timer = Timer(800,self.disableStateSprite)
 
@@ -138,12 +134,8 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
             self.eaten = True
             if self.lives < self.maximumLives:
                 self.lives += 1
-
-
             self.stateSprite = AnimalStateSprite(animalStateSprites[self.lives],self.pos, self.group[0])
             return
-
-
 
     def Eaten(self):
         if self.eaten:
@@ -165,8 +157,6 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
                 self.IdleState()
             case 1:
                 self.RoamState()
-
-
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
@@ -252,8 +242,6 @@ class Chicken(FarmAnimals):
             self.eaten = False
         return
 
-
-
     def update(self):
         self.animalTimer.update()
         self.timer.update()
@@ -265,7 +253,6 @@ class Chicken(FarmAnimals):
 
             if not self.timer.activated:
                 self.timer.activate()
-
 
         if not self.animalTimer.activated:
             self.currentState *= -1
