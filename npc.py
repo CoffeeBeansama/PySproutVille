@@ -139,8 +139,8 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
             if self.lives < self.maximumLives:
                 self.lives += 1
 
-            spriteFacePos = ((self.rect.centerx - 8, self.rect.centery - 25))
-            self.stateSprite = AnimalStateSprite(animalStateSprites[self.lives],spriteFacePos, self.group[0])
+
+            self.stateSprite = AnimalStateSprite(animalStateSprites[self.lives],self.pos, self.group[0])
             return
 
 
@@ -260,6 +260,9 @@ class Chicken(FarmAnimals):
         self.animate()
 
         if self.stateSprite is not None:
+            self.stateSprite.rect.centerx = self.rect.centerx - 8
+            self.stateSprite.rect.centery = self.rect.centery - 25
+
             if not self.timer.activated:
                 self.timer.activate()
 
@@ -328,6 +331,8 @@ class Cow(FarmAnimals):
         self.animate()
 
         if self.stateSprite is not None:
+            self.stateSprite.rect.centerx = self.rect.centerx - 12
+            self.stateSprite.rect.centery = self.rect.centery -25
             if not self.timer.activated:
                 self.timer.activate()
 
