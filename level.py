@@ -179,7 +179,7 @@ class Level:
         self.timer = Timer(300)
 
         self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,
-                                       self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites)
+                                       self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
 
         self.saveload.loadGameState()
 

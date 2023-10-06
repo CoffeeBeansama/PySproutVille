@@ -29,6 +29,10 @@ class BerryBush(InteractableObjects):
             self.phase += 1
             self.image = self.sprites[self.phase].convert_alpha()
 
+    def loadPhase(self,savedPhase):
+        self.phase = savedPhase
+        self.image = self.sprites[self.phase].convert_alpha()
+
     def interact(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_x]:

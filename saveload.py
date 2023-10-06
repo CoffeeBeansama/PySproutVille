@@ -7,7 +7,7 @@ from npc import *
 
 class SaveLoadSystem:
     def __init__(self,fileExtension,folder,player,treesList,chestInventory,plantList,appleList,soilList,animalsList,pickAbleItemSprites,
-                 visibleSprites,timeManager,soilTileSprites,animalCollider,animalSprites
+                 visibleSprites,timeManager,soilTileSprites,animalCollider,animalSprites,berryBushes
                  ):
 
         self.fileExtension = fileExtension
@@ -26,6 +26,7 @@ class SaveLoadSystem:
         self.soilTileSprites = soilTileSprites
         self.animalCollider = animalCollider
         self.animalSprites = animalSprites
+        self.berryBushes = berryBushes
 
         self.gameState = {
             "Player": self.player.data,
@@ -38,6 +39,7 @@ class SaveLoadSystem:
             "PlayerInventorySlots": {},
             "ItemChestItems": {},
             "ItemChestSlots": {"itemName": {}},
+            "BerryBushes" : {}
 
         }
 
@@ -51,7 +53,8 @@ class SaveLoadSystem:
             "Animals": {},
             "PlayerInventorySlots": {},
             "ItemChestItems": {},
-            "ItemChestSlots": {"itemName": {}}
+            "ItemChestSlots": {"itemName": {}},
+            "BerryBushes": {}
 
         }
 
@@ -124,7 +127,9 @@ class SaveLoadSystem:
             savedSlots["index"] = slots.index
             savedSlots["stack"] = slots.stackNum
 
-
+    def saveBerryBushesData(self):
+        for index,bushes in enumerate(self.berryBushes):
+            self.gameState["BerryBushes"][index] = bushes.phase
 
     def saveGameState(self):
         for items in self.gameState.values():
@@ -137,6 +142,7 @@ class SaveLoadSystem:
         self.savePlantData()
         self.saveAnimalData()
         self.saveItemChestData()
+        self.saveBerryBushesData()
 
         self.saveGameData(self.gameState,"gameState")
 #endregion
@@ -203,6 +209,10 @@ class SaveLoadSystem:
         except:
             pass
 
+    def loadBerryBushesData(self):
+        for index, data in enumerate(self.gameState["BerryBushes"].values()):
+            self.berryBushes[index].loadPhase(data)
+
     def loadPlayerData(self):
         player = self.player
         player.coins = self.gameState["Player"]["Coins"]
@@ -225,6 +235,7 @@ class SaveLoadSystem:
         self.loadAnimalData()
         self.loadItemChestData()
         self.loadPlayerData()
+        self.loadBerryBushesData()
 
 #endregion
 
