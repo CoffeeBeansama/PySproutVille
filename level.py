@@ -38,7 +38,7 @@ class CameraGroup(pg.sprite.Group):
         self.internalSurface = pg.Surface(self.internalSurfaceSize, pg.SRCALPHA)
         self.internalRect = self.internalSurface.get_rect(center=(self.half_width, self.half_height))
         self.offset_rect = None
-        self.zoomInSize = (1100, 1100)
+        self.zoomInSize = (1500, 1500)
 
         self.internalOffset = pg.math.Vector2()
         self.internalOffset.x = self.internalSurfaceSize[0] // 2 - self.half_width
@@ -155,7 +155,6 @@ class Level:
         }
 
 
-
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
 
@@ -234,7 +233,6 @@ class Level:
                             bush = BerryBush((x,y),[self.visibleSprites,self.interactableSprites],self.visibleSprites,self.pickAbleItemSprites,self.timeManager,self.player.inventory)
                             self.berryBushesList.append(bush)
 
-
                         if style == "Tree Base":
                             self.treeList.append(TreeBase((x,y),[self.woodTileSprites,self.collisionSprites,self.visibleSprites],self.visibleSprites,self.pickAbleItemSprites,self.appleList,self.appleIndex,[self.visibleSprites,self.collisionSprites]))
                             self.appleIndex += 1
@@ -295,28 +293,29 @@ class Level:
 
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
-        for sprites in self.equipmentSprites:
-            soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
-            woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
-            animalSpriteCollided = pg.sprite.spritecollide(sprites,self.animalSprites, False)
-            if inventory.currentItems[inventory.itemIndex] is not None:
-                itemName = inventory.currentItems[inventory.itemIndex]["name"]
 
-                if soilTileCollided:
-                    if itemName == "Hoe":
-                        soilTileCollided[0].tiltSoil()
-                    elif itemName == "WateringCan":
-                        soilTileCollided[0].waterSoil()
-                    elif itemName in seedItems:
-                        self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+        soilTileCollided = pg.sprite.spritecollide(self.equipmentSprites, self.soilTileSprites, False)
+        woodTileCollided = pg.sprite.spritecollide(self.equipmentSprites, self.woodTileSprites, False)
+        animalSpriteCollided = pg.sprite.spritecollide(self.equipmentSprites,self.animalSprites, False)
 
-                if woodTileCollided:
-                    if itemName == "Axe":
-                        woodTileCollided[0].chopped()
-                        playSound("Axe")
+        if inventory.currentItems[inventory.itemIndex] is not None:
+            itemName = inventory.currentItems[inventory.itemIndex]["name"]
 
-                if animalSpriteCollided:
-                    animalSpriteCollided[0].feed()
+            if soilTileCollided:
+                if itemName == "Hoe":
+                    soilTileCollided[0].tiltSoil()
+                elif itemName == "WateringCan":
+                    soilTileCollided[0].waterSoil()
+                elif itemName in ["Wheat","Tomato"]:
+                    self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+
+            if woodTileCollided:
+                if itemName == "Axe":
+                    woodTileCollided[0].chopped()
+                    playSound("Axe")
+
+            if animalSpriteCollided:
+                animalSpriteCollided[0].feed()
 
         if self.currentEquipmentInstance is not None:
             self.currentEquipmentInstance.kill()
@@ -327,7 +326,11 @@ class Level:
     def seedPlantTile(self, soilTile,data):
         if soilTile.planted: return
         if soilTile.currentState == "Tilted" or soilTile.currentState == "Watered":
-            plantTile = PlantTile(soilTile.rect.topleft,[self.visibleSprites],data,self.pickAbleItemSprites,self.timeManager,self.soilTileSprites)
+            plantTile = PlantTile(soilTile.rect.topleft,
+                                  [self.visibleSprites],
+                                  data,
+                                  self.pickAbleItemSprites,
+                                  self.timeManager,self.soilTileSprites)
             soilTile.currentPlant = plantTile
             self.plantList.append(plantTile)
             self.PlantedSoilTileList.append(soilTile)
@@ -361,11 +364,20 @@ class Level:
         self.displayMerchantStore = False
 
     def createChickenInstance(self):
-        newChicken = Chicken("Chicken",self.chickenSpawnPoint, [self.visibleSprites,self.animalSprites], self.animalCollider, self.pickAbleItemSprites)
+        newChicken = Chicken("Chicken",
+                             self.chickenSpawnPoint, 
+                             [self.visibleSprites,self.animalSprites], 
+                             self.animalCollider, 
+                             self.pickAbleItemSprites)
         self.animalsList.append(newChicken)
 
     def createCowInstance(self):
-        newCow = Cow("Cow", self.cowSpawnPoint, [self.visibleSprites,self.animalSprites], self.animalCollider, self.pickAbleItemSprites)
+        newCow = Cow("Cow",
+                     self.cowSpawnPoint,
+                     [self.visibleSprites,
+                      self.animalSprites], 
+                      self.animalCollider, 
+                      self.pickAbleItemSprites)
         self.animalsList.append(newCow)
 
 

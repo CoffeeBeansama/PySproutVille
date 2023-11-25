@@ -44,7 +44,7 @@ class PlantTile(PickAbleItems):
         if self.currentPhase >= len(self.phases):
             self.add(self.pickupitems)
             self.currentSoil.planted = False
-        getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
+        getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"])
         self.image = getCurrentSprite
 
 
@@ -54,7 +54,7 @@ class PlantTile(PickAbleItems):
             if self.currentPhase >= len(self.phases):
                 self.add(self.pickupitems)
                 self.currentSoil.planted = False
-            getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"].convert_alpha())
+            getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"])
             self.image = getCurrentSprite
 
 

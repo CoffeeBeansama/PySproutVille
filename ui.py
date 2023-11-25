@@ -75,11 +75,10 @@ class DynamicUI:
         animation = self.animationStates[self.player.mood]
 
         self.frameIndex += self.animationTime
-
         if self.frameIndex >= len(animation):
             self.frameIndex = 0 if self.player.mood != "Happy" else len(animation) -1
-
-        self.faceSprite = pg.transform.scale(animation[int(self.frameIndex)],self.faceSpriteScale).convert_alpha()
+            
+        self.faceSprite = pg.transform.scale(animation[int(self.frameIndex)],self.faceSpriteScale)
 
     def createHearts(self):
         self.hearts = {

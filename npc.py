@@ -37,7 +37,6 @@ class Merchant(InteractableObjects):
             if not self.interacted:
                 self.dialogueSystem.startDialogue(self.dialogueId)
                 self.interacted = True
-
             else:
                 return
 
@@ -123,7 +122,7 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
         if self.frameIndex >= len(animation):
             self.frameIndex = 0
 
-        self.image = animation[int(self.frameIndex)].convert_alpha()
+        self.image = animation[int(self.frameIndex)]
         self.image = pg.transform.flip(self.image, True, False) if self.direction.x < 0 else pg.transform.flip(
             self.image, False, False)
         self.rect = self.image.get_rect(topleft=self.hitbox.center)

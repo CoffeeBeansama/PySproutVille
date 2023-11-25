@@ -1,12 +1,20 @@
 import pygame as pg
-from settings import soilSprites
+from settings import spritePath,tileSize
+from support import loadSprite
 
 class SoilTile(pg.sprite.Sprite):
     def __init__(self, pos, group,planted,indexId):
         super().__init__(group)
 
         self.type = "Soil"
-        self.untiledSprite = soilSprites["untiledSprite"].convert_alpha()
+        
+        self.soilSprites = {
+        "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)).convert_alpha(),
+        "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)).convert_alpha(),
+        "WateredSprite": loadSprite(f"{spritePath}WateredTiledDirt.png",(tileSize,tileSize)).convert_alpha(),
+        }
+
+        self.untiledSprite = self.soilSprites["untiledSprite"]
         self.image = self.untiledSprite
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
@@ -19,10 +27,11 @@ class SoilTile(pg.sprite.Sprite):
         self.planted = planted
 
         self.currentState = "Untilted"
+
         self.state = {
-            "Untilted" : soilSprites["untiledSprite"],
-            "Tilted": soilSprites["tiledSprite"],
-            "Watered": soilSprites["WateredSprite"]
+            "Untilted" : self.soilSprites["untiledSprite"],
+            "Tilted": self.soilSprites["tiledSprite"],
+            "Watered": self.soilSprites["WateredSprite"]
         }
 
 
@@ -30,7 +39,7 @@ class SoilTile(pg.sprite.Sprite):
         if not self.watered:
             self.currentState = "Tilted"
             getCurrentSprite = self.state.get(self.currentState)
-            self.image = getCurrentSprite.convert_alpha()
+            self.image = getCurrentSprite
             return
 
     def waterSoil(self):
@@ -38,18 +47,17 @@ class SoilTile(pg.sprite.Sprite):
             self.watered = True
             self.currentState = "Watered"
             getCurrentSprite = self.state.get(self.currentState)
-            self.image = getCurrentSprite.convert_alpha()
+            self.image = getCurrentSprite
             return
 
-
     def loadState(self):
-        getCurrentSprite = self.state.get(self.currentState, soilSprites["untiledSprite"].convert_alpha())
-        self.image = getCurrentSprite.convert_alpha()
+        getCurrentSprite = self.state.get(self.currentState, self.soilSprites["untiledSprite"])
+        self.image = getCurrentSprite
         return
 
     def update(self):
         self.currentState = "Tilted" if self.planted else "Untilted"
         self.watered = False
         getCurrentSprite = self.state.get(self.currentState)
-        self.image = getCurrentSprite.convert_alpha()
+        self.image = getCurrentSprite
         return

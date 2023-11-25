@@ -94,11 +94,6 @@ itemData = {
     }
 }
 
-soilSprites = {
-    "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)),
-    "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)),
-    "WateredSprite": loadSprite(f"{spritePath}WateredTiledDirt.png",(tileSize,tileSize)),
-}
 
 animalStateSprites = {
     6 : loadSprite(f"{uiPath}Icons/special icons/00.png",(tileSize,tileSize)),
@@ -128,7 +123,6 @@ uiSprites = {
 
 animalFodders = ["Berry"]
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
-seedItems = ["Wheat","Tomato"]
 stackAbleItems = ["Wheat","Tomato","Wood"]
 sellableItems = ["Wheat","Tomato","Apple","Egg","Milk"]
 OverlapTiles = ["Soil", "Plants","npc"]

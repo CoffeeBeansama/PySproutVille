@@ -31,17 +31,17 @@ class MerchantStore:
             "Tomato": {
                 "name": "Tomato",
                 "storeCost": 3,
-                "StoreSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png", self.itemStoreSpriteSize),
+                "StoreSprite": loadSprite(f"{spritePath}/Plants/Tomato/5.png", self.itemStoreSpriteSize).convert_alpha(),
             },
             "Chicken": {
                 "name": "Chicken",
                 "storeCost": 60,
-                "StoreSprite": loadSprite("Sprites/Chicken/Idle/0.png",self.itemStoreSpriteSize),
+                "StoreSprite": loadSprite("Sprites/Chicken/Idle/0.png",self.itemStoreSpriteSize).convert_alpha(),
             },
             "Cow": {
                 "name": "Cow",
                 "storeCost": 90,
-                "StoreSprite": loadSprite("Sprites/Cow/Idle/0.png",(38,38)),
+                "StoreSprite": loadSprite("Sprites/Cow/Idle/0.png",(38,38)).convert_alpha(),
             },
         }
 

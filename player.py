@@ -1,9 +1,7 @@
 import pygame as pg
-from settings import *
+from settings import equipmentItems,tileSize,seedItems,animalFodders
 from entity import Entity
-from support import import_folder
-from pygame import mixer
-from objects import CoinOverHead
+from support import import_folder,loadSprite
 from enum import Enum
 from timer import Timer
 from sound import *
@@ -69,6 +67,7 @@ class Player(Entity):
         self.timeManager = timeManager
         self.interactableObjects = interactableObjects
 
+        self.playerSpeed = 2
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -99,7 +98,7 @@ class Player(Entity):
                     self.createEquipmentTile()
                     self.usingItem = False
 
-            self.image = animation[int(self.frame_index)].convert_alpha()
+            self.image = animation[int(self.frame_index)]
             self.rect = self.image.get_rect(center=self.hitbox.center)
 
 
@@ -239,7 +238,7 @@ class Player(Entity):
         self.timer.update()
         self.getInputs()
         self.updateMood()
-        self.movement(playerSpeed)
+        self.movement(self.playerSpeed)
         self.animate()
         self.interact()
 
