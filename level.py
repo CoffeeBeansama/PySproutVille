@@ -293,33 +293,35 @@ class Level:
 
     def equipmentTileCollisionLogic(self):
         inventory = self.player.inventory
+        
+        for sprites in self.equipmentSprites:
 
-        soilTileCollided = pg.sprite.spritecollide(self.equipmentSprites, self.soilTileSprites, False)
-        woodTileCollided = pg.sprite.spritecollide(self.equipmentSprites, self.woodTileSprites, False)
-        animalSpriteCollided = pg.sprite.spritecollide(self.equipmentSprites,self.animalSprites, False)
+            soilTileCollided = pg.sprite.spritecollide(sprites, self.soilTileSprites, False)
+            woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
+            animalSpriteCollided = pg.sprite.spritecollide(sprites,self.animalSprites, False)
 
-        if inventory.currentItems[inventory.itemIndex] is not None:
-            itemName = inventory.currentItems[inventory.itemIndex]["name"]
+            if inventory.currentItems[inventory.itemIndex] is not None:
+                itemName = inventory.currentItems[inventory.itemIndex]["name"]
 
-            if soilTileCollided:
-                if itemName == "Hoe":
-                    soilTileCollided[0].tiltSoil()
-                elif itemName == "WateringCan":
-                    soilTileCollided[0].waterSoil()
-                elif itemName in ["Wheat","Tomato"]:
-                    self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+                if soilTileCollided:
+                    if itemName == "Hoe":
+                        soilTileCollided[0].tiltSoil()
+                    elif itemName == "WateringCan":
+                        soilTileCollided[0].waterSoil()
+                    elif itemName in ["Wheat","Tomato"]:
+                        self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
 
-            if woodTileCollided:
-                if itemName == "Axe":
-                    woodTileCollided[0].chopped()
-                    playSound("Axe")
+                if woodTileCollided:
+                    if itemName == "Axe":
+                        woodTileCollided[0].chopped()
+                        playSound("Axe")
 
-            if animalSpriteCollided:
-                animalSpriteCollided[0].feed()
+                if animalSpriteCollided:
+                    animalSpriteCollided[0].feed()
 
-        if self.currentEquipmentInstance is not None:
-            self.currentEquipmentInstance.kill()
-            return
+            if self.currentEquipmentInstance is not None:
+                self.currentEquipmentInstance.kill()
+                return
 
 
 

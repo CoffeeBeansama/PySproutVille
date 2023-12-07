@@ -1,5 +1,5 @@
 import pygame as pg
-from settings import equipmentItems,tileSize,seedItems,animalFodders
+from settings import seedItems,equipmentItems,tileSize,animalFodders
 from entity import Entity
 from support import import_folder,loadSprite
 from enum import Enum
