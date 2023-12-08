@@ -21,6 +21,11 @@ class Game:
                     self.level.saveload.saveGameState()
                     pg.quit()
                     sys.exit()
+                if event.type == pg.KEYDOWN:
+                   if event.key == pg.K_ESCAPE:
+                      self.level.saveload.saveGameState()
+                      pg.quit()
+                      sys.exit()
 
             self.screen.fill("black")
             self.level.update()

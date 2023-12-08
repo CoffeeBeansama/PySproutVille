@@ -5,6 +5,8 @@ from support import import_folder,loadSprite
 from enum import Enum
 from timer import Timer
 from sound import *
+from eventManager import EventHandler
+
 
 class Player(Entity):
     def __init__(self,group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,inventory):
@@ -68,6 +70,8 @@ class Player(Entity):
         self.interactableObjects = interactableObjects
 
         self.playerSpeed = 2
+
+        self.eventHandler = EventHandler()
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -215,22 +219,22 @@ class Player(Entity):
         return True
 
     def getInputs(self):
-        keys = pg.key.get_pressed()
+        self.eventHandler.handleKeyBoardInput()
         
         if self.allowedToMove():
 
-            if keys[pg.K_w]:
+            if self.eventHandler.pressingUpButton():
                 self.getState(self.verticalDirection, -1, "Up")
-            elif keys[pg.K_s]:
+            elif self.eventHandler.pressingDownButton():
                 self.getState(self.verticalDirection, 1, "Down")
-            elif keys[pg.K_a]:
+            elif self.eventHandler.pressingLeftButton():
                 self.getState(self.horizontalDirection, -1, "Left")
-            elif keys[pg.K_d]:
+            elif self.eventHandler.pressingRightButton():
                 self.getState(self.horizontalDirection, 1, "Right")
             else:
                 self.idleState()
         
-        if keys[pg.K_SPACE] and self.notMoving():
+        if self.eventHandler.pressingEquipmentButton() and self.notMoving():
 
            if not self.timer.activated:
               self.useItemEquipped()

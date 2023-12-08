@@ -308,7 +308,7 @@ class Level:
                         soilTileCollided[0].tiltSoil()
                     elif itemName == "WateringCan":
                         soilTileCollided[0].waterSoil()
-                    elif itemName in ["Wheat","Tomato"]:
+                    elif itemName in seedItems:
                         self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
 
                 if woodTileCollided:
