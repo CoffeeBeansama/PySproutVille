@@ -172,31 +172,52 @@ class Player(Entity):
         if self.itemIndex >= len(equipmentItems):
             self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
+    
+    def cannotUseItem(self):
+        if self.laidToBed:
+           return True
+        if self.dialogueSystem.dialogueActive:
+           return True
 
-    def useItemEquipped(self):
-        canUseItem = not self.laidToBed and not self.dialogueSystem.dialogueActive
-        if canUseItem:
-            inventory = self.inventory
-            notMoving = self.direction.x == 0 and self.direction.y == 0
-            if notMoving and self.inventory.selectingEquipmentSlot():
-                self.frame_index = 0
-                self.usingItem = True
-                if inventory.currentItems[inventory.itemIndex]["name"] in equipmentItems:
-                    self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
-                elif inventory.currentItems[inventory.itemIndex]["name"] in seedItems:
-                    self.state = f"{self.facingDirection}_idle"
-                    self.createEquipmentTile()
-                    self.usingItem = False
-                elif inventory.currentItems[inventory.itemIndex]["name"] in animalFodders:
-                    self.state = f"{self.facingDirection}_idle"
-                    self.createEquipmentTile()
-                    self.usingItem = False
+        return False
+    
+    def useItemEquipped(self):    
+        if self.cannotUseItem(): return
+           
+        if self.inventory.selectingEquipmentSlot():
+           self.frame_index = 0
+           self.usingItem = True
 
+           if self.inventory.currentItems[self.inventory.itemIndex]["name"] in equipmentItems:
+              self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
+           elif self.inventory.currentItems[self.inventory.itemIndex]["name"] in seedItems:
+              self.state = f"{self.facingDirection}_idle"
+              self.createEquipmentTile()
+              self.usingItem = False
+           elif self.inventory.currentItems[self.inventory.itemIndex]["name"] in animalFodders:
+              self.state = f"{self.facingDirection}_idle"
+              self.createEquipmentTile()
+              self.usingItem = False
+    
+    def notMoving(self):
+        if self.direction.x == 0 and self.direction.y == 0:
+           return True
+        return False
+    
+    def allowedToMove(self):
+        if self.usingItem:
+           return False
+        if self.laidToBed:
+           return False
+        if self.dialogueSystem.dialogueActive:
+           return False
+
+        return True
 
     def getInputs(self):
         keys = pg.key.get_pressed()
-        allowedToMove = not self.usingItem and not self.laidToBed and not self.dialogueSystem.dialogueActive and not self.inventory.inventoryActive
-        if allowedToMove:
+        
+        if self.allowedToMove():
 
             if keys[pg.K_w]:
                 self.getState(self.verticalDirection, -1, "Up")
@@ -208,12 +229,12 @@ class Player(Entity):
                 self.getState(self.horizontalDirection, 1, "Right")
             else:
                 self.idleState()
+        
+        if keys[pg.K_SPACE] and self.notMoving():
 
-        if not self.timer.activated:
-            if keys[pg.K_SPACE]:
-                if not self.inventory.inventoryActive:
-                    self.useItemEquipped()
-                self.timer.activate()
+           if not self.timer.activated:
+              self.useItemEquipped()
+              self.timer.activate()
 
     def resetLives(self):
         self.lives = self.maxLives
