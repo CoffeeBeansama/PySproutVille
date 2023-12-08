@@ -1,28 +1,38 @@
 import pygame as pg
 
-class EventHandler:
-    def handleKeyBoardInput(self):
+class EventHandler(object):
+    
+    pressingEquipment = False
+
+    @staticmethod
+    def handleKeyBoardInput():
         keys = pg.key.get_pressed()
         
-        self.pressingUp = True if keys[pg.K_UP] else False
-        self.pressingDown = True if keys[pg.K_DOWN] else False
-        self.pressingLeft = True if keys[pg.K_LEFT] else False
-        self.pressingRight = True if keys[pg.K_RIGHT] else False
+        print("this")
+        pressingUp = True if keys[pg.K_UP] else False
+        pressingDown = True if keys[pg.K_DOWN] else False
+        pressingLeft = True if keys[pg.K_LEFT] else False
+        pressingRight = True if keys[pg.K_RIGHT] else False
 
-        self.pressingEquipment = True if keys[pg.K_SPACE] else False
+        pressingEquipment = True if keys[pg.K_SPACE] else False
+        
+    
+    @staticmethod
+    def pressingUpButton():
+        return EventHandler.pressingUp
+    
+    @staticmethod
+    def pressingDownButton():
+        return EventHandler.pressingDown
 
-
-    def pressingUpButton(self):
-        return self.pressingUp
-
-    def pressingDownButton(self):
-        return self.pressingDown
-
+    @staticmethod
     def pressingLeftButton(self):
-        return self.pressingLeft
+        return EventHandler.pressingLeft
 
-    def pressingRightButton(self):
-        return self.pressingRight
-
-    def pressingEquipmentButton(self):
-        return self.pressingEquipment
+    @staticmethod
+    def pressingRightButton():
+        return EventHandler.pressingRight
+    
+    @staticmethod
+    def pressingEquipmentButton():
+        return EventHandler.pressingEquipment

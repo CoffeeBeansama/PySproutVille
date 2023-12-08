@@ -20,6 +20,7 @@ from inventory import PlayerInventory
 from roof import RoofTile
 from berries import *
 from sound import *
+from eventManager import EventHandler
 
 
 class CameraGroup(pg.sprite.Group):
@@ -181,6 +182,7 @@ class Level:
         self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,
                                        self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
         self.saveload.loadGameState()
+        
 
     def createMap(self):
 
@@ -384,24 +386,24 @@ class Level:
 
 
     def titleScreen(self):
-        pos = pg.mouse.get_pos()
-        mouse_presses = pg.mouse.get_pressed()
-
         self.screen.blit(uiSprites["MenuBackground"].convert_alpha(),(0,0))
         self.screen.blit(uiSprites["MenuImageOverLay"].convert_alpha(),(100,100))
         playButton = self.screen.blit(uiSprites["PlayButton"].convert_alpha(),(300,320))
 
         self.screen.blit(self.titleText.convert_alpha(),(200,200))
-        playButtonPressed = playButton.collidepoint(pos)
+        
 
-        if playButtonPressed:
-            if mouse_presses[0]:
+        if EventHandler.pressingEquipmentButton():
+            print("this")
+            if not self.timer.activated:
                 self.startLevel = True
+                self.timer.activate()
 
 
     def update(self):
+        EventHandler.handleKeyBoardInput()
         self.timer.update()
-
+        
         if self.startLevel:
                 self.timer.update()
                 self.visibleSprites.custom_draw(self.player)
