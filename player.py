@@ -71,7 +71,6 @@ class Player(Entity):
 
         self.playerSpeed = 2
 
-        self.eventHandler = EventHandler()
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -219,22 +218,21 @@ class Player(Entity):
         return True
 
     def getInputs(self):
-        self.eventHandler.handleKeyBoardInput()
-        
+    
         if self.allowedToMove():
 
-            if self.eventHandler.pressingUpButton():
+            if EventHandler.pressingUpButton():
                 self.getState(self.verticalDirection, -1, "Up")
-            elif self.eventHandler.pressingDownButton():
+            elif EventHandler.pressingDownButton():
                 self.getState(self.verticalDirection, 1, "Down")
-            elif self.eventHandler.pressingLeftButton():
+            elif EventHandler.pressingLeftButton():
                 self.getState(self.horizontalDirection, -1, "Left")
-            elif self.eventHandler.pressingRightButton():
+            elif EventHandler.pressingRightButton():
                 self.getState(self.horizontalDirection, 1, "Right")
             else:
                 self.idleState()
         
-        if self.eventHandler.pressingEquipmentButton() and self.notMoving():
+        if EventHandler.pressingEquipmentButton() and self.notMoving():
 
            if not self.timer.activated:
               self.useItemEquipped()
@@ -258,7 +256,6 @@ class Player(Entity):
 
     def update(self):
         self.currentTime = pg.time.get_ticks()
-
 
         self.timer.update()
         self.getInputs()

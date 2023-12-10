@@ -125,7 +125,6 @@ animalFodders = ["Berry"]
 equipmentItems = ["Hoe", "Axe", "WateringCan"]
 stackAbleItems = ["Wheat","Tomato","Wood"]
 sellableItems = ["Wheat","Tomato","Apple","Egg","Milk"]
-OverlapTiles = ["Soil", "Plants","npc"]
 seedItems = ["Wheat","Tomato"]
 
 
