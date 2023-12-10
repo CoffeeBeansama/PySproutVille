@@ -46,11 +46,9 @@ class Game:
         self.soilTileSprites = pg.sprite.Group()
         self.woodTileSprites = pg.sprite.Group()
         self.pickAbleItemSprites = pg.sprite.Group()
-        self.playerSprite = pg.sprite.Group()
         self.interactableSprites = pg.sprite.Group()
         self.animalCollider = pg.sprite.Group()
         self.roofSprites = pg.sprite.Group()
-        self.outsideHouseSprites = pg.sprite.Group()
         self.animalSprites = pg.sprite.Group()
 
         self.timeManager = TimeManager(None,self.updateEntities)
@@ -70,12 +68,10 @@ class Game:
         self.appleIndex = 0
 
 
-        
-
         self.invisibleSprite = loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize))
 
         self.playerInventory = PlayerInventory(None)
-        self.player = Player([self.visibleSprites, self.playerSprite], self.collisionSprites, self.createEquipmentTile,
+        self.player = Player([self.visibleSprites], self.collisionSprites, self.createEquipmentTile,
                              self.interactableSprites, self.pickAbleItemSprites, self.timeManager, None,
                              self.playerInventory)
 
@@ -92,7 +88,7 @@ class Game:
 
         self.ui = Ui(self.player,self.displayMerchantStore)
         self.dynamicUi = self.ui.dynamicUi
-        self.merchant.dialogueSystem,dynamicUi = self.dialogueSystem,self.dynamicUi
+        self.merchant.dialogueSystem = self.dialogueSystem
         self.dialogueSystem.dynamicUi = self.dynamicUi
         self.player.dialogueSystem = self.dialogueSystem
 
@@ -138,10 +134,6 @@ class Game:
                             self.soilList.append(SoilTile((x, y), [self.visibleSprites,self.soilTileSprites],False,self.soilIndex))
                             self.soilIndex += 1
 
-                        if style == "HouseCollider":
-                            if column == "Outside":
-                                Tile(self.invisibleSprite, (x, y), [self.outsideHouseSprites])
-
                         if style == "InteractableObjects":
                             if column == "bed":
                                 self.bedTile = Bed(loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize)),(x,y),[self.interactableSprites], None)
@@ -165,14 +157,13 @@ class Game:
                             self.appleIndex += 1
 
                         if style == "Roof":
-                            RoofTile(loadSprite(f"{roofSpritePath}{column}.png",(tileSize,tileSize)).convert_alpha(), (x,y), [self.visibleSprites, self.roofSprites], self.playerSprite, self.roofSprites)
+                            RoofTile(loadSprite(f"{roofSpritePath}{column}.png",(tileSize,tileSize)).convert_alpha(), (x,y), [self.visibleSprites, self.roofSprites], self.player, self.roofSprites)
 
         self.merchant = Merchant([self.visibleSprites,self.collisionSprites],self.interactableSprites,None,None)
     
     
     def initializeGameState(self):
-
-        self.gameState = {
+        self.gameState = {  
               "Player": self.player.data,
               "Plants": {},
               "Trees": {},
@@ -348,34 +339,30 @@ class Game:
 
 
     def update(self):
+        self.visibleSprites.custom_draw(self.player)
+        self.dialogueSystem.display()
+        self.merchantStore.display()
+        self.chestInventory.display()
+        self.equipmentTileCollisionLogic()
+        self.playerPickUpItems()
+        self.updateCoinList()
+        self.doorObject.update()
+        self.playerInventory.display()
+        self.chestObject.update()
 
-        if self.startLevel:
-                self.visibleSprites.custom_draw(self.player)
-                self.dialogueSystem.display()
-                self.merchantStore.display()
-                self.chestInventory.display()
-                self.equipmentTileCollisionLogic()
-                self.playerPickUpItems()
-                self.updateCoinList()
-                self.doorObject.update()
-                self.playerInventory.display()
-                self.chestObject.update()
+        for trees in self.treeList:
+            trees.update()
 
-                for trees in self.treeList:
-                    trees.update()
+        for roofTiles in self.roofSprites:
+            roofTiles.update()
 
-                for roofTiles in self.roofSprites:
-                    roofTiles.update()
+        if not self.gamePaused:
+           for animals in self.animalsList:
+                animals.update()
 
-                if not self.gamePaused:
-                    for animals in self.animalsList:
-                        animals.update()
-                    self.ui.display()
-                    self.timeManager.dayNightCycle()
-                    self.player.update()
-
-        else:
-            self.titleScreen()
+           self.ui.display()
+           self.timeManager.dayNightCycle()
+           self.player.update()
 
 
     def run(self):
@@ -401,6 +388,7 @@ class Game:
             self.screen.fill("black")
 
             self.update()
+
             pg.display.update()
             self.clock.tick(FPS)
 

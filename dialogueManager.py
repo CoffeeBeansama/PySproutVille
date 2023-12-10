@@ -6,7 +6,7 @@ from pygame import mixer
 
 
 class DialogueSystem:
-    def __init__(self,player,dynamicUi,displayMerchantStore,closeInventory):
+    def __init__(self,player,dynamicUi,displayMerchantStore,hidePlayerInventory):
 
         self.screen = pg.display.get_surface()
         self.dynamicUi = dynamicUi
@@ -66,7 +66,7 @@ class DialogueSystem:
         self.importFontSprites()
 
 
-        self.closeInventory = closeInventory
+        self.hidePlayerInventory = hidePlayerInventory
 
         self.displayMerchantStore = displayMerchantStore
 
@@ -100,7 +100,7 @@ class DialogueSystem:
         self.speaker = speaker
         self.dialogueActive = True
         self.skippedDialogue = False
-        self.closeInventory()
+        self.hidePlayerInventory()
 
     def endDialogue(self):
         self.dialogueIndex = 1
