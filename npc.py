@@ -196,7 +196,7 @@ class FarmAnimals(pg.sprite.Sprite,ABC):
 
 
 class Egg(PickAbleItems):
-    def __init__(self,pos,group,pickAbleSprites,data=itemData["Egg"]):
+    def __init__(self,pos,group,pickAbleSprites,data=None):
         super().__init__(pos,group,data)
         self.type = "item"
 
@@ -263,7 +263,7 @@ class Chicken(FarmAnimals):
 
 
 class Milk(PickAbleItems):
-    def __init__(self,pos,group,pickAbleSprites,data=itemData["Milk"]):
+    def __init__(self,pos,group,pickAbleSprites,data=None):
         super().__init__(pos,group,data)
 
         self.type = "item"

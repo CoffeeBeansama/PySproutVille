@@ -369,7 +369,7 @@ class Game:
         while True:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    self.level.saveload.saveGameState()
+                    self.saveload.saveGameState()
                     pg.quit()
                     sys.exit()
                 if event.type == pg.KEYDOWN:

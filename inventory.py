@@ -1,8 +1,11 @@
 import pygame as pg
-from settings import *
+from settings import uiPath,slotScale,itemData,animalFodders,equipmentItems,seedItems
 from timer import Timer
 from pygame import mixer
 from sound import *
+from support import loadSprite
+
+
 
 class InventorySlot:
     def __init__(self,pos,item,index):
@@ -14,9 +17,9 @@ class InventorySlot:
 
         self.stackNum = 1
         self.maximumStack = 9
-
-        self.defaultSprite = uiSprites["EmptySlot"].convert_alpha()
-        self.defaultSelectedSprite = uiSprites["EmptySlotSelected"].convert_alpha()
+        
+        self.defaultSprite = loadSprite(f"{uiPath}Slots/EmptySlot.png",slotScale).convert_alpha()
+        self.defaultSelectedSprite = loadSprite(f"{uiPath}Slots/EmptySlotSelected.png",slotScale).convert_alpha()
 
         self.sprite = self.data["uiSprite"].convert_alpha() if item is not None else self.defaultSprite.convert_alpha()
         self.selectedSprite = self.data["uiSpriteSelected"].convert_alpha() if item is not None else self.defaultSelectedSprite.convert_alpha()
@@ -29,16 +32,15 @@ class PlayerInventory:
         self.inventoryPos = (73, 495)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
-
-        self.selectorSprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector.png"
-        self.selectorSprite2 = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Slots/SlotSelector2.png"
-
-        self.selector = pg.transform.scale(pg.image.load(self.selectorSprite),slotScale).convert_alpha()
-        self.selector2 = pg.transform.scale(pg.image.load(self.selectorSprite2),slotScale).convert_alpha()
+        
+    
+        self.selector = loadSprite(f"{uiPath}Slots/SlotSelector.png",slotScale).convert_alpha()
+        self.selector2 = loadSprite(f"{uiPath}Slots/SlotSelector2.png",slotScale).convert_alpha()
 
         self.swappingItems = False
 
-        self.background = uiSprites['InventoryHolder']
+        backGroundSize = (625,90)
+        self.background = loadSprite(f"{uiPath}Inventory.png",backGroundSize).convert_alpha()
 
         self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
         self.currentItems = self.defaultInventorySetup
@@ -59,6 +61,16 @@ class PlayerInventory:
 
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 16)
         self.fontColor = (255, 255, 255)
+        
+        self.importUISprites()
+
+
+    def importUISprites(self):
+        self.sprites = {}
+        for items in itemData.keys():
+            self.sprites[items] = {}
+            self.sprites[items]["Default Sprite"] = itemData[items]["uiSprite"].convert_alpha()
+            self.sprites[items]["Selected Sprite"] = itemData[items]["uiSpriteSelected"].convert_alpha()
 
 
     def selectFromRight(self):
@@ -308,7 +320,7 @@ class PlayerInventory:
         self.screen.blit(self.background,self.inventoryPos)
 
         for index,slots in enumerate(self.slotList):
-            self.screen.blit(slots.sprite.convert_alpha() if self.itemIndex != slots.index else slots.selectedSprite.convert_alpha(),slots.pos)
+            self.screen.blit(slots.sprite if self.itemIndex != slots.index else slots.selectedSprite,slots.pos)
             if slots.stackNum > 1:
                 stackText = self.font.render(str(slots.stackNum),True,self.fontColor)
                 self.screen.blit(stackText,slots.textRect.topright)

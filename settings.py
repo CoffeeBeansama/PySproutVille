@@ -82,16 +82,7 @@ itemData = {
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wood/collision.png",(tileSize,tileSize)),
 
     },
-    "Egg":{
-        "name": "Egg",
-        "costs": 10,
-        "CollisionSprite": loadSprite(f"{spritePath}/EggCollision.png",(tileSize,tileSize)),
-    },
-    "Milk":{
-        "name": "Milk",
-        "costs": 35,
-        "CollisionSprite": loadSprite(f"{spritePath}MilkCollision.png",(tileSize,tileSize)),
-    }
+
 }
 
 
