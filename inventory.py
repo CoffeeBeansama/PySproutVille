@@ -8,12 +8,12 @@ from support import loadSprite
 
 
 class InventorySlot:
-    def __init__(self,pos,item,index):
+    def __init__(self,pos,data,index):
 
         self.screen = pg.display.get_surface()
         self.pos = pos
         self.index = index
-        self.data = item
+        self.data = data
 
         self.stackNum = 1
         self.maximumStack = 9
@@ -21,14 +21,14 @@ class InventorySlot:
         self.defaultSprite = loadSprite(f"{uiPath}Slots/EmptySlot.png",slotScale).convert_alpha()
         self.defaultSelectedSprite = loadSprite(f"{uiPath}Slots/EmptySlotSelected.png",slotScale).convert_alpha()
 
-        self.sprite = self.data["uiSprite"].convert_alpha() if item is not None else self.defaultSprite.convert_alpha()
-        self.selectedSprite = self.data["uiSpriteSelected"].convert_alpha() if item is not None else self.defaultSelectedSprite.convert_alpha()
+        self.sprite = self.data["Default Sprite"] if data is not None else self.defaultSprite.convert_alpha()
+        self.selectedSprite = self.data["Selected Sprite"] if data is not None else self.defaultSelectedSprite.convert_alpha()
 
         self.textRect = self.sprite.get_rect(topleft=pos)
 
 class PlayerInventory:
     def __init__(self,chestInventory):
-
+        self.chestInventory = chestInventory
         self.inventoryPos = (73, 495)
         self.slotPosY = 514
         self.screen = pg.display.get_surface()
@@ -46,15 +46,18 @@ class PlayerInventory:
         self.currentItems = self.defaultInventorySetup
 
 
+
         self.itemIndex = 0
         self.itemSwapIndex = 0
         self.inventoryCapacity = 9
 
         self.sellableItems = []
         self.width = self.inventoryPos[0] // self.inventoryCapacity
-        self.chestInventory = chestInventory
         self.slotList = []
+        
+        self.importUISprites()
         self.createSlots()
+
         self.inventoryActive = False
         self.displayPlayerInventory = True
         self.timer = Timer(200)
@@ -63,7 +66,8 @@ class PlayerInventory:
         self.fontColor = (255, 255, 255)
         
         self.importUISprites()
-
+        
+        
 
     def importUISprites(self):
         self.sprites = {}
@@ -231,8 +235,9 @@ class PlayerInventory:
         newData = itemData[f"{item.data['name']}"]
         slot.data = newData
         self.currentItems[slotIndex] = newData
-        slot.sprite = newData["uiSprite"]
-        slot.selectedSprite = newData["uiSpriteSelected"]
+        print(self.sprites[item.data["name"]])
+        slot.sprite = self.sprites[item.data["name"]]["Default Sprite"]
+        slot.selectedSprite = self.sprites[item.data["name"]]["Selected Sprite"]
         return
 
     def removeItemData(self,slot):
@@ -256,7 +261,7 @@ class PlayerInventory:
             inventoryWidth = 600  # less the borders
             increment = inventoryWidth // self.inventoryCapacity
             left = (index * increment) + (increment - self.width) + 37
-            newSlots = InventorySlot((left, self.slotPosY), item, index)
+            newSlots = InventorySlot((left, self.slotPosY), self.sprites[item["name"]] if item is not None else item, index)
             self.slotList.append(newSlots)
 
     def update(self,item):
