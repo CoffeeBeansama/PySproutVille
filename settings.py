@@ -18,25 +18,25 @@ itemScale = (24,24)
 itemData = {
     "Hoe":{
         "name": "Hoe",
-        "uiSprite": loadSprite(f"{uiPath}Slots/Hoe.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/HoeSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Hoe.png",
+        "uiSpriteSelected": f"{uiPath}Slots/HoeSelected.png",
          },
     "Axe": {
         "name": "Axe",
-        "uiSprite": loadSprite(f"{uiPath}Slots/Axe.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/AxeSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Axe.png",
+        "uiSpriteSelected": f"{uiPath}Slots/AxeSelected.png",
          },
     "WateringCan": {
         "name": "WateringCan",
-        "uiSprite": loadSprite(f"{uiPath}Slots/WateringCan.png", slotScale),
-        "uiSpriteSelected":loadSprite(f"{uiPath}Slots/WateringCanSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/WateringCan.png",
+        "uiSpriteSelected":f"{uiPath}Slots/WateringCanSelected.png",
         },
     "Apple": {
         "name": "Apple",
         "costs": 5,
         "CropSprite":  loadSprite(f"{spritePath}/Plants/Apple/2.png",(tileSize,tileSize)),
-        "uiSprite": loadSprite(f"{uiPath}Slots/Apple.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/AppleSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Apple.png",
+        "uiSpriteSelected": f"{uiPath}Slots/AppleSelected.png",
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Apple/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Apple/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Apple/3.png",(tileSize,tileSize)),
@@ -46,8 +46,8 @@ itemData = {
     "Wheat":{
         "name": "Wheat",
         "costs": 10,
-        "uiSprite": loadSprite(f"{uiPath}Slots/Wheat.png",slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/WheatSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Wheat.png",
+        "uiSpriteSelected": f"{uiPath}Slots/WheatSelected.png",
         "PhaseOneSprite": loadSprite(f"{spritePath}/Plants/Wheat/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}/Plants/Wheat/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}/Plants/Wheat/3.png",(tileSize,tileSize)),
@@ -59,8 +59,8 @@ itemData = {
     "Tomato":{
         "name": "Tomato",
         "costs": 15,
-        "uiSprite": loadSprite(f"{uiPath}Slots/Tomato.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/TomatoSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Tomato.png",
+        "uiSpriteSelected": f"{uiPath}Slots/TomatoSelected.png",
         "PhaseOneSprite": loadSprite(f"{spritePath}Plants/Tomato/1.png",(tileSize,tileSize)),
         "PhaseTwoSprite": loadSprite(f"{spritePath}Plants/Tomato/2.png",(tileSize,tileSize)),
         "PhaseThreeSprite": loadSprite(f"{spritePath}Plants/Tomato/3.png",(tileSize,tileSize)),
@@ -70,15 +70,15 @@ itemData = {
     },
     "Berry":{
         "name": "Berry",
-        "uiSprite": loadSprite(f"{uiPath}Slots/Berry.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/BerrySelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Berry.png",
+        "uiSpriteSelected": f"{uiPath}Slots/BerrySelected.png",
 
     },
     "Wood":{
         "name": "Wood",
         "CropSprite":  loadSprite(f"{spritePath}/Plants/Wood/Wood.png",(tileSize,tileSize)),
-        "uiSprite": loadSprite(f"{uiPath}Slots/Wood.png", slotScale),
-        "uiSpriteSelected": loadSprite(f"{uiPath}Slots/WoodSelected.png", slotScale),
+        "uiSprite": f"{uiPath}Slots/Wood.png",
+        "uiSpriteSelected": f"{uiPath}Slots/WoodSelected.png",
         "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wood/collision.png",(tileSize,tileSize)),
 
     },

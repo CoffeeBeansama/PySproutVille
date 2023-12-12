@@ -11,56 +11,8 @@ from eventManager import EventHandler
 class Player(Entity):
     def __init__(self,group,collidable_sprites,useEquipmentTile,interactableObjects,pickableItems,timeManager,dialogueSystem,inventory):
         super().__init__(group)
-        self.screen = pg.display.get_surface()
         self.type = "player"
-        self.animations_States = None
-
-        self.inventory = inventory
-        self.displayInventory = False
-        self.currentItemsHolding = []
-
-        self.data = {
-            "Position" : (948, 866),
-            "Coins": 0,
-            "Items": self.inventory.currentItems
-
-        }
-        self.defaultData = {
-            "Position": (948, 866),
-            "Coins": 600,
-            "Items": self.inventory.defaultInventorySetup
-
-        }
-
-        self.startingPos = self.data["Position"]
-
-        self.maxLives = 3
-        self.lives = 3
-
-        self.frame_index = 0
-        self.walkingAnimationTime = 1 / 8
-        self.eqpActionAnimationTime = 1 / 20
-
-        self.image = loadSprite("Sprites/Player/Down_idle/00.png",(tileSize,tileSize)).convert_alpha()
-        self.rect = self.image.get_rect(topleft=self.startingPos)
-        self.hitbox = self.rect.inflate(-5, 0)
-
-        self.coins = self.data["Coins"]
-
-        self.mood = "Idle"
-
-        self.facingDirection = "Down"
-        self.state = "Down_idle"
-        self.importSprites()
-
-        self.itemIndex = 0
-        self.equippedItem = equipmentItems[self.itemIndex]
-
-        self.usingItem = False
-
-        self.laidToBed = False
-
-        self.timer = Timer(200)
+        self.screen = pg.display.get_surface()
 
         self.collisionSprites = collidable_sprites
         self.pickAbleItems = pickableItems
@@ -68,9 +20,55 @@ class Player(Entity):
         self.dialogueSystem = dialogueSystem
         self.timeManager = timeManager
         self.interactableObjects = interactableObjects
+        self.animations_States = None
 
-        self.playerSpeed = 2
+        self.inventory = inventory
+        self.displayInventory = False
+        self.currentItemsHolding = []
 
+        self.initializePlayerData()
+
+        self.startingPos = self.data["Position"]
+        self.image = loadSprite("Sprites/Player/Down_idle/00.png",(tileSize,tileSize)).convert_alpha()
+        self.rect = self.image.get_rect(topleft=self.startingPos)
+        self.hitbox = self.rect.inflate(-5, 0)
+
+
+        self.importSprites()
+
+        self.usingItem = False
+        self.laidToBed = False
+
+        self.timer = Timer(300)
+
+
+    
+    def initializePlayerData(self):
+        self.data = {
+            "Position" : (948, 866),
+            "Coins": 0,
+            "Items": self.inventory.currentItems
+        }
+
+        self.defaultData = {
+            "Position": (948, 866),
+            "Coins": 600,
+            "Items": self.inventory.defaultInventorySetup
+        }
+
+        self.maxLives = 3
+        self.lives = 3
+        self.coins = self.data["Coins"]
+
+        self.mood = "Idle"
+        self.state = "Down_idle"
+
+        self.walkSpeed = 2
+
+        self.frame_index = 0
+        self.walkingAnimationTime = 1 / 8
+        self.eqpActionAnimationTime = 1 / 20
+        self.facingDirection = "Down"
 
     def importSprites(self):
         player_path = "Sprites/Player/"
@@ -86,7 +84,7 @@ class Player(Entity):
             full_path = player_path + animation
             self.animations_States[animation] = import_folder(full_path)
 
-    def animate(self):
+    def handleAnimation(self):
         if not self.laidToBed:
             animation = self.animations_States[self.state]
             self.frame_index += self.eqpActionAnimationTime if self.usingItem else self.walkingAnimationTime
@@ -124,7 +122,7 @@ class Player(Entity):
         self.state = state
         self.facingDirection = state
 
-    def movement(self, speed):
+    def handleMovement(self, speed):
         self.hitbox.x += self.direction.x * speed
         self.checkWallCollision("Horizontal")
         self.hitbox.y += self.direction.y * speed
@@ -161,7 +159,6 @@ class Player(Entity):
         playSound("Coin")
         self.mood = "Happy"
         self.coins += cost
-        self.moodTickTime = pg.time.get_ticks()
 
 
     def idleState(self):
@@ -217,22 +214,22 @@ class Player(Entity):
 
         return True
 
-    def getInputs(self):
+    def handleKeyboardInput(self):
     
         if self.allowedToMove():
 
-            if EventHandler.pressingUpButton():
+            if EventHandler.pressingUpKey():
                 self.getState(self.verticalDirection, -1, "Up")
-            elif EventHandler.pressingDownButton():
+            elif EventHandler.pressingDownKey():
                 self.getState(self.verticalDirection, 1, "Down")
-            elif EventHandler.pressingLeftButton():
+            elif EventHandler.pressingLeftKey():
                 self.getState(self.horizontalDirection, -1, "Left")
-            elif EventHandler.pressingRightButton():
+            elif EventHandler.pressingRightKey():
                 self.getState(self.horizontalDirection, 1, "Right")
             else:
                 self.idleState()
         
-        if EventHandler.pressingEquipmentButton() and self.notMoving():
+        if EventHandler.pressingInteractKey() and self.notMoving():
 
            if not self.timer.activated:
               self.useItemEquipped()
@@ -251,17 +248,15 @@ class Player(Entity):
     def updateMood(self):
         if self.mood == "Happy":
             self.frame_index = 0
-            if self.currentTime - self.moodTickTime > 300:
-                self.mood = "Idle"
+            
 
     def update(self):
-        self.currentTime = pg.time.get_ticks()
-
+    
         self.timer.update()
-        self.getInputs()
+        self.handleKeyboardInput()
         self.updateMood()
-        self.movement(self.playerSpeed)
-        self.animate()
+        self.handleMovement(self.walkSpeed)
+        self.handleAnimation()
         self.interact()
 
 

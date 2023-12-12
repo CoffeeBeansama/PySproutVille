@@ -347,7 +347,7 @@ class Game:
         self.playerPickUpItems()
         self.updateCoinList()
         self.doorObject.update()
-        self.playerInventory.display()
+        self.playerInventory.renderPlayerInventory()
         self.chestObject.update()
 
         for trees in self.treeList:

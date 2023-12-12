@@ -122,7 +122,7 @@ class SaveLoadSystem:
         for index, items in enumerate(itemChest.currentItemHolding):
             self.gameState["ItemChestItems"][index] = items["name"] if items is not None else None
 
-        for index, slots in enumerate(itemChest.slotList.values()):
+        for index, slots in enumerate(itemChest.itemSlots.values()):
             savedSlots = self.gameState["ItemChestSlots"][slots.index] = {}
             savedSlots["index"] = slots.index
             savedSlots["stack"] = slots.stackNum
