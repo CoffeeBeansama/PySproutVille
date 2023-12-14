@@ -281,7 +281,6 @@ class Game:
                                   self.timeManager,self.soilTileSprites)
             soilTile.currentPlant = plantTile
             self.plantList.append(plantTile)
-            self.PlantedSoilTileList.append(soilTile)
             soilTile.planted = True
             playSound("Seed")
 

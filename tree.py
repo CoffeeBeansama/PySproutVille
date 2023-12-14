@@ -3,6 +3,7 @@ from random import random,randint
 from settings import *
 from objects import PickAbleItems
 from timer import Timer
+from support import loadSprite
 
 
 class TreeBase(pg.sprite.Sprite):
@@ -148,7 +149,7 @@ class AppleFruit(pg.sprite.Sprite):
         self.appleSide = appleSide
 
 
-        self.image = self.data["PhaseOneSprite"].convert_alpha()
+        self.image = loadSprite(self.data["PhaseOneSprite"],(tileSize,tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-10, -10)
 
@@ -156,9 +157,9 @@ class AppleFruit(pg.sprite.Sprite):
         self.currentPhase = 1
 
         self.phases = {
-            1: self.data["PhaseOneSprite"],
-            2: self.data["PhaseTwoSprite"],
-            3: self.data["PhaseThreeSprite"]
+            1: loadSprite(self.data["PhaseOneSprite"],(tileSize,tileSize)).convert_alpha(),
+            2: loadSprite(self.data["PhaseTwoSprite"],(tileSize,tileSize)).convert_alpha(),
+            3: loadSprite(self.data["PhaseThreeSprite"],(tileSize,tileSize)).convert_alpha()
         }
 
         self.group = group
@@ -171,7 +172,7 @@ class AppleFruit(pg.sprite.Sprite):
         if prob < 0.2:
             self.currentPhase += 1
 
-        getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseOneSprite"].convert_alpha())
+        getCurrentPhase = self.phases.get(self.currentPhase, self.phases[1])
         self.image = getCurrentPhase.convert_alpha()
         if self.currentPhase >= len(self.phases):
             AppleItem(self.finalPos,[self.group],itemData["Apple"],self.pickUpSprites)
@@ -181,8 +182,8 @@ class AppleFruit(pg.sprite.Sprite):
 
 
     def loadState(self):
-        getCurrentPhase = self.phases.get(self.currentPhase, self.data["PhaseOneSprite"].convert_alpha())
-        self.image = getCurrentPhase.convert_alpha()
+        getCurrentPhase = self.phases.get(self.currentPhase, self.phases[1])
+        self.image = getCurrentPhase
         return
 
 class AppleItem(PickAbleItems):
@@ -191,7 +192,7 @@ class AppleItem(PickAbleItems):
 
         self.type = "Apple"
 
-        self.image = itemData["Apple"]["PhaseThreeSprite"].convert_alpha()
+        self.image = loadSprite(itemData["Apple"]["PhaseThreeSprite"],(tileSize,tileSize)).convert_alpha()
         self.pos = pos
         self.rect = self.image.get_rect(topleft=self.pos)
         self.hitbox = self.rect.inflate(-10, -10)

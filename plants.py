@@ -1,6 +1,7 @@
 import pygame as pg
 from settings import *
 from objects import PickAbleItems
+from support import loadSprite
 
 class PlantTile(PickAbleItems):
     def __init__(self, pos, group, data,pickupitemSprites,timeManager,soilTile):
@@ -11,7 +12,10 @@ class PlantTile(PickAbleItems):
         self.pickupitems = pickupitemSprites
 
         self.data = data
-        self.image = self.data["PhaseOneSprite"].convert_alpha()
+
+        size = (tileSize,tileSize)
+        self.image = loadSprite(self.data["PhaseOneSprite"],size).convert_alpha()
+    
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-20, -20)
 
@@ -21,10 +25,10 @@ class PlantTile(PickAbleItems):
         self.currentPhase = 1
 
         self.phases = {
-            1: self.data["PhaseOneSprite"].convert_alpha(),
-            2: self.data["PhaseTwoSprite"].convert_alpha(),
-            3: self.data["PhaseThreeSprite"].convert_alpha(),
-            4: self.data["CropSprite"].convert_alpha(),
+            1: loadSprite(self.data["PhaseOneSprite"],size).convert_alpha(),
+            2: loadSprite(self.data["PhaseTwoSprite"],size).convert_alpha(),
+            3: loadSprite(self.data["PhaseThreeSprite"],size).convert_alpha(),
+            4: loadSprite(self.data["CropSprite"],size).convert_alpha(),
         }
 
         self.soilTiles = soilTile
@@ -44,7 +48,7 @@ class PlantTile(PickAbleItems):
         if self.currentPhase >= len(self.phases):
             self.add(self.pickupitems)
             self.currentSoil.planted = False
-        getCurrentSprite = self.phases.get(self.currentPhase,self.data["CropSprite"])
+        getCurrentSprite = self.phases.get(self.currentPhase,self.phases[1])
         self.image = getCurrentSprite
 
 

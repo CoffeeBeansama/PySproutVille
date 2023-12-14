@@ -60,7 +60,7 @@ class PickAbleItems(pg.sprite.Sprite):
         self.collided = False
 
     def pickUpItem(self, plantlist,player,coinSpriteGroup,coinList):
-        self.image = self.data["CollisionSprite"].convert_alpha()
+        self.image = loadSprite(self.data["CollisionSprite"],(tileSize,tileSize)).convert_alpha()
         self.currentTime = pg.time.get_ticks()
 
         plantlist.remove(self) if self in plantlist else None
