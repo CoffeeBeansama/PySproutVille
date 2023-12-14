@@ -33,53 +33,31 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH,HEIGHT))
         pg.display.set_caption("SproutVille")
         self.clock = pg.time.Clock()
-
-        self.player = None
-       
+ 
         self.gamePaused = False
         self.displayMerchantStore = False
         self.currentEquipmentInstance = None
-
-        self.visibleSprites = CameraGroup()
-        self.collisionSprites = pg.sprite.Group()
-        self.equipmentSprites = pg.sprite.Group()
-        self.soilTileSprites = pg.sprite.Group()
-        self.woodTileSprites = pg.sprite.Group()
-        self.pickAbleItemSprites = pg.sprite.Group()
-        self.interactableSprites = pg.sprite.Group()
-        self.animalCollider = pg.sprite.Group()
-        self.roofSprites = pg.sprite.Group()
-        self.animalSprites = pg.sprite.Group()
-
-        self.timeManager = TimeManager(None,self.updateEntities)
-
         self.plantTile = None
 
-        self.PlantedSoilTileList = []
-        self.plantList = []
-        self.appleList = []
-        self.animalsList = []
-        self.soilList = []
-        self.berryBushesList = []
-        self.treeList = []
-        self.coinList = []
+        self.initializeSpriteGroups()
+        self.initializeObjectLists()
 
-        self.soilIndex = 0
-        self.appleIndex = 0
 
+        self.timeManager = TimeManager(None,self.updateEntities)
 
         self.invisibleSprite = loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize))
 
         self.playerInventory = PlayerInventory(None)
+        self.chestInventory = ChestInventory(self.playerInventory, self.closeChestInventory)
+        self.playerInventory.chestInventory = self.chestInventory
+
         self.player = Player([self.visibleSprites], self.collisionSprites, self.createEquipmentTile,
                              self.interactableSprites, self.pickAbleItemSprites, self.timeManager, None,
                              self.playerInventory)
 
-        self.chestInventory = ChestInventory(self.playerInventory, self.closeChestInventory)
-        self.playerInventory.chestInventory = self.chestInventory
 
-        self.createMap()
         self.initializeGameState()
+        self.createMap()
         
         self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
@@ -99,13 +77,36 @@ class Game:
         self.titleText = self.font.render("Sprout Ville",True,self.fontColor)
         self.startLevel = False
 
-
-        self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,
-                                       self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
+        self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
         self.saveload.loadGameState()
         
     
+    def initializeSpriteGroups(self): 
+        self.visibleSprites = CameraGroup()
+        self.collisionSprites = pg.sprite.Group()
+        self.equipmentSprites = pg.sprite.Group()
+        self.soilTileSprites = pg.sprite.Group()
+        self.woodTileSprites = pg.sprite.Group()
+        self.pickAbleItemSprites = pg.sprite.Group()
+        self.interactableSprites = pg.sprite.Group()
+        self.animalCollider = pg.sprite.Group()
+        self.roofSprites = pg.sprite.Group()
+        self.animalSprites = pg.sprite.Group()
+        
+
+    def initializeObjectLists(self): 
+        self.plantList = []
+        self.appleList = []
+        self.animalsList = []
+        self.soilList = []
+        self.berryBushesList = []
+        self.treeList = []
+        self.coinList = []
+
+
     def createMap(self):
+        self.soilIndex = 0
+        self.appleIndex = 0
 
         mapLayouts = {
             "boundary": import_csv_layout("Map/wall.csv"),
@@ -350,8 +351,6 @@ class Game:
         self.playerInventory.renderPlayerInventory()
         self.chestObject.update()
 
-        for trees in self.treeList:
-            trees.update()
 
         for roofTiles in self.roofSprites:
             roofTiles.update()
