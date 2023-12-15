@@ -29,18 +29,11 @@ class InventorySlot:
 class PlayerInventory:
     def __init__(self,chestInventory):
         self.chestInventory = chestInventory
-        self.inventoryPos = (73, 495)
-
         self.screen = pg.display.get_surface()
         
     
-        self.selector = loadSprite(f"{uiPath}Slots/SlotSelector.png",slotScale).convert_alpha()
-        self.selector2 = loadSprite(f"{uiPath}Slots/SlotSelector2.png",slotScale).convert_alpha()
 
         self.swappingItems = False
-
-        backGroundSize = (625,90)
-        self.background = loadSprite(f"{uiPath}Inventory.png",backGroundSize).convert_alpha()
 
         self.sellableItems = []
         
@@ -66,6 +59,7 @@ class PlayerInventory:
 
         self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
         self.currentItems = self.defaultInventorySetup
+        self.inventoryPos = (73, 495)
 
 
     def importUISprites(self):
@@ -74,6 +68,12 @@ class PlayerInventory:
             self.sprites[items] = {}
             self.sprites[items]["Default Sprite"] = loadSprite(itemData[items]["uiSprite"],slotScale).convert_alpha()
             self.sprites[items]["Selected Sprite"] = loadSprite(itemData[items]["uiSpriteSelected"],slotScale).convert_alpha()
+
+        backGroundSize = (625,90)
+        self.background = loadSprite(f"{uiPath}Inventory.png",backGroundSize).convert_alpha()
+
+        self.selector = loadSprite(f"{uiPath}Slots/SlotSelector.png",slotScale).convert_alpha()
+        self.selector2 = loadSprite(f"{uiPath}Slots/SlotSelector2.png",slotScale).convert_alpha()
 
     def createSlots(self):
         self.slotList = []

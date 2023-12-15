@@ -38,6 +38,7 @@ class Player(Entity):
 
         self.usingItem = False
         self.laidToBed = False
+        self.nearAnInteractableObject = False
 
         self.timer = Timer(300)
 
@@ -134,10 +135,14 @@ class Player(Entity):
         for objectIndex,object in enumerate(self.interactableObjects):
             if hasattr(object,"interactHitbox"):
                 if object.interactHitbox.colliderect(self.hitbox):
+                    self.nearAnInteractableObject = True
                     object.interact()
+                    return
                 else:
+                    self.nearAnInteractableObject = False
                     object.disengage()
 
+        
 
     def checkWallCollision(self, direction):
         for sprite in self.collisionSprites:
@@ -173,17 +178,17 @@ class Player(Entity):
             self.itemIndex = 0
         self.equippedItem = equipmentItems[self.itemIndex]
     
-    def cannotUseItem(self):
+    def canUseItem(self):
         if self.laidToBed:
-           return True
+           return False
         if self.dialogueSystem.dialogueActive:
-           return True
+           return False
+        if self.nearAnInteractableObject:
+           return False
 
-        return False
+        return True
     
     def useItemEquipped(self):    
-        if self.cannotUseItem(): return
-           
         if self.inventory.selectingEquipmentSlot():
            self.frame_index = 0
            self.usingItem = True
@@ -229,11 +234,11 @@ class Player(Entity):
             else:
                 self.idleState()
         
-        if EventHandler.pressingInteractKey() and self.notMoving():
-
-           if not self.timer.activated:
-              self.useItemEquipped()
-              self.timer.activate()
+        if self.notMoving():
+            if EventHandler.pressingInteractKey() and self.canUseItem():
+                if not self.timer.activated:
+                    self.useItemEquipped()
+                    self.timer.activate()
 
     def resetLives(self):
         self.lives = self.maxLives
