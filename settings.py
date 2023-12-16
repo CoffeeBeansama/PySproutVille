@@ -76,10 +76,10 @@ itemData = {
     },
     "Wood":{
         "name": "Wood",
-        "CropSprite":  loadSprite(f"{spritePath}/Plants/Wood/Wood.png",(tileSize,tileSize)),
+        "CropSprite":  f"{spritePath}/Plants/Wood/Wood.png",
         "uiSprite": f"{uiPath}Slots/Wood.png",
         "uiSpriteSelected": f"{uiPath}Slots/WoodSelected.png",
-        "CollisionSprite": loadSprite(f"{spritePath}/Plants/Wood/collision.png",(tileSize,tileSize)),
+        "CollisionSprite": f"{spritePath}/Plants/Wood/collision.png",
 
     },
 

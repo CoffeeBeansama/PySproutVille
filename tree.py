@@ -209,7 +209,8 @@ class Wood(PickAbleItems):
 
         self.tree = tree
         self.data = data
-        self.image = self.data["CropSprite"].convert_alpha()
+        self.image = loadSprite(self.data["CropSprite"],(tileSize,tileSize)).convert_alpha()
+
 
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-10, -10)
