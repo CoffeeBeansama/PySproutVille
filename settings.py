@@ -106,7 +106,7 @@ uiSprites = {
              "HalfHeart": loadSprite(f"{uiPath}Icons/Heart/Half.png",(40,38)),
              "EmptyHeart": loadSprite(f"{uiPath}Icons/Heart/Empty.png",(40,38)),
              "DialogueBox": loadSprite(f"{uiPath}Dialouge UI/DialogueBox.png",(750,150)),
-             "ChestBackground" :loadSprite(f"{uiPath}ChestBackground.png",(625,350)),
+             "ChestBackground" :f"{uiPath}ChestBackground.png",
              "MenuBackground" :loadSprite("Sprites/menuBg.png",(WIDTH,HEIGHT)),
              "MenuImageOverLay" :loadSprite(f"{uiPath}ChestBackground.png",(600,420)),
              "PlayButton": loadSprite(f"{uiPath}PlayButton.png",(180,50))

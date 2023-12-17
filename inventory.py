@@ -1,5 +1,5 @@
 import pygame as pg
-from settings import uiPath,slotScale,itemData,animalFodders,equipmentItems,seedItems
+from settings import uiPath,slotScale,itemData,animalFodders,equipmentItems,seedItems,uiSprites
 from timer import Timer
 from pygame import mixer
 from sound import *
@@ -26,21 +26,23 @@ class InventorySlot:
 
         self.textRect = self.sprite.get_rect(topleft=pos)
 
-class PlayerInventory:
-    def __init__(self,chestInventory):
-        self.chestInventory = chestInventory
+class Inventory:
+    def __init__(self):
         self.screen = pg.display.get_surface()
-        
     
-
         self.swappingItems = False
 
         self.sellableItems = []
-        
-        self.initializeInventory()
-        
+
+        self.itemIndex = 0  
+        self.itemSwapIndex = 0
+
+        self.initializePlayerInventory()
+        self.initializeChestInventory()     
         self.importUISprites()
-        self.createSlots()
+                
+        self.createPlayerInventorySlots()
+        self.createChestInventorySlots() 
 
         self.inventoryActive = False
         self.displayPlayerInventory = True
@@ -52,16 +54,29 @@ class PlayerInventory:
         self.importUISprites()
             
     
-    def initializeInventory(self):
-        self.itemIndex = 0  
-        self.itemSwapIndex = 0
-        self.inventoryCapacity = 9
+    def initializePlayerInventory(self):
+        self.playerInventoryPos = (73, 495)
+        self.playerInventoryCapacity = 9
 
-        self.defaultInventorySetup = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
-        self.currentItems = self.defaultInventorySetup
-        self.inventoryPos = (73, 495)
+        self.playerInventoryDefaultItems = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
+        self.playerCurrentItems = self.playerInventoryDefaultItems
+        
 
 
+    def initializeChestInventory(self):
+        self.chestInventoryPos = (73, 130)
+
+        self.chestOpened = False
+        
+        chestCapacity = 36
+        self.chestInventoryDefaultItems = [None for i in range(chestCapacity)]
+
+        self.chestCurrentItems = self.chestInventoryDefaultItems 
+
+        self.itemIndex = self.playerInventory.itemIndex + len(self.chestInventoryDefaultItems)
+        self.itemSwapIndex = self.playerInventory.itemSwapIndex + len(self.chestInventoryDefaultItems)
+
+        
     def importUISprites(self):
         self.sprites = {}
         for items in itemData.keys():
@@ -69,35 +84,87 @@ class PlayerInventory:
             self.sprites[items]["Default Sprite"] = loadSprite(itemData[items]["uiSprite"],slotScale).convert_alpha()
             self.sprites[items]["Selected Sprite"] = loadSprite(itemData[items]["uiSpriteSelected"],slotScale).convert_alpha()
 
-        backGroundSize = (625,90)
-        self.background = loadSprite(f"{uiPath}Inventory.png",backGroundSize).convert_alpha()
+        playerInventoryBackgroundSize = (625,90)
+        self.playerInventoryBackground = loadSprite(f"{uiPath}Inventory.png",playerInventoryBackgroundSize).convert_alpha()
 
         self.selector = loadSprite(f"{uiPath}Slots/SlotSelector.png",slotScale).convert_alpha()
         self.selector2 = loadSprite(f"{uiPath}Slots/SlotSelector2.png",slotScale).convert_alpha()
 
-    def createSlots(self):
-        self.slotList = []
+        chestBackgroundSize = (625,350)
+        self.chestBackgroundImage = loadSprite(uiSprites["ChestBackground"],chestBackgroundSize).convert_alpha()
 
-        width = self.inventoryPos[0] // self.inventoryCapacity
+    def createPlayerInventorySlots(self):
+        self.playerItemSlotList = []
+
+        width = self.playerInventoryPos[0] // self.playerInventoryCapacity
         offset = 37
 
         yPos = 514
 
-        for index,item in enumerate(self.currentItems):
+        for index,item in enumerate(self.playerCurrentItems):
             inventoryWidth = 600  # less the borders
-            increment = inventoryWidth // self.inventoryCapacity
+            increment = inventoryWidth // self.playerInventoryCapacity
             xPos = (index * increment) + (increment - width) + offset
             newSlots = InventorySlot((xPos, yPos), self.sprites[item["name"]] if item is not None else item, index)
-            self.slotList.append(newSlots)
+            self.playerItemSlotList.append(newSlots)
+
+    def createChestInventorySlots(self):
+        self.chestItemSlots = {}
+
+        rows = 4
+        columns = 9
+        
+        width = self.chestInventoryPos[0] // rows
+        offset = 47
+        yPos = 170
+
+        slotID = -self.itemIndex
+
+        for i in range(rows):
+            for j in range(columns):
+                inventoryWidth = 600 # less the borders
+                increment = inventoryWidth // columns
+                xPos = (j * increment) + (increment - width) + offset
+                newSlots = InventorySlot((xPos, yPos), None, rows)
+                self.chestItemSlots[slotID] = newSlots
+                slotID += 1
+            yPos += 70
+
+
+    def displayChestInventory(self):
+        self.chestOpened = True
+        playSound("Chest")
+
+    def closeInventory(self):
+        self.chestOpened = False
+        self.playerInventory.resetIndexes()
+        self.updateIndex()
+        self.inventoryClosed()
+
+    def loadChestSlotsData(self):
+        for index,slots in enumerate(self.chestItemSlots.values()):
+            item = self.chestCurrentItems[index]
+            
+            if item is not None:
+                slots.sprite = self.sprites[item["name"]]["Default Sprite"]
+                slots.selectedSprite = self.sprites[item["name"]]["Selected Sprite"]
+
+
+    def loadSlotsStack(self,index,stack):
+        self.chestItemSlots[index].stackNum = stack
+        
+    def loadCurrentItems(self,index,item):
+        if item is not None:
+            self.chestCurrentItems[index] = itemData[item]
 
     def selectFromRight(self):
         if not self.swappingItems:
             self.itemIndex += 1
-            if self.itemIndex >= self.inventoryCapacity:
+            if self.itemIndex >= self.playerInventoryCapacity:
                 self.itemIndex = 0
         else:
             self.itemSwapIndex += 1
-            if self.itemSwapIndex >= self.inventoryCapacity:
+            if self.itemSwapIndex >= self.playerInventoryCapacity:
                 self.itemSwapIndex = 0
 
     def selectFromLeft(self):
@@ -144,17 +211,17 @@ class PlayerInventory:
         if self.itemSwapIndex >= 0:
             if self.itemIndex < 0:
                 # chest to inventory
-                self.swapItemData(False,self.currentItems,chestItem,self.slotList,chestSlot)
+                self.swapItemData(False,self.playerCurrentItems,chestItem,self.playerItemSlotList,chestSlot)
             else:
                 # inventory to inventory
-                self.swapItemData(True,self.currentItems,self.currentItems,self.slotList,self.slotList)
+                self.swapItemData(True,self.playerCurrentItems,self.playerCurrentItems,self.playerItemSlotList,self.playerItemSlotList)
         else:
             if self.itemIndex < 0:
                 # chest to chest
                 self.swapItemData(True,chestItem,chestItem,chestSlot,chestSlot)
             else:
                 # inventory to chests
-                self.swapItemData(False,chestItem,self.currentItems,chestSlot,self.slotList)
+                self.swapItemData(False,chestItem,self.playerCurrentItems,chestSlot,self.playerItemSlotList)
         playSound("ItemSwap")
 
 
@@ -186,53 +253,53 @@ class PlayerInventory:
             self.swappingItems = True
 
     def selectingEquipmentSlot(self):
-        if self.currentItems[self.itemIndex] is not None:
+        if self.playerCurrentItems[self.itemIndex] is not None:
             usableItems = [equipmentItems,seedItems,animalFodders]
             for items in usableItems:
-                if self.currentItems[self.itemIndex]["name"] in items:
+                if self.playerCurrentItems[self.itemIndex]["name"] in items:
                     return True
             return False
 
 
     def loadItems(self,index,items):
-        self.currentItems[index] = itemData[items] if items is not None else None
-        self.slotList[index].sprite = self.sprites[items]["Default Sprite"] if items is not None else self.slotList[index].defaultSprite
-        self.slotList[index].selectedSprite = self.sprites[items]["Selected Sprite"] if items is not None else self.slotList[index].defaultSelectedSprite
+        self.playerCurrentItems[index] = itemData[items] if items is not None else None
+        self.playerItemSlotList[index].sprite = self.sprites[items]["Default Sprite"] if items is not None else self.playerItemSlotList[index].defaultSprite
+        self.playerItemSlotList[index].selectedSprite = self.sprites[items]["Selected Sprite"] if items is not None else self.playerItemSlotList[index].defaultSelectedSprite
 
 
     def loadSlotStacks(self,index,data):
-        self.slotList[index].stackNum = data
+        self.playerItemSlotList[index].stackNum = data
 
     def AddItem(self,item):
-        for slotIndex, itemSlots in enumerate(self.slotList):
-            if self.currentItems[slotIndex] is not None:
-                if self.currentItems[slotIndex]["name"] == item.data["name"]:
+        for slotIndex, itemSlots in enumerate(self.playerItemSlotList):
+            if self.playerCurrentItems[slotIndex] is not None:
+                if self.playerCurrentItems[slotIndex]["name"] == item.data["name"]:
                     if itemSlots.stackNum < itemSlots.maximumStack:
                         itemSlots.stackNum += 1
                         return
             else:
-                for i in range(slotIndex, self.inventoryCapacity):
-                    if self.currentItems[i] is not None:
-                        if self.currentItems[i]["name"] == item.data["name"]:
-                            if self.slotList[i].stackNum < self.slotList[i].maximumStack:
-                                self.slotList[i].stackNum += 1
+                for i in range(slotIndex, self.playerInventoryCapacity):
+                    if self.playerCurrentItems[i] is not None:
+                        if self.playerCurrentItems[i]["name"] == item.data["name"]:
+                            if self.playerItemSlotList[i].stackNum < self.playerItemSlotList[i].maximumStack:
+                                self.playerItemSlotList[i].stackNum += 1
                                 return
                 self.storeItemData(itemSlots, slotIndex, item)
                 return
 
     def PurchaseItem(self,item):
-        for slotIndex,itemSlots in enumerate(self.slotList):
-            if self.currentItems[slotIndex] is not None:
-                if self.currentItems[slotIndex]["name"] == item.data["name"]:
+        for slotIndex,itemSlots in enumerate(self.playerItemSlotList):
+            if self.playerCurrentItems[slotIndex] is not None:
+                if self.playerCurrentItems[slotIndex]["name"] == item.data["name"]:
                     if itemSlots.stackNum < itemSlots.maximumStack:
                         itemSlots.stackNum += 1
                         return
             else:
-                for i in range(slotIndex,self.inventoryCapacity):
-                    if self.currentItems[i] is not None:
-                        if self.currentItems[i]["name"] == item.data["name"]:
-                            if self.slotList[i].stackNum < self.slotList[i].maximumStack:
-                                self.slotList[i].stackNum += 1
+                for i in range(slotIndex,self.playerInventoryCapacity):
+                    if self.playerCurrentItems[i] is not None:
+                        if self.playerCurrentItems[i]["name"] == item.data["name"]:
+                            if self.playerItemSlotList[i].stackNum < self.playerItemSlotList[i].maximumStack:
+                                self.playerItemSlotList[i].stackNum += 1
                                 return
                 self.storeItemData(itemSlots, slotIndex, item)
                 return
@@ -247,33 +314,37 @@ class PlayerInventory:
     def storeItemData(self,slot,slotIndex,item):
         newData = itemData[f"{item.data['name']}"]
         slot.data = newData
-        self.currentItems[slotIndex] = newData
+        self.playerCurrentItems[slotIndex] = newData
         slot.sprite = self.sprites[item.data["name"]]["Default Sprite"]
         slot.selectedSprite = self.sprites[item.data["name"]]["Selected Sprite"]
         return
 
     def removeItemData(self,slot):
-        self.currentItems[self.itemIndex] = None
+        self.playerCurrentItems[self.itemIndex] = None
         slot.sprite = slot.defaultSprite
         slot.selectedSprite = slot.defaultSelectedSprite
 
     def decreaseItemStack(self):
-        if self.slotList[self.itemIndex].stackNum > 1:
-            self.slotList[self.itemIndex].stackNum -= 1
+        if self.playerItemSlotList[self.itemIndex].stackNum > 1:
+            self.playerItemSlotList[self.itemIndex].stackNum -= 1
         else:
-            self.removeItemData(self.slotList[self.itemIndex])
+            self.removeItemData(self.playerItemSlotList[self.itemIndex])
 
 
     def getCurrentSelectedItem(self):
-        item = self.currentItems[self.itemIndex]["name"]  # if selecting Equipment
+        item = self.playerCurrentItems[self.itemIndex]["name"]  # if selecting Equipment
         return item
 
+
+    
+
+
     def update(self,item):
-        for itemIndex,items in enumerate(self.currentItems):
+        for itemIndex,items in enumerate(self.playerCurrentItems):
             if items is None:
-                self.currentItems[itemIndex] = item
-                self.slotList[itemIndex].sprite = item["uiSprite"]
-                self.slotList[itemIndex].selectedSprite = item["uiSpriteSelected"]
+                self.playerCurrentItems[itemIndex] = item
+                self.playerItemSlotList[itemIndex].sprite = item["uiSprite"]
+                self.playerItemSlotList[itemIndex].selectedSprite = item["uiSpriteSelected"]
                 return
             else:
                 pass
@@ -320,27 +391,52 @@ class PlayerInventory:
         self.itemIndex = 0
         self.itemSwapIndex = 0
 
+    def renderChestInventory(self):
+        if not self.chestOpened: return
+
+        self.screen.blit(self.chestBackgroundImage, self.inventoryPos)
+        
+        for keyIndex,slots in enumerate(self.chestItemSlots.values()):
+            self.screen.blit(slots.sprite if self.playerInventory.itemIndex != slots.index else slots.selectedSprite,slots.pos)
+            if slots.stackNum > 1:
+                stackText = self.font.render(str(slots.stackNum),True,self.fontColor)
+                self.screen.blit(stackText,slots.textRect.topright)
+
+        if self.itemIndex < 0:
+            self.screen.blit(self.selector,self.chestItemSlots[self.itemIndex].pos)
+
+        if self.playerInventory.swappingItems and self.itemSwapIndex < 0:
+            self.screen.blit(self.selector2, self.chestItemSlots[self.itemSwapIndex].pos)
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_ESCAPE]:
+            self.updateIndex()
+            self.closeInventory()
+
     def renderPlayerInventory(self):
         if not self.displayPlayerInventory: return
 
-        self.handleKeyboardInput()
-        self.timer.update()
+        
+        self.screen.blit(self.playerInventoryBackground,self.playerInventoryPos)
 
-        self.screen.blit(self.background,self.inventoryPos)
-
-        for index,slots in enumerate(self.slotList):
+        for index,slots in enumerate(self.playerItemSlotList):
             self.screen.blit(slots.sprite if self.itemIndex != slots.index else slots.selectedSprite,slots.pos)
             if slots.stackNum > 1:
                 stackText = self.font.render(str(slots.stackNum),True,self.fontColor)
                 self.screen.blit(stackText,slots.textRect.topright)
 
         if self.itemIndex >= 0:
-            self.screen.blit(self.selector,self.slotList[self.itemIndex].pos)
+            self.screen.blit(self.selector,self.playerItemSlotList[self.itemIndex].pos)
 
         if self.swappingItems and self.itemSwapIndex >= 0:
-            self.screen.blit(self.selector2, self.slotList[self.itemSwapIndex].pos)
+            self.screen.blit(self.selector2, self.playerItemSlotList[self.itemSwapIndex].pos)
 
+    def update(self):
+        self.timer.update()
+        self.handleKeyboardInput()
 
+        self.renderPlayerInventory()
+        self.renderChestInventory()
 
 
 

@@ -1,10 +1,9 @@
 import pygame as pg
 import sys
 from settings import *
-from debug import debug
 from tile import Tile
 from player import Player
-from inventory import PlayerInventory
+from inventory import Inventory
 from plants import PlantTile
 from soil import SoilTile
 from support import import_csv_layout
@@ -17,8 +16,7 @@ from npc import *
 from merchantStore import MerchantStore
 from dialogueManager import DialogueSystem
 from saveload import SaveLoadSystem
-from chestInventory import ChestInventory
-from inventory import PlayerInventory
+from inventory import Inventory
 from roof import RoofTile
 from berries import BerryBush
 from sound import *
@@ -47,20 +45,19 @@ class Game:
 
         self.invisibleSprite = loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize))
 
-        self.playerInventory = PlayerInventory(None)
-        self.chestInventory = ChestInventory(self.playerInventory, self.closeChestInventory)
-        self.playerInventory.chestInventory = self.chestInventory
-
+        self.inventory = Inventory()
+        
         self.player = Player([self.visibleSprites], self.collisionSprites, self.createEquipmentTile,
                              self.interactableSprites, self.pickAbleItemSprites, self.timeManager, None,
-                             self.playerInventory)
+                             self.inventory)
 
 
         self.initializeGameState()
+
         self.createMap()
         
-        self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.playerInventory.openInventory)
-        self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.playerInventory.closeInventory)
+        self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.inventory.openInventory)
+        self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.inventory.closeInventory)
 
         self.getPlayerData([self.timeManager,self.bedTile,self.doorObject])
 
@@ -246,8 +243,8 @@ class Game:
             woodTileCollided = pg.sprite.spritecollide(sprites, self.woodTileSprites, False)
             animalSpriteCollided = pg.sprite.spritecollide(sprites,self.animalSprites, False)
 
-            if inventory.currentItems[inventory.itemIndex] is not None:
-                itemName = inventory.currentItems[inventory.itemIndex]["name"]
+            if inventory.playerCurrentItems[inventory.itemIndex] is not None:
+                itemName = inventory.playerCurrentItems[inventory.itemIndex]["name"]
 
                 if soilTileCollided:
                     if itemName == "Hoe":
@@ -255,7 +252,7 @@ class Game:
                     elif itemName == "WateringCan":
                         soilTileCollided[0].waterSoil()
                     elif itemName in seedItems:
-                        self.seedPlantTile(soilTileCollided[0],inventory.currentItems[inventory.itemIndex])
+                        self.seedPlantTile(soilTileCollided[0],inventory.playerCurrentItems[inventory.itemIndex])
 
                 if woodTileCollided:
                     if itemName == "Axe":
@@ -292,13 +289,9 @@ class Game:
 
     def openChestInventory(self):
         self.chestInventory.displayInventory()
-        self.displayPlayerInventory = True
-        self.playerInventory.inventoryActive = True
         self.pauseGame()
 
     def closeChestInventory(self):
-        self.displayPlayerInventory = False
-        self.playerInventory.inventoryActive = False
         self.unpauseGame()
 
     def openMerchantStore(self):
@@ -332,7 +325,9 @@ class Game:
     def titleScreen(self):
         self.screen.blit(uiSprites["MenuBackground"].convert_alpha(),(0,0))
         self.screen.blit(uiSprites["MenuImageOverLay"].convert_alpha(),(100,100))
-        playButton = self.screen.blit(uiSprites["PlayButton"].convert_alpha(),(300,320))
+
+        # Play Button
+        self.screen.blit(uiSprites["PlayButton"].convert_alpha(),(300,320))
 
         self.screen.blit(self.titleText.convert_alpha(),(200,200))
     
@@ -342,12 +337,11 @@ class Game:
         self.visibleSprites.custom_draw(self.player)
         self.dialogueSystem.display()
         self.merchantStore.display()
-        self.chestInventory.display()
         self.equipmentTileCollisionLogic()
         self.playerPickUpItems()
         self.updateCoinList()
         self.doorObject.update()
-        self.playerInventory.renderPlayerInventory()
+        self.inventory.update()
         self.chestObject.update()
 
 
