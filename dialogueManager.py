@@ -3,7 +3,7 @@ from settings import *
 from dialogues import *
 from support import *
 from pygame import mixer
-
+from eventManager import EventHandler
 
 class DialogueSystem:
     def __init__(self,player,dynamicUi,displayMerchantStore,hidePlayerInventory):
@@ -113,8 +113,7 @@ class DialogueSystem:
 
 
     def checkPlayerInput(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_SPACE]:
+        if EventHandler.pressingInteractKey():
             if not self.skipKeyPressed:
                 if self.lineFinished:
                     self.nextDialogue()

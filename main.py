@@ -45,7 +45,7 @@ class Game:
 
         self.invisibleSprite = loadSprite(f"{testSpritePath}wall.png",(tileSize,tileSize))
 
-        self.inventory = Inventory()
+        self.inventory = Inventory(self.closeChestInventory)
         
         self.player = Player([self.visibleSprites], self.collisionSprites, self.createEquipmentTile,
                              self.interactableSprites, self.pickAbleItemSprites, self.timeManager, None,
@@ -56,7 +56,7 @@ class Game:
 
         self.createMap()
         
-        self.merchantStore = MerchantStore(self.player, self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.inventory.openInventory)
+        self.merchantStore = MerchantStore(self.player,self.closeMerchantStore,self.createChickenInstance,self.createCowInstance,self.inventory.openInventory)
         self.dialogueSystem = DialogueSystem(self.player, None, self.openMerchantStore,self.inventory.closeInventory)
 
         self.getPlayerData([self.timeManager,self.bedTile,self.doorObject])

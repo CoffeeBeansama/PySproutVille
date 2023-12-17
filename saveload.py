@@ -203,9 +203,9 @@ class SaveLoadSystem:
         for index, item in enumerate(self.gameState["ItemChestItems"].values()):
             chestInventory.loadChestCurrentItems(index, item)
         chestInventory.loadChestSlotsData()
-        try:
+        try: 
             for index, data in enumerate(self.gameState["ItemChestSlots"].keys()):
-                self.chestInventory.loadChestSlotsStack(data, self.gameState["ItemChestSlots"][data]["stack"])
+                chestInventory.loadChestSlotsStack(data, self.gameState["ItemChestSlots"][data]["stack"])
         except:
             pass
 

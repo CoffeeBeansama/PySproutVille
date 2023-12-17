@@ -2,9 +2,10 @@ from support import *
 from settings import *
 from timer import Timer
 from sound import playSound
+from eventManager import EventHandler
 
 class MerchantStore:
-    def __init__(self,player,action,chickenBought,cowBought,openInventory):
+    def __init__(self,player,action,chickenBought,cowBought,reopenPlayerInventory):
         self.screen = pg.display.get_surface()
 
         self.player = player
@@ -65,7 +66,7 @@ class MerchantStore:
 
         self.chickenBought = chickenBought
         self.cowBought = cowBought
-        self.openInventory = openInventory
+        self.reopenPlayerInventory = reopenPlayerInventory
 
     def createItems(self):
         for index,items in enumerate(self.itemSetup):
@@ -93,7 +94,6 @@ class MerchantStore:
 
     def getPlayerInputs(self):
         if self.allowedToPurchase:
-            keys = pg.key.get_pressed()
 
             if self.itemIndex >= len(self.itemSetup):
                 self.itemIndex = 0
@@ -101,23 +101,23 @@ class MerchantStore:
                 self.itemIndex = len(self.itemSetup) - 1
 
             if not self.timer.activated:
-                if keys[pg.K_w]:
+                if EventHandler.pressingUpKey():
                     self.itemIndex -= 1
                     self.timer.activate()
                     playSound("Selection")
-                if keys[pg.K_s]:
+                if EventHandler.pressingDownKey():
                     self.itemIndex += 1
                     self.timer.activate()
                     playSound("Selection")
-                if keys[pg.K_ESCAPE]:
+                if EventHandler.pressingCloseKey():
                     self.closeMenu()
                     self.displayMerchandise = False
                     self.allowedToPurchase = False
                     self.timer.activate()
                     playSound("CloseInventory")
-                    self.openInventory()
+                    self.reopenPlayerInventory()
 
-                if keys[pg.K_SPACE]:
+                if EventHandler.pressingInteractKey():
                     self.purchaseItem()
                     self.timer.activate()
 

@@ -15,6 +15,7 @@ class EventHandler(object):
     pressingInventoryLeft = False
     pressingInventoryRight = False
 
+    pressingClose = False
 
     @staticmethod
     def handleKeyBoardInput():
@@ -31,7 +32,8 @@ class EventHandler(object):
         EventHandler.pressingInventoryDown = True if keys[pg.K_s] else False
         EventHandler.pressingInventoryLeft = True if keys[pg.K_a] else False
         EventHandler.pressingInventoryRight = True if keys[pg.K_d] else False
-             
+            
+        EventHandler.pressingClose = True if keys[pg.K_c] else False
 
     def pressingUpKey():
         return EventHandler.pressingUp
@@ -59,3 +61,6 @@ class EventHandler(object):
 
     def pressingInventoryRightKey():
         return EventHandler.pressingInventoryRight
+
+    def pressingCloseKey():
+        return EventHandler.pressingClose
