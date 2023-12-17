@@ -11,7 +11,7 @@ class Equipment(pg.sprite.Sprite):
 
         self.equipment = True
 
-        playerItemEquipped = player.inventory.currentItems[player.inventory.itemIndex]["name"]
+        playerItemEquipped = player.inventory.playerCurrentItems[player.inventory.itemIndex]["name"]
         self.playEquipmentSound(playerItemEquipped if playerItemEquipped not in seedItems else "Seed")
         playerDirection = player.facingDirection
         self.image = pg.Surface((10, 10))

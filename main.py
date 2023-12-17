@@ -74,7 +74,7 @@ class Game:
         self.titleText = self.font.render("Sprout Ville",True,self.fontColor)
         self.startLevel = False
 
-        self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.chestInventory,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
+        self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
         self.saveload.loadGameState()
         
     
@@ -288,7 +288,7 @@ class Game:
                 coins.update(self.coinList)
 
     def openChestInventory(self):
-        self.chestInventory.displayInventory()
+        self.inventory.displayChestInventory()
         self.pauseGame()
 
     def closeChestInventory(self):

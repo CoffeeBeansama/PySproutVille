@@ -48,13 +48,13 @@ class Player(Entity):
         self.data = {
             "Position" : (948, 866),
             "Coins": 0,
-            "Items": self.inventory.currentItems
+            "Items": self.inventory.playerCurrentItems
         }
 
         self.defaultData = {
             "Position": (948, 866),
             "Coins": 600,
-            "Items": self.inventory.defaultInventorySetup
+            "Items": self.inventory.playerInventoryDefaultItems
         }
 
         self.maxLives = 3
@@ -193,13 +193,13 @@ class Player(Entity):
            self.frame_index = 0
            self.usingItem = True
 
-           if self.inventory.currentItems[self.inventory.itemIndex]["name"] in equipmentItems:
+           if self.inventory.playerCurrentItems[self.inventory.itemIndex]["name"] in equipmentItems:
               self.state = f"{self.inventory.getCurrentSelectedItem()}_{self.facingDirection}"
-           elif self.inventory.currentItems[self.inventory.itemIndex]["name"] in seedItems:
+           elif self.inventory.playerCurrentItems[self.inventory.itemIndex]["name"] in seedItems:
               self.state = f"{self.facingDirection}_idle"
               self.createEquipmentTile()
               self.usingItem = False
-           elif self.inventory.currentItems[self.inventory.itemIndex]["name"] in animalFodders:
+           elif self.inventory.playerCurrentItems[self.inventory.itemIndex]["name"] in animalFodders:
               self.state = f"{self.facingDirection}_idle"
               self.createEquipmentTile()
               self.usingItem = False

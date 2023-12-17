@@ -6,7 +6,7 @@ from tree import *
 from npc import *
 
 class SaveLoadSystem:
-    def __init__(self,fileExtension,folder,player,treesList,chestInventory,plantList,appleList,soilList,animalsList,pickAbleItemSprites,
+    def __init__(self,fileExtension,folder,player,treesList,plantList,appleList,soilList,animalsList,pickAbleItemSprites,
                  visibleSprites,timeManager,soilTileSprites,animalCollider,animalSprites,berryBushes
                  ):
 
@@ -15,7 +15,6 @@ class SaveLoadSystem:
 
         self.player = player
         self.treeList = treesList
-        self.chestInventory = chestInventory
         self.plantList = plantList
         self.appleList = appleList
         self.soilList = soilList
@@ -65,10 +64,10 @@ class SaveLoadSystem:
         player.data["Position"] = player.hitbox.center
         player.data["Coins"] = player.coins
 
-        for items in player.inventory.currentItems:
+        for items in player.inventory.playerCurrentItems:
             player.currentItemsHolding.append(items["name"] if items is not None else None)
             player.data["Items"] = player.currentItemsHolding
-        for index, slots in enumerate(player.inventory.slotList):
+        for index, slots in enumerate(player.inventory.playerItemSlotList):
             self.gameState["PlayerInventorySlots"][index] = slots.stackNum
         self.gameState["Player"] = player.data
 
@@ -118,11 +117,11 @@ class SaveLoadSystem:
             savedAnimal["Eaten"] = animals.eaten
 
     def saveItemChestData(self):
-        itemChest = self.chestInventory
-        for index, items in enumerate(itemChest.currentItemHolding):
+        chestInventory = self.player.inventory
+        for index, items in enumerate(chestInventory.chestCurrentItems):
             self.gameState["ItemChestItems"][index] = items["name"] if items is not None else None
 
-        for index, slots in enumerate(itemChest.itemSlots.values()):
+        for index, slots in enumerate(chestInventory.chestItemSlots.values()):
             savedSlots = self.gameState["ItemChestSlots"][slots.index] = {}
             savedSlots["index"] = slots.index
             savedSlots["stack"] = slots.stackNum
@@ -200,12 +199,13 @@ class SaveLoadSystem:
                 self.animalsList.append(newCow)
 
     def loadItemChestData(self):
+        chestInventory = self.player.inventory
         for index, item in enumerate(self.gameState["ItemChestItems"].values()):
-            self.chestInventory.loadCurrentItems(index, item)
-        self.chestInventory.loadSlotsData()
+            chestInventory.loadChestCurrentItems(index, item)
+        chestInventory.loadChestSlotsData()
         try:
             for index, data in enumerate(self.gameState["ItemChestSlots"].keys()):
-                self.chestInventory.loadSlotsStack(data, self.gameState["ItemChestSlots"][data]["stack"])
+                self.chestInventory.loadChestSlotsStack(data, self.gameState["ItemChestSlots"][data]["stack"])
         except:
             pass
 
@@ -219,9 +219,9 @@ class SaveLoadSystem:
         player.hitbox.center = self.gameState["Player"]["Position"]
         try:
             for index, items in enumerate(self.gameState["Player"]["Items"]):
-                player.inventory.loadItems(index, items)
+                player.inventory.loadPlayerInventoryItems(index, items)
             for index, data in enumerate(self.gameState["PlayerInventorySlots"].values()):
-                player.inventory.loadSlotStacks(index, data)
+                player.inventory.loadPlayerInventorySlotStacks(index, data)
         except:
             pass
 

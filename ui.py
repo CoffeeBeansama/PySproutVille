@@ -34,8 +34,11 @@ class DynamicUI:
 
         self.playerLives = self.player.lives
         self.frameIndex = 0
-        self.fullHeartSprite = uiSprites["FullHeart"].convert_alpha()
-        self.emptyHeartSprite = uiSprites["EmptyHeart"].convert_alpha()
+
+        heartSpriteSize = (40,38)
+        self.fullHeartSprite = loadSprite(uiSprites["FullHeart"],heartSpriteSize).convert_alpha()
+        self.emptyHeartSprite = loadSprite(uiSprites["EmptyHeart"],heartSpriteSize).convert_alpha()
+        
 
         self.animationTime = 1 / 64
 
@@ -127,10 +130,14 @@ class StaticUI:
         self.screen = pg.display.get_surface()
 
         self.dynamicUi = dynamicUi
-        self.faceContainerBackground = uiSprites["FaceContainer"].convert_alpha()
+        
+        faceContainerSize = (100,100)
+        self.faceContainerBackground = loadSprite(uiSprites["FaceContainer"],faceContainerSize).convert_alpha()
         self.faceContainerBackgroundPos = (10, 10)
         self.faceContainerBackgroundRect = self.faceContainerBackground.get_rect()
-        self.coinHeartBackGround = uiSprites["HeartCoinContainer"].convert_alpha()
+
+        coinHeartBGSize = (130,130)
+        self.coinHeartBackGround = loadSprite(uiSprites["HeartCoinContainer"],coinHeartBGSize).convert_alpha()
         self.coinHeartBackGroundPos = (120, 10)
 
         self.staticUi = {

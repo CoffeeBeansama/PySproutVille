@@ -25,8 +25,9 @@ class DialogueSystem:
         self.fontSpriteColor = (144, 98, 93)
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 16)
         self.fontColor = (0, 0, 0)
-
-        self.dialogueBoxSprite = uiSprites["DialogueBox"].convert_alpha()
+        
+        dialogueBoxSize = (750,150)
+        self.dialogueBoxSprite = loadSprite(uiSprites["DialogueBox"],dialogueBoxSize).convert_alpha()
         self.boxPos = (30,440)
 
         self.letterSprites = None

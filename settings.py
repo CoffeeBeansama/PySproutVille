@@ -96,20 +96,17 @@ animalStateSprites = {
 }
 
 uiSprites = {
-             "InventoryHolder":loadSprite(f"{uiPath}Inventory.png",(625,90)),
-             "EmptySlot": loadSprite(f"{uiPath}EmptySlot.png",slotScale),
-             "EmptySlotSelected": loadSprite(f"{uiPath}Slots/EmptySlotSelected.png",slotScale),
-             "FaceContainer":loadSprite(f"{uiPath}FaceContainer.png",(100,100)),
-             "HeartCoinContainer":loadSprite(f"{uiPath}CoinHeartContainer.png",(130,130)),
-             "DefaultFace": loadSprite(f"{uiPath}DefaultFace.png",(62,62)),
-             "FullHeart": loadSprite(f"{uiPath}Icons/Heart/Full.png",(40,38)),
-             "HalfHeart": loadSprite(f"{uiPath}Icons/Heart/Half.png",(40,38)),
-             "EmptyHeart": loadSprite(f"{uiPath}Icons/Heart/Empty.png",(40,38)),
-             "DialogueBox": loadSprite(f"{uiPath}Dialouge UI/DialogueBox.png",(750,150)),
+             "FaceContainer": f"{uiPath}FaceContainer.png",
+             "HeartCoinContainer":f"{uiPath}CoinHeartContainer.png",
+             "DefaultFace": f"{uiPath}DefaultFace.png",
+             "FullHeart": f"{uiPath}Icons/Heart/Full.png",
+             "HalfHeart": f"{uiPath}Icons/Heart/Half.png",
+             "EmptyHeart": f"{uiPath}Icons/Heart/Empty.png",
+             "DialogueBox": f"{uiPath}Dialouge UI/DialogueBox.png",
              "ChestBackground" :f"{uiPath}ChestBackground.png",
-             "MenuBackground" :loadSprite("Sprites/menuBg.png",(WIDTH,HEIGHT)),
-             "MenuImageOverLay" :loadSprite(f"{uiPath}ChestBackground.png",(600,420)),
-             "PlayButton": loadSprite(f"{uiPath}PlayButton.png",(180,50))
+             "MenuBackground" :"Sprites/menuBg.png",
+             "MenuImageOverLay" :f"{uiPath}ChestBackground.png",
+             "PlayButton": f"{uiPath}PlayButton.png",
              }
 
 animalFodders = ["Berry"]
