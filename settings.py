@@ -87,12 +87,12 @@ itemData = {
 
 
 animalStateSprites = {
-    6 : loadSprite(f"{uiPath}Icons/special icons/00.png",(tileSize,tileSize)),
-    5 : loadSprite(f"{uiPath}Icons/special icons/10.png",(tileSize,tileSize)),
-    4 : loadSprite(f"{uiPath}Icons/special icons/20.png",(tileSize,tileSize)),
-    3 : loadSprite(f"{uiPath}Icons/special icons/30.png",(tileSize,tileSize)),
-    2 : loadSprite(f"{uiPath}Icons/special icons/40.png",(tileSize,tileSize)),
-    1 : loadSprite(f"{uiPath}Icons/special icons/50.png",(tileSize,tileSize)),
+    6 : f"{uiPath}Icons/special icons/00.png",
+    5 : f"{uiPath}Icons/special icons/10.png",
+    4 : f"{uiPath}Icons/special icons/20.png",
+    3 : f"{uiPath}Icons/special icons/30.png",
+    2 : f"{uiPath}Icons/special icons/40.png",
+    1 : f"{uiPath}Icons/special icons/50.png",
 }
 
 uiSprites = {

@@ -77,6 +77,8 @@ class Game:
         self.saveload = SaveLoadSystem(".data", "savedata",self.player,self.treeList,self.plantList,self.appleList,self.soilList,self.animalsList,self.pickAbleItemSprites,self.visibleSprites,self.timeManager,self.soilTileSprites,self.animalCollider,self.animalSprites,self.berryBushesList)
         self.saveload.loadGameState()
         
+        self.chickenSpawnPoint = (1206,938)
+        self.cowSpawnPoint = (1130,1378)
     
     def initializeSpriteGroups(self): 
         self.visibleSprites = CameraGroup()
@@ -335,7 +337,7 @@ class Game:
 
     def update(self):
         self.visibleSprites.custom_draw(self.player)
-        self.dialogueSystem.display()
+        self.dialogueSystem.update()
         self.merchantStore.display()
         self.equipmentTileCollisionLogic()
         self.playerPickUpItems()

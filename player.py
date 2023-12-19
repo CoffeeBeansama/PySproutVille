@@ -185,7 +185,8 @@ class Player(Entity):
            return False
         if self.nearAnInteractableObject:
            return False
-
+        if self.inventory.inventoryActive:
+           return False
         return True
     
     def useItemEquipped(self):    
@@ -216,7 +217,8 @@ class Player(Entity):
            return False
         if self.dialogueSystem.dialogueActive:
            return False
-
+        if self.inventory.inventoryActive:
+           return False
         return True
 
     def handleKeyboardInput(self):

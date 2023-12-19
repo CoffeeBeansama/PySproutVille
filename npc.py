@@ -48,7 +48,7 @@ class AnimalStateSprite(pg.sprite.Sprite):
     def __init__(self,image,pos,group):
         super().__init__(group)
         self.type = "sprite"
-        self.image = image
+        self.image = loadSprite(image,(tileSize,tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
 
 

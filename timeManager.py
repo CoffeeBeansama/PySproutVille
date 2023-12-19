@@ -10,13 +10,8 @@ class TimeManager:
         self.startTickTime = 0
         self.screen = pg.display.get_surface()
 
-        self.darknessOpacity = 0
-        self.nightDarknessSprite = loadSprite("Sprites/NightMask.png",(WIDTH, HEIGHT)).convert_alpha()
-        self.nightDarknessSprite.set_alpha(0)
-
-        self.transitionSpriteAlpha = 0
-        self.sleepTransitionSprite = loadSprite("Sprites/transitionSprite.png",(WIDTH, HEIGHT)).convert_alpha()
-        self.sleepTransitionSprite.set_alpha(0)
+        self.importSprites()
+        
         self.transitionTickTime = None
 
         self.day = 1
@@ -36,6 +31,17 @@ class TimeManager:
 
         self.updateEntities = updateEntities
         self.player = player
+
+    
+    def importSprites(self):
+        self.darknessOpacity = 0
+        self.nightDarknessSprite = loadSprite("Sprites/NightMask.png",(WIDTH, HEIGHT)).convert_alpha()
+        self.nightDarknessSprite.set_alpha(0)
+
+
+        self.transitionSpriteAlpha = 0
+        self.sleepTransitionSprite = loadSprite("Sprites/transitionSprite.png",(WIDTH, HEIGHT)).convert_alpha()
+        self.sleepTransitionSprite.set_alpha(0)
 
     def Day(self):
         if self.darknessOpacity >= 0:
@@ -71,7 +77,7 @@ class TimeManager:
                 self.relightAnimation()
 
     def darknessFadeAnimation(self):
-        if self.transitionSpriteAlpha <= 255:
+        if self.transitionSpriteAlpha <= 250:
             self.transitionSpriteAlpha += 2.125
             self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
         else:
@@ -85,7 +91,7 @@ class TimeManager:
         if self.currentTime - self.transitionTickTime > self.darknessAnimationDuration:
             self.darknessOpacity = 0
             self.nightDarknessSprite.set_alpha(self.darknessOpacity)
-            if self.transitionSpriteAlpha >= 0:
+            if self.transitionSpriteAlpha >= 5:
                 self.transitionSpriteAlpha -= 2.125
                 self.sleepTransitionSprite.set_alpha(self.transitionSpriteAlpha)
             else:
@@ -95,13 +101,18 @@ class TimeManager:
         match self.currentPeriod:
             case -1: self.Night()
             case 1: self.Day()
+    
+    def renderDarkness(self):
+        self.screen.blit(self.nightDarknessSprite,(0,0))
+        self.screen.blit(self.sleepTransitionSprite,(0,0))
+        
+        
 
     def dayNightCycle(self):
         self.dayTimer.update()
         self.currentTime = pg.time.get_ticks()
-
-        self.screen.blit(self.nightDarknessSprite,(0,0))
-        self.screen.blit(self.sleepTransitionSprite,(0,0))
+         
+        self.renderDarkness()
 
         if not self.dayTimer.activated:
             self.currentPeriod *= -1

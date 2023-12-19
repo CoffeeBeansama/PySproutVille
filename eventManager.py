@@ -15,6 +15,8 @@ class EventHandler(object):
     pressingInventoryLeft = False
     pressingInventoryRight = False
 
+    pressingInventory = False
+
     pressingClose = False
 
     @staticmethod
@@ -32,7 +34,9 @@ class EventHandler(object):
         EventHandler.pressingInventoryDown = True if keys[pg.K_s] else False
         EventHandler.pressingInventoryLeft = True if keys[pg.K_a] else False
         EventHandler.pressingInventoryRight = True if keys[pg.K_d] else False
-            
+    
+        EventHandler.pressingInventory = True if keys[pg.K_z] else False
+
         EventHandler.pressingClose = True if keys[pg.K_c] else False
 
     def pressingUpKey():
@@ -61,6 +65,9 @@ class EventHandler(object):
 
     def pressingInventoryRightKey():
         return EventHandler.pressingInventoryRight
+    
+    def pressingInventoryKey():
+        return EventHandler.pressingInventory
 
     def pressingCloseKey():
         return EventHandler.pressingClose

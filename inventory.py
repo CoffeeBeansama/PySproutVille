@@ -287,9 +287,6 @@ class Inventory:
         item = self.playerCurrentItems[self.itemIndex]["name"]  # if selecting Equipment
         return item
 
-
-    
-    
     
     def checkOutOfIndex(self):    
 
@@ -320,11 +317,20 @@ class Inventory:
         
         if not self.timer.activated:
             if EventHandler.pressingInteractKey() and self.chestOpened:
-                
+                self.inventoryActive = True        
                 self.renderSelector()
                 self.timer.activate()
+            
+            if EventHandler.pressingInventoryKey() and not self.chestOpened:
 
-            if EventHandler.pressingInventoryLeftKey():
+                if self.inventoryActive:
+                   self.inventoryActive = False
+                else:
+                    self.inventoryActive = True
+
+                self.timer.activate()
+
+            if EventHandler.pressingLeftKey() and self.inventoryActive:
                 if not self.swappingItems:
                    self.itemIndex -= 1
                 else:
@@ -333,7 +339,7 @@ class Inventory:
                 playSound("Selection")
                 self.timer.activate()
 
-            if EventHandler.pressingInventoryRightKey():
+            if EventHandler.pressingRightKey() and self.inventoryActive:
                if not self.swappingItems:
                   self.itemIndex += 1
                else:
@@ -342,7 +348,7 @@ class Inventory:
                playSound("Selection")
                self.timer.activate()
 
-            if EventHandler.pressingInventoryUpKey() and self.chestOpened:
+            if EventHandler.pressingUpKey() and self.chestOpened:
                 if not self.swappingItems:
                    self.itemIndex -= 9
                 else:
@@ -351,7 +357,7 @@ class Inventory:
                 playSound("Selection")
                 self.timer.activate()
 
-            if EventHandler.pressingInventoryDownKey() and self.chestOpened:
+            if EventHandler.pressingDownKey() and self.chestOpened:
                if not self.swappingItems:
                   self.itemIndex += 9
                else:
@@ -360,9 +366,9 @@ class Inventory:
                playSound("Selection")
                self.timer.activate()
 
-            if EventHandler.pressingCloseKey() and self.chestOpened:
-               self.closeChestInventory()
-
+            if EventHandler.pressingCloseKey(): 
+               if self.chestOpened:
+                  self.closeChestInventory()
                self.timer.activate()
 
         self.checkOutOfIndex()
@@ -413,7 +419,7 @@ class Inventory:
                 stackText = self.font.render(str(slots.stackNum),True,self.fontColor)
                 self.screen.blit(stackText,slots.textRect.topright)
         
-        if self.itemIndex >= 0:
+        if self.itemIndex >= 0 and self.inventoryActive:
             self.screen.blit(self.selector,self.playerItemSlotList[self.itemIndex].pos)
 
         if self.swappingItems and self.itemSwapIndex >= 0:
