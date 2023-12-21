@@ -9,9 +9,9 @@ class SoilTile(pg.sprite.Sprite):
         self.type = "Soil"
         
         self.soilSprites = {
-        "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)).convert_alpha(),
-        "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)).convert_alpha(),
-        "WateredSprite": loadSprite(f"{spritePath}WateredTiledDirt.png",(tileSize,tileSize)).convert_alpha(),
+            "untiledSprite": loadSprite(f"{spritePath}untiledDirt.png",(tileSize,tileSize)).convert_alpha(),
+            "tiledSprite": loadSprite(f"{spritePath}tiledDirt.png",(tileSize,tileSize)).convert_alpha(),
+            "WateredSprite": loadSprite(f"{spritePath}WateredTiledDirt.png",(tileSize,tileSize)).convert_alpha(),
         }
 
         self.untiledSprite = self.soilSprites["untiledSprite"]

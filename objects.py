@@ -7,6 +7,7 @@ from timer import Timer
 from sound import playSound
 from support import import_folder
 from sound import playSound
+from eventManager import EventHandler
 
 class InteractableObjects(pg.sprite.Sprite):
     def __init__(self,groups):
@@ -93,39 +94,34 @@ class Chest(pg.sprite.Sprite):
     def __init__(self, pos, group,player,interactableSprites,openChestInventory):
         super().__init__(group)
         self.type = "Chest"
-
         self.player = player
-        self.spriteIndex = 1
-
-        self.spriteSize = (48, 48)
-
-        for index in range(5):
-            self.sprites[index] = loadSprite(f"{spritePath}Chests/{index}.png", self.spriteSize)
-        
-        
-
-        self.frame_index = 0
-        self.image = self.sprites[self.frame_index].convert_alpha()
-        self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-30, -30)
-
-
-
-        self.interactRect = self.image.get_rect(topleft=(pos[0], pos[1] + tileSize))
-        self.interactHitbox = self.interactRect.inflate(-40, -40)
-
         self.interactableSprites = interactableSprites
         self.openChestInventory = openChestInventory
         self.add(self.interactableSprites)
 
+        self.importSprites()
+
+        self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.inflate(-30, -30)
+
+        self.interactRect = self.image.get_rect(topleft=(pos[0], pos[1] + tileSize))
+        self.interactHitbox = self.interactRect.inflate(-40, -40)
+
+        self.frame_index = 0
         self.animationTime = 1 / 6
         self.state = "close"
         self.interacted = False
 
+    def importSprites(self):
+        self.sprites = {}
+        spriteSize = (48, 48)
+        for index in range(5):
+            self.sprites[index] = loadSprite(f"{spritePath}Chests/{index}.png", spriteSize).convert_alpha()
+        
+        self.image = self.sprites[0]
 
     def interact(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_x]:
+        if EventHandler.pressingInteractKey():
             if not self.interacted:
                 self.openChestInventory()
                 self.interacted = True
@@ -143,7 +139,6 @@ class Chest(pg.sprite.Sprite):
                 self.frame_index += self.animationTime
                 if self.frame_index >= len(self.sprites):
                     self.frame_index = len(self.sprites) -1
-                self.image = self.sprites[int(self.frame_index)].convert_alpha()
             case "Close":
                 self.frame_index -= self.animationTime
                 if self.frame_index <= 0:
@@ -152,7 +147,7 @@ class Chest(pg.sprite.Sprite):
                         playSound("Chest")
                         self.interacted = False
 
-                self.image = self.sprites[int(self.frame_index)].convert_alpha()
+        self.image = self.sprites[int(self.frame_index)]
 
     def update(self):
         self.animate()
@@ -172,9 +167,7 @@ class Bed(InteractableObjects):
         self.interactHitbox = self.interactRect.inflate(-40, -40)
 
     def interact(self):
-        keys = pg.key.get_pressed()
-
-        if keys[pg.K_x]:
+        if EventHandler.pressingInteractKey():
             if not self.interacted:
                 self.player.laidToBed = True
                 self.interacted = True
@@ -186,10 +179,11 @@ class Bed(InteractableObjects):
 class Door(InteractableObjects):
     def __init__(self,pos,group,player):
         super().__init__(group)
-
         self.player = player
         self.type = "Door"
-        self.image = loadSprite(f"Sprites/Door/1.png",(tileSize,tileSize)).convert_alpha()
+        self.state = "Close"
+
+        self.importSprites()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(0, 0)
 
@@ -199,15 +193,11 @@ class Door(InteractableObjects):
         self.animationTime = 1 / 6
         self.frame_index = 0
 
-        self.sprites = {
-            0: loadSprite("Sprites/Door/1.png", (tileSize, tileSize)),
-            1: loadSprite("Sprites/Door/2.png", (tileSize, tileSize)),
-            2: loadSprite("Sprites/Door/3.png", (tileSize, tileSize)),
-            3: loadSprite("Sprites/Door/4.png", (tileSize, tileSize)),
-        }
-
-        self.state = "Close"
-
+    def importSprites(self):
+        self.sprites = {}
+        for index in range(0,4):
+            self.sprites[index] = loadSprite(f"Sprites/{self.type}/{index+1}.png", (tileSize, tileSize)).convert_alpha()
+        self.image = self.sprites[0]
 
     def interact(self):
         self.state = "Open"
@@ -233,8 +223,7 @@ class Door(InteractableObjects):
                 if self.frame_index <= 0:
                     self.frame_index = 0
 
-        self.image = self.sprites[int(self.frame_index)].convert_alpha()
-
+        self.image = self.sprites[int(self.frame_index)]
 
     def update(self):
         self.animate()

@@ -211,7 +211,6 @@ class Wood(PickAbleItems):
         self.data = data
         self.image = loadSprite(self.data["CropSprite"],(tileSize,tileSize)).convert_alpha()
 
-
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-10, -10)
         self.hitbox.centery = pos[1]
