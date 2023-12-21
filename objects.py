@@ -28,14 +28,14 @@ class CoinOverHead(pg.sprite.Sprite):
         super().__init__(group)
 
         self.type = "object"
-        self.spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Coin/"
-
+       
         self.frameIndex = 0
         self.speed = 0.5
         self.coinList = coinList
 
         self.timer = Timer(200,self.killself)
 
+        self.spritePath = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Icons/Coin/"
         self.image = loadSprite(f"{self.spritePath}1.png", (tileSize, tileSize)).convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
 
@@ -99,14 +99,10 @@ class Chest(pg.sprite.Sprite):
 
         self.spriteSize = (48, 48)
 
-        self.sprites = {
-            0: loadSprite(f"{spritePath}Chests/1.png", self.spriteSize),
-            1: loadSprite(f"{spritePath}Chests/2.png", self.spriteSize),
-            2: loadSprite(f"{spritePath}Chests/3.png", self.spriteSize),
-            3: loadSprite(f"{spritePath}Chests/4.png", self.spriteSize),
-            4: loadSprite(f"{spritePath}Chests/5.png", self.spriteSize),
-
-        }
+        for index in range(5):
+            self.sprites[index] = loadSprite(f"{spritePath}Chests/{index}.png", self.spriteSize)
+        
+        
 
         self.frame_index = 0
         self.image = self.sprites[self.frame_index].convert_alpha()
