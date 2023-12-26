@@ -15,51 +15,19 @@ class Ui:
         self.dynamicUi = DynamicUI(self.player)
         self.staticUi = StaticUI(self.dynamicUi)
         self.displayUi = True
-
-    def display(self):
-        if not self.displayUi: return
-        self.staticUi.display()
-        self.dynamicUi.display()
-
-
-
-class DynamicUI:
-    def __init__(self,player):
-        self.screen = pg.display.get_surface()
-
-        self.player = player
-        self.faceSpritePos = (30, 30)
-        self.faceSpriteScale = (62,62)
-
-
-        self.playerLives = self.player.lives
-        self.frameIndex = 0
-
-        heartSpriteSize = (40,38)
-        self.fullHeartSprite = loadSprite(uiSprites["FullHeart"],heartSpriteSize).convert_alpha()
-        self.emptyHeartSprite = loadSprite(uiSprites["EmptyHeart"],heartSpriteSize).convert_alpha()
         
-
-        self.animationTime = 1 / 64
-
-        self.font = pg.font.Font("Font/PeaberryBase.ttf", 26)
-        self.fontColor = (144, 98, 93)
-        self.coinCounterLocation = (160, 102)
-        self.coinText = None
-
-        self.animationStates = None
-        self.importPlayerMoodSprites()
-
-        self.heartList = []
-        self.heartPosX = 133
-        self.heartPosY = 19
-        self.createHearts()
-
+        self.initializePlayerFaceUI()
+        self.initializeFonts()
+    
         self.timer = Timer(200)
 
-        self.displayMerchandise = False
-
-
+    def initializePlayerFaceUI(self):
+        self.faceSpritePos = (30, 30)
+        self.faceSpriteScale = (62,62) 
+        self.frameIndex = 0
+        self.animationTime = 1 / 64
+        self.animationStates = None
+        self.importPlayerMoodSprites()
 
     def importPlayerMoodSprites(self):
         faceUISprite = "Sprites/Sprout Lands - Sprites - Basic pack/Ui/Face/"
@@ -74,7 +42,12 @@ class DynamicUI:
             full_path = faceUISprite + animation
             self.animationStates[animation] = import_folder(full_path)
 
-    def animateFace(self):
+    def initializeFonts(self):
+        self.font = pg.font.Font("Font/PeaberryBase.ttf", 26)
+        self.fontColor = (144, 98, 93)
+        self.coinCounterLocation = (160, 102)
+
+    def handlePlayerFaceAnimation(self):
         animation = self.animationStates[self.player.mood]
 
         self.frameIndex += self.animationTime
@@ -82,6 +55,49 @@ class DynamicUI:
             self.frameIndex = 0 if self.player.mood != "Happy" else len(animation) -1
             
         self.faceSprite = pg.transform.scale(animation[int(self.frameIndex)],self.faceSpriteScale)
+
+    def display(self):
+        if not self.displayUi: return
+
+        self.staticUi.display()
+        self.dynamicUi.display()
+
+        # Player Face
+        self.handlePlayerFaceAnimation()
+        self.screen.blit(self.faceSprite, self.faceSpritePos)
+
+        # Coins
+        self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
+        self.screen.blit(self.coinText, self.coinCounterLocation)
+
+class DynamicUI:
+    def __init__(self,player):
+        self.screen = pg.display.get_surface()
+
+        self.player = player
+
+
+        self.playerLives = self.player.lives
+
+        heartSpriteSize = (40,38)
+        self.fullHeartSprite = loadSprite(uiSprites["FullHeart"],heartSpriteSize).convert_alpha()
+        self.emptyHeartSprite = loadSprite(uiSprites["EmptyHeart"],heartSpriteSize).convert_alpha()
+
+
+        self.coinText = None
+
+
+        self.heartList = []
+        self.heartPosX = 133
+        self.heartPosY = 19
+        self.createHearts()
+
+
+        self.displayMerchandise = False
+
+
+
+
 
     def createHearts(self):
         self.hearts = {
@@ -115,15 +131,10 @@ class DynamicUI:
                 self.hearts[i]["Sprite"] = self.fullHeartSprite
 
     def display(self):
-        self.timer.update()
 
         for key,values in enumerate(self.hearts.values()):
             self.screen.blit(values["Sprite"],values["Position"])
-            self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
-            self.screen.blit(self.coinText, self.coinCounterLocation)
             self.resetPlayerHeart()
-            self.animateFace()
-            self.screen.blit(self.faceSprite, self.faceSpritePos)
 
 class StaticUI:
     def __init__(self,dynamicUi):

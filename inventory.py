@@ -47,7 +47,7 @@ class Inventory:
         self.chestItemSwapIndex = self.itemSwapIndex + len(self.chestInventoryDefaultItems)
 
         self.createPlayerInventorySlots()
-        self.createChestInventorySlots() 
+        self.createChestInventorySlots()
 
         self.inventoryActive = False
         self.displayPlayerInventory = True
@@ -55,29 +55,28 @@ class Inventory:
 
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 16)
         self.fontColor = (255, 255, 255)
-        
+
         self.unPauseGame = unPauseGame
-            
-    
+
     def initializePlayerInventory(self):
         self.playerInventoryPos = (73, 495)
         self.playerInventoryCapacity = 9
 
         self.playerInventoryDefaultItems = [itemData["Hoe"],itemData["Axe"],itemData["WateringCan"],None,None,None,None,None,None]
         self.playerCurrentItems = self.playerInventoryDefaultItems
-        
+
 
 
     def initializeChestInventory(self):
         self.chestInventoryPos = (73, 130)
 
         self.chestOpened = False
-        
+
         chestCapacity = 36
         self.chestInventoryDefaultItems = [None for i in range(chestCapacity)]
 
         self.chestCurrentItems = self.chestInventoryDefaultItems 
-        
+
     def importUISprites(self):
         self.sprites = {}
         for items in itemData.keys():
@@ -114,7 +113,7 @@ class Inventory:
 
         rows = 4
         columns = 9
-        
+
         width = self.chestInventoryPos[0] // rows
         offset = 47
         yPos = 170
