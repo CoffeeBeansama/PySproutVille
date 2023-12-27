@@ -62,9 +62,8 @@ class Game:
         self.getPlayerData([self.timeManager,self.bedTile,self.doorObject])
 
         self.ui = Ui(self.player,self.displayMerchantStore)
-        self.dynamicUi = self.ui.dynamicUi
         self.merchant.dialogueSystem = self.dialogueSystem
-        self.dialogueSystem.dynamicUi = self.dynamicUi
+        self.dialogueSystem.dynamicUi = self.ui
         self.player.dialogueSystem = self.dialogueSystem
 
         playBGM("level")

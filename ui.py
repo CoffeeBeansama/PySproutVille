@@ -11,14 +11,15 @@ class Ui:
     def __init__(self,player,displayMerchantStore):
         self.screen = pg.display.get_surface()
         self.player = player
+        self.playerLives = self.player.lives
 
-        self.dynamicUi = DynamicUI(self.player)
-        self.staticUi = StaticUI(self.dynamicUi)
         self.displayUi = True
         
+        self.initializeBackgrounds() 
         self.initializePlayerFaceUI()
         self.initializeFonts()
-    
+        self.initializePlayerHealthHUD()
+
         self.timer = Timer(200)
 
     def initializePlayerFaceUI(self):
@@ -41,6 +42,35 @@ class Ui:
         for animation in self.animationStates.keys():
             full_path = faceUISprite + animation
             self.animationStates[animation] = import_folder(full_path)
+    
+    def initializePlayerHealthHUD(self):
+        heartSpriteSize = (40,38)
+        self.fullHeartSprite = loadSprite(uiSprites["FullHeart"],heartSpriteSize).convert_alpha()
+        self.emptyHeartSprite = loadSprite(uiSprites["EmptyHeart"],heartSpriteSize).convert_alpha()
+        self.heartList = []
+        self.heartPosX = 133
+        self.heartPosY = 19
+
+        self.hearts = {}
+
+        for i in range(1,4):
+            self.hearts[i] = {
+                    "Sprite": self.fullHeartSprite,
+                    "Position": (self.heartPosX + (30 * (i - 1)), self.heartPosY)
+                    }
+        
+        for i in self.hearts.values():
+            self.heartList.append(i)
+
+    def initializeBackgrounds(self):
+        faceContainerSize = (100,100)
+        self.faceContainerBackground = loadSprite(uiSprites["FaceContainer"],faceContainerSize).convert_alpha()
+        self.faceContainerBackgroundPos = (10, 10)
+        self.faceContainerBackgroundRect = self.faceContainerBackground.get_rect()
+
+        coinHeartBGSize = (130,130)
+        self.coinHeartBackGround = loadSprite(uiSprites["HeartCoinContainer"],coinHeartBGSize).convert_alpha()
+        self.coinHeartBackGroundPos = (120, 10)
 
     def initializeFonts(self):
         self.font = pg.font.Font("Font/PeaberryBase.ttf", 26)
@@ -56,67 +86,6 @@ class Ui:
             
         self.faceSprite = pg.transform.scale(animation[int(self.frameIndex)],self.faceSpriteScale)
 
-    def display(self):
-        if not self.displayUi: return
-
-        self.staticUi.display()
-        self.dynamicUi.display()
-
-        # Player Face
-        self.handlePlayerFaceAnimation()
-        self.screen.blit(self.faceSprite, self.faceSpritePos)
-
-        # Coins
-        self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
-        self.screen.blit(self.coinText, self.coinCounterLocation)
-
-class DynamicUI:
-    def __init__(self,player):
-        self.screen = pg.display.get_surface()
-
-        self.player = player
-
-
-        self.playerLives = self.player.lives
-
-        heartSpriteSize = (40,38)
-        self.fullHeartSprite = loadSprite(uiSprites["FullHeart"],heartSpriteSize).convert_alpha()
-        self.emptyHeartSprite = loadSprite(uiSprites["EmptyHeart"],heartSpriteSize).convert_alpha()
-
-
-        self.coinText = None
-
-
-        self.heartList = []
-        self.heartPosX = 133
-        self.heartPosY = 19
-        self.createHearts()
-
-
-        self.displayMerchandise = False
-
-
-
-
-
-    def createHearts(self):
-        self.hearts = {
-            1: {
-                "Sprite": self.fullHeartSprite,
-                "Position":(self.heartPosX,self.heartPosY)
-            },
-            2: {
-                "Sprite": self.fullHeartSprite,
-                "Position": (self.heartPosX + 30, self.heartPosY)
-            },
-            3: {
-                "Sprite": self.fullHeartSprite,
-                "Position": (self.heartPosX + 60, self.heartPosY)
-            }
-        }
-        for i in self.hearts.values():
-            self.heartList.append(i)
-
     def decreasePlayerHeart(self):
         self.playerLives = self.player.lives
         if self.player.lives > 0:
@@ -131,44 +100,23 @@ class DynamicUI:
                 self.hearts[i]["Sprite"] = self.fullHeartSprite
 
     def display(self):
+        if not self.displayUi: return
 
+        # Backgrounds
+        self.screen.blit(self.faceContainerBackground,self.faceContainerBackgroundPos)
+        self.screen.blit(self.coinHeartBackGround,self.coinHeartBackGroundPos)
+
+        # Player Face
+        self.handlePlayerFaceAnimation()
+        self.screen.blit(self.faceSprite, self.faceSpritePos)
+
+        # Coins
+        self.coinText = self.font.render(str(self.player.coins), True, self.fontColor)
+        self.screen.blit(self.coinText, self.coinCounterLocation)
+
+        # Player Hearts
         for key,values in enumerate(self.hearts.values()):
             self.screen.blit(values["Sprite"],values["Position"])
             self.resetPlayerHeart()
-
-class StaticUI:
-    def __init__(self,dynamicUi):
-        self.screen = pg.display.get_surface()
-
-        self.dynamicUi = dynamicUi
-        
-        faceContainerSize = (100,100)
-        self.faceContainerBackground = loadSprite(uiSprites["FaceContainer"],faceContainerSize).convert_alpha()
-        self.faceContainerBackgroundPos = (10, 10)
-        self.faceContainerBackgroundRect = self.faceContainerBackground.get_rect()
-
-        coinHeartBGSize = (130,130)
-        self.coinHeartBackGround = loadSprite(uiSprites["HeartCoinContainer"],coinHeartBGSize).convert_alpha()
-        self.coinHeartBackGroundPos = (120, 10)
-
-        self.staticUi = {
-            "FaceContainer": {
-                "Sprite": self.faceContainerBackground,
-                "Position": self.faceContainerBackgroundPos,
-            },
-            "CoinHeartContainer": {
-                "Sprite": self.coinHeartBackGround,
-                "Position": self.coinHeartBackGroundPos
-            },
-        }
-
-    def display(self):
-        if not self.dynamicUi.displayMerchandise:
-            for keys, values in enumerate(self.staticUi.values()):
-                self.screen.blit(values["Sprite"], values["Position"])
-
-
-
-
 
 
