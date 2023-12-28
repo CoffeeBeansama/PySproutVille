@@ -124,30 +124,27 @@ class MerchantStore:
 
 
     def display(self):
-        if self.displayMerchandise:
-            self.timer.update()
-            self.getPlayerInputs()
-            if not self.timer.activated and not self.allowedToPurchase:
-                self.allowedToPurchase = True
-                self.timer.activate()
+        if not self.displayMerchandise: return
+        self.timer.update()
+        self.getPlayerInputs()
+        
+        if not self.timer.activated and not self.allowedToPurchase:
+           self.allowedToPurchase = True
+           self.timer.activate()
 
-            self.screen.blit(self.backGroundSprite,self.backGroundSpriteRect)
+        self.screen.blit(self.backGroundSprite,self.backGroundSpriteRect)
 
-            if len(self.renderedItems) > 0:
-                for items in self.renderedItems:
+        if len(self.renderedItems) > 0:
+           for items in self.renderedItems:
+               self.screen.blit(items.sprite if self.itemIndex != items.index else items.selectedSprite,items.pos)
+               self.screen.blit(items.itemSprite, (items.pos[0] + 30, items.pos[1] + 15))
+               itemName = self.font.render(str(items.itemName), True, self.fontColor)
+               self.screen.blit(itemName, (items.pos[0] + 80,items.pos[1] + 15))
+               itemCost = self.font.render(str(items.itemCost), True, self.fontColor)
+               self.screen.blit(itemCost,(items.pos[0] + 315, items.pos[1] + 16))
 
-                    self.screen.blit(items.sprite if self.itemIndex != items.index else items.selectedSprite,items.pos)
-
-                    self.screen.blit(items.itemSprite, (items.pos[0] + 30, items.pos[1] + 15))
-
-                    itemName = self.font.render(str(items.itemName), True, self.fontColor)
-                    self.screen.blit(itemName, (items.pos[0] + 80,items.pos[1] + 15))
-
-                    itemCost = self.font.render(str(items.itemCost), True, self.fontColor)
-                    self.screen.blit(itemCost,(items.pos[0] + 315, items.pos[1] + 16))
-
-            playerCoin = self.font.render(str(f"Cash: {self.player.coins}"),True,self.fontColor)
-            self.screen.blit(playerCoin,self.playerCoinPos)
+        playerCoin = self.font.render(str(f"Cash: {self.player.coins}"),True,self.fontColor)
+        self.screen.blit(playerCoin,self.playerCoinPos)
 
 class ItemSlot:
     def __init__(self,pos,item,index):

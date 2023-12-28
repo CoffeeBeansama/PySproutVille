@@ -7,6 +7,7 @@ from timer import Timer,AnimalTimer
 from support import import_folder
 import random
 from abc import ABC,abstractmethod
+from eventManager import EventHandler
 
 
 class Merchant(InteractableObjects):
@@ -32,8 +33,7 @@ class Merchant(InteractableObjects):
         self.add(self.interactableSprites)
 
     def interact(self):
-        keys = pg.key.get_pressed()
-        if keys[pg.K_x]:
+        if EventHandler.pressingInteractKey():
             if not self.interacted:
                 self.dialogueSystem.startDialogue(self.dialogueId)
                 self.interacted = True
